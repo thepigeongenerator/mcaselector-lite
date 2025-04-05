@@ -1,0 +1,210 @@
+---
+# ---------------------------
+# general style settings
+# ---------------------------
+BasedOnStyle:  ''                            # (LLVM,Google,Chromium,Mozilla,WebKit,Microsoft,GNU,InheritParentConfig)
+Standard:      Auto                          # automatically detect the language version
+ColumnLimit:   0                             # 0: disable column limit
+LineEnding:    LF                            # use LF line endings
+UseTab:        ForContinuationAndIndentation # (Never,ForIndentation,ForContinuationAndIndentation,Always)
+TabWidth:      4                             # recommended to set this equal to IndentWidth
+IndentWidth:   4                             # how wide each indent is
+ContinuationIndentWidth: 4                   # width for a line continuation
+
+# ---------------------------
+# alignment options
+# ---------------------------
+AlignAfterOpenBracket:        Align            # (Align,DontAlign,AlwaysBreak,BlockIndent)
+AlignArrayOfStructures:       Left             # (Left,Right,None)
+AlignConsecutiveMacros:       AcrossEmptyLines # (None,Consecutive,AcrossEmptyLines,AcrossComments,AcrossEmptyLinesAndComments)
+AlignConsecutiveAssignments:  None             # (None,Consecutive,AcrossEmptyLines,AcrossComments,AcrossEmptyLinesAndComments)
+AlignConsecutiveBitFields:    AcrossEmptyLines # (None,Consecutive,AcrossEmptyLines,AcrossComments,AcrossEmptyLinesAndComments)
+AlignConsecutiveDeclarations: None             # (None,Consecutive,AcrossEmptyLines,AcrossComments,AcrossEmptyLinesAndComments)
+AlignEscapedNewlines:         Left             # (DontAlign,Left,LeftWithLastLine,Right)
+AlignOperands:                Align            # (DontAlign,Align,AlignAfterOperator)
+AlignTrailingComments:        Always           # (Leave,Always,Never)
+
+# ---------------------------
+# short constructs on a single line
+# ---------------------------
+AllowShortBlocksOnASingleLine:       Always        # (Never,Empty,Always)
+AllowShortFunctionsOnASingleLine:    All           # (None,InlineOnly,Empty,All)
+AllowShortLambdasOnASingleLine:      All           # (None,Empty,Inline,All)
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse # (Never,WithoutElse,OnlyFirstIf,AllIfsAndElse)
+AllowShortCaseLabelsOnASingleLine:   true
+AllowShortEnumsOnASingleLine:        true
+AllowShortLoopsOnASingleLine:        true
+
+# ---------------------------
+# break and wrapping options
+# ---------------------------
+AlwaysBreakBeforeMultilineStrings: true      # when defining multi-line strings, linebreak should be inserted
+BreakAfterReturnType:           Automatic    # is decided by PenaltyReturnTypeOnItsOwnLine
+BreakTemplateDeclarations:      MultiLine    # (Leave,No,MultiLine,Yes)
+BreakBeforeBinaryOperators:     None         # (None,NonAssignment,All)
+BreakBeforeConceptDeclarations: Never        # (Never,Allowed,Always)
+BreakBeforeBraces:              Attach       # (Attach,Linux,Mozilla,Stroustrup,Allman,Whitesmiths,GNU,WebKit,Custom)
+BreakInheritanceList:           BeforeColon  # (BeforeColon,BeforeComma,AfterColon)
+BreakConstructorInitializers:   BeforeColon  # (BeforeColon,BeforeComma,AfterColon)
+BreakBeforeTernaryOperators:    true
+BreakStringLiterals:            true
+
+# ---------------------------
+# brace wrapping configuration
+# ---------------------------
+BraceWrapping:
+  AfterControlStatement: Never # (Never,MultiLine,Always)
+  AfterCaseLabel:        false
+  AfterClass:            false
+  AfterEnum:             false
+  AfterFunction:         false
+  AfterNamespace:        false
+  AfterObjCDeclaration:  false
+  AfterStruct:           false
+  AfterUnion:            false
+  AfterExternBlock:      false
+  BeforeCatch:           false
+  BeforeElse:            false
+  BeforeLambdaBody:      false
+  BeforeWhile:           false
+  IndentBraces:          false
+  SplitEmptyFunction:    false
+  SplitEmptyRecord:      false
+  SplitEmptyNamespace:   false
+
+# ---------------------------
+# constructor initializer and parameter packing options
+# ---------------------------
+ConstructorInitializerIndentWidth: 4
+PackConstructorInitializers: BinPack          # (Never,BinPack,CurrentLine,NextLine,NextLineOnly)
+BinPackParameters: true                       # use bin-packing for paramter lists
+BinPackArguments:  false                      # false: function calls either on one line or one per line
+
+# ---------------------------
+# pointer alignment
+# ---------------------------
+DerivePointerAlignment: false      # automatically detect pointer alignment
+PointerAlignment:       Left       # (Left,Right,Middle)
+ReferenceAlignment:     Pointer    # (Pointer,Left,Right,Middle)
+
+# ---------------------------
+# include settings and sorting
+# ---------------------------
+IncludeIsMainSourceRegex: ''                        # only [*.{c,cc,cpp,c++,cxx,m,mm}] are considered to be "main"
+IncludeIsMainRegex:       '([-_](test|unittest))?$' # regex used for identifying an include as "main", to assign catagory 0
+IncludeBlocks:      Regroup                         # (Preserve,Merge,Regroup)
+IncludeCategories:
+  - Regex:         '^<.*\.h>' # system headers
+    Priority:      1
+    SortPriority:  0
+    CaseSensitive: true
+  - Regex:         '^".*'     # custom headers
+    Priority:      2
+    SortPriority:  0
+    CaseSensitive: true
+
+# ---------------------------
+# macro and language-specific settings
+# ---------------------------
+AttributeMacros:
+  - __capability
+ForEachMacros:
+  - foreach
+  - Q_FOREACH
+  - BOOST_FOREACH
+IfMacros:
+  - KJ_IF_MAYBE
+StatementAttributeLikeMacros:
+  - Q_EMIT
+StatementMacros:
+  - Q_UNUSED
+  - QT_REQUIRE_VERSION
+WhitespaceSensitiveMacros:
+  - STRINGIZE
+  - PP_STRINGIZE
+  - BOOST_PP_STRINGIZE
+  - NS_SWIFT_NAME
+  - CF_SWIFT_NAME
+
+# ---------------------------
+# additional formatting and sorting details
+# ---------------------------
+AllowAllArgumentsOnNextLine:      false
+AllowAllParametersOfDeclarationOnNextLine: false
+EmptyLineAfterAccessModifier:     Never                # (Never,Leave,Always)
+EmptyLineBeforeAccessModifier:    LogicalBlock         # (Never,Leave,LogicalBlock,Always)
+ExperimentalAutoDetectBinPacking: false
+FixNamespaceComments:             true                 # adds comments at namespace delimiters
+MaxEmptyLinesToKeep:              4                    # what the maximum amount of empty lines that we're allowed to keep
+ReflowComments:                   true                 # reflow comment text to match column limits
+RemoveBracesLLVM:                 false                # don't automatically remove braces
+SeparateDefinitionBlocks:         Leave                # (Leave,Always.Never)
+ShortNamespaceLines:              1                    # how many lines a namespaces can be to be regarded "short"
+SortIncludes:                     CaseSensitive        # (Never,CaseSensitive,CaseInsensitive)
+SortJavaStaticImport:             Before               # (After,Before)
+SortUsingDeclarations:            LexicographicNumeric # (Never,Lexicographic,LexicographicNumeric)
+
+# ---------------------------
+# spacing options
+# ---------------------------
+SpaceAfterCStyleCast:             false
+SpaceAfterLogicalNot:             false
+SpaceAfterTemplateKeyword:        false
+SpaceBeforeAssignmentOperators:   true
+SpaceBeforeCaseColon:             false
+SpaceBeforeCpp11BracedList:       false
+SpaceBeforeCtorInitializerColon:  true
+SpaceBeforeInheritanceColon:      true
+SpaceBeforeParens:                ControlStatements # (ControlStatements,ControlStatementsExceptControlMacros,NonEmptyParentheses,Always,Custom)
+SpaceBeforeParensOptions:
+  AfterControlStatements:       true
+  AfterForeachMacros:           true
+  AfterFunctionDefinitionName:  false
+  AfterFunctionDeclarationName: false
+  AfterIfMacros:                true
+  AfterOverloadedOperator:      false
+  BeforeNonEmptyParentheses:    false
+SpaceAroundPointerQualifiers:     Default # (Default,Before,After,Both) recommend to use Default and let PointerAlignment decide
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceInEmptyBlock:                 true
+SpacesInParens:            Custom
+SpacesInParensOptions:
+  ExceptDoubleParentheses: false
+  InConditionalStatements: false
+  InCStyleCasts:           false
+  Other:                   false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles:               Never # (Never,Always,Leave)
+SpacesInConditionalStatement: false
+SpacesInContainerLiterals:    true
+SpacesInLineCommentPrefix:
+  Minimum: 1
+  Maximum: 1
+SpacesInParentheses:       false
+SpacesInSquareBrackets:    false
+SpaceBeforeSquareBrackets: false
+BitFieldColonSpacing:      Both # (Both,None,Before,After)
+
+# ---------------------------
+# indentation details
+# ---------------------------
+IndentAccessModifiers: false
+IndentCaseLabels:      false
+IndentCaseBlocks:      false
+IndentGotoLabels:      true
+IndentExternBlock:     AfterExternBlock  # (AfterExternBlock,NoIndent,Indent)
+IndentRequiresClause:  false
+IndentPPDirectives:    AfterHash         # preprocessor indent style (None,AfterHash,BeforeHash)
+PPIndentWidth:         1
+
+---
+# ---------------------------
+# Objective-C specific settings
+# ---------------------------
+Language:                        ObjC
+ObjCBinPackProtocolList:         Never
+ObjCBlockIndentWidth:            4
+ObjCBreakBeforeNestedBlockParam: true
+ObjCSpaceAfterProperty:          false
+ObjCSpaceBeforeProtocolList:     true
+...

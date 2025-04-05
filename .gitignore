@@ -1,0 +1,18 @@
+# ignore all dotfiles by default
+.*
+
+# unhide dotfiles we want to keep
+!.gitignore
+!.editorconfig
+!.clang-format
+!/.github/
+
+# hide output files
+*.o
+*.d
+*.out
+/bin/
+/obj/
+*.lock
+/target/
+compile_commands.json

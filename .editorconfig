@@ -1,0 +1,23 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{c,h}]
+indent_style = tab
+indent_size = tab
+
+[*.{rs}]
+indent_style = space
+intent_size = 4
+
+[{makefile}]
+indent_style = tab
+indent_size = tab
+
+[*.{yaml,json}]
+indent_style = space
+intent_size = 2
