@@ -5,7 +5,6 @@
 #  - bear (debug)
 #  - git bash (windows)
 NAME  := mcaselector-lite
-VER   := 0.0.1
 
 RUSTC   := rustc
 
