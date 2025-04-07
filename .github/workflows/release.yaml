@@ -14,6 +14,9 @@ on:
 jobs:
   compile:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/thepigeongenerator/crust_tools:latest
+    needs: install-deps
     strategy:
       matrix:
         arch:
@@ -22,17 +25,7 @@ jobs:
     env:
       OUT: ${{github.workspace}}/mcaselector-lite-${{matrix.arch}}-${{github.event.release.tag_name || github.event.inputs.release_tag}}.zip
     steps:
-      - uses: actions/checkout@v4 # clone the repo
-      # install tool chains
-      - name: install dependencies
-        run: |
-          apt update
-          apt install clang zip -y
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-      # compile the binary
+      - uses: actions/checkout@latest
       - run: make compile ARCH=${{matrix.arch}}
       - name: compress binary information
         run: |
