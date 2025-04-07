@@ -23,7 +23,7 @@ CFLAGS  += -DDEBUG -g -Og
 RSFLAGS += -C debuginfo=2
 PROF    := dbg
 else
-CFLAGS += -O2
+CFLAGS  += -O2 -Werror
 RSFLAGS += -D warnings
 PROF    := rel
 endif
