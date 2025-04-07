@@ -31,9 +31,11 @@ endif
 ifneq ($(MAKECMDGOALS),clean)
 ifeq      ($(ARCH),linux-x86_64)
 CFLAGS  += -target x86_64-pc-linux-gnu
+LDFLAGS += -target x86_64-pc-linux-gnu
 RSFLAGS += --target=x86_64-unknown-linux-gnu
 else ifeq ($(ARCH),win-x86_64)
 CFLAGS  += -target x86_64-pc-windows-gnu
+LDFLAGS += -target x86_64-pc-windows-gnu
 RSFLAGS += --target=x86_64-pc-windows-gnu
 EXT     := .exe
 else
@@ -73,7 +75,7 @@ $(TARGET): $(C_OBJ) $(RS_OBJ)
 	@$(call wr_colour,"LDFLAGS: '$(LDFLAGS)'",94)
 	@$(call wr_colour,"linking to: '$@'",92)
 
-	@$(CC) $(LDFLAGS) $(C_OBJ) $(RS_OBJ) -o $(TARGET)
+	@$(CC) $(LDFLAGS) -o $@ $(C_OBJ) $(RS_OBJ)
 	@$(call wr_colour,"current profile: '$(PROF)'",93)
 
 # create .o and .d files for C sources
