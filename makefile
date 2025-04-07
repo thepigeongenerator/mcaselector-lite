@@ -13,24 +13,29 @@ CC      := clang
 CLANG   := c
 CSTD    := c17
 CFLAGS  := -Wall -Wextra -Wpedantic -Wno-pointer-arith -static
+RSFLAGS := --crate-type=staticlib -C panic=abort
 LDFLAGS :=
 DEBUG   ?= 0
 ARCH    ?= 0
 
 ifeq ($(DEBUG),1)
-CFLAGS += -DDEBUG -g -Og
-PROF   := dbg
+CFLAGS  += -DDEBUG -g -Og
+RSFLAGS += -C debuginfo=2
+PROF    := dbg
 else
 CFLAGS += -O2
-PROF   := rel
+RSFLAGS += -D warnings
+PROF    := rel
 endif
 
 ifneq ($(MAKECMDGOALS),clean)
 ifeq      ($(ARCH),linux-x86_64)
-CFLAGS += -target x86_64-pc-linux-gnu
+CFLAGS  += -target x86_64-pc-linux-gnu
+RSFLAGS += --target=x86_64-unknown-linux-gnu
 else ifeq ($(ARCH),win-x86_64)
-CFLAGS += -target x86_64-pc-windows-gnu
-EXT    := .exe
+CFLAGS  += -target x86_64-pc-windows-gnu
+RSFLAGS += --target=x86_64-pc-windows-gnu
+EXT     := .exe
 else
 $(error you must set the ARCH environment variable to one of these: 'linux-x86_64' 'win-x86_64')
 endif
@@ -64,6 +69,7 @@ $(TARGET): $(C_OBJ) $(RS_OBJ)
 	@$(call wr_colour,"RUSTC: '$(RUSTC)'",94)
 	@$(call wr_colour,"CC: '$(CC)'",94)
 	@$(call wr_colour,"CFLAGS: '$(CFLAGS)'",94)
+	@$(call wr_colour,"RSFLAGS: '$(RSFLAGS)'",94)
 	@$(call wr_colour,"LDFLAGS: '$(LDFLAGS)'",94)
 	@$(call wr_colour,"linking to: '$@'",92)
 
@@ -72,13 +78,13 @@ $(TARGET): $(C_OBJ) $(RS_OBJ)
 
 # create .o and .d files for C sources
 $(C_OBJ): $(C_SRC)
-	$(call wr_colour,"compiling $(notdir $@) from $(notdir $<)",92)
+	@$(call wr_colour,"compiling $(notdir $@) from $(notdir $<)",92)
 	@$(CC) $(CFLAGS) -c -MD -MP -std=$(CSTD) -x $(CLANG) -o $@ $<
 
 # create .o files for RUST sources
 $(RS_OBJ): $(RS_SRC)
-	$(call wr_colour,"compiling $(notdir $@) from $(notdir $<)",92)
-	$(RUSTC) --crate-type=staticlib --emit=obj -C debuginfo=2 -C panic=abort -o $@ $<
+	@$(call wr_colour,"compiling $(notdir $@) from $(notdir $<)",92)
+	@$(RUSTC) $(RSFLAGS) --emit=obj -o $@ $<
 
 # create directories
 $(DIR):
