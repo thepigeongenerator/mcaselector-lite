@@ -25,7 +25,7 @@ jobs:
     env:
       OUT: ${{github.workspace}}/mcaselector-lite-${{matrix.arch}}-${{github.event.release.tag_name || github.event.inputs.release_tag}}.zip
     steps:
-      - uses: actions/checkout@latest
+      - uses: actions/checkout@v4
       - run: make compile ARCH=${{matrix.arch}}
       - name: compress binary information
         run: |

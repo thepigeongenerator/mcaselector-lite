@@ -20,6 +20,6 @@ jobs:
           - linux-x86_64
           - win-x86_64
     steps:
-      - uses: actions/checkout@latest
+      - uses: actions/checkout@v4
       - run: make compile ARCH=${{matrix.arch}}
       # TODO: add linting checking here
