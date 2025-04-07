@@ -6,6 +6,7 @@
 #  - git bash (windows)
 NAME  := mcaselector-lite
 
+# TODO: use cargo instead of rustc, as then the Cargo.toml file is actually useful (and will help with linting)
 RUSTC   := rustc
 
 # C compiler options
@@ -65,6 +66,7 @@ run: compile
 compile: compile_commands.json $(DIR) $(TARGET)
 clean:
 	rm -rf bin/ obj/ compile_commands.json
+# TODO: write a structure for the unit tests in this
 
 # create the binary (linking step)
 $(TARGET): $(C_OBJ) $(RS_OBJ)

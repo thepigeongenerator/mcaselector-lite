@@ -9,6 +9,7 @@ on:
       - dev
       - $default-branch
 jobs:
+  # TODO: add unit test job here
   compile-and-lint:
     runs-on: ubuntu-latest
     container:
@@ -21,3 +22,4 @@ jobs:
     steps:
       - uses: actions/checkout@latest
       - run: make compile ARCH=${{matrix.arch}}
+      # TODO: add linting checking here
