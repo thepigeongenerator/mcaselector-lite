@@ -9,7 +9,15 @@ on:
       - dev
       - $default-branch
 jobs:
-  tmp:
+  compile-and-lint:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/thepigeongenerator/crust_tools:latest
+    strategy:
+      matrix:
+        arch:
+          - linux-x86_64
+          - win-x86_64
     steps:
-      - run: echo Hello, World
+      - uses: actions/checkout@latest
+      - run: make compile ARCH=${{matrix.arch}}
