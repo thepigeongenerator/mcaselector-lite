@@ -12,53 +12,33 @@ on:
         description: the tag to release for
         default: ""
 jobs:
-  compile_linux-x86_64:
+  compile:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch:
+          - linux-x86_64
+          - win-x86_64
     env:
-      OUT: mcaselector-lite-linux-x86_64-${{github.event.release.tag_name || github.event.inputs.release_tag}}.zip
+      OUT: ${{github.workspace}}/mcaselector-lite-${{matrix.arch}}-${{github.event.release.tag_name || github.event.inputs.release_tag}}.zip
     steps:
       - uses: actions/checkout@v4 # clone the repo
       # install tool chains
-      - name: install clang
+      - name: install dependencies
         run: |
           apt update
-          apt install clang -y
+          apt install clang zip -y
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           override: true
       # compile the binary
-      - run: make compile ARCH=linux-x86_64
-      - run: zip -rv ${{env.OUT}} bin/linux-x86_64/rel/*
-      # upload to the release
-      - name: upload release
-        uses: softprops/action-gh-release@v2
-        if: ${{!env.ACT}}
-        with:
-          files: ${{env.OUT}}
-      # upload to the artefact directory if running locally with act
-      - uses: actions/upload-artifact@v4
-        if: ${{env.ACT}}
-        with:
-          path: ${{env.OUT}}
-  compile_win-x86_64:
-    runs-on: ubuntu-latest
-    env:
-      OUT: mcaselector-lite-win-x86_64-${{github.event.release.tag_name || github.event.inputs.release_tag}}.zip
-    steps:
-      - uses: actions/checkout@v4 # clone the repo
-      # install tool chains
-      - name: install clang
+      - run: make compile ARCH=${{matrix.arch}}
+      - name: compress binary information
         run: |
-          apt update
-          apt install clang -y
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-      # compile the binary
-      - run: make compile ARCH=win-x86_64
-      - run: -rv zip ${{env.OUT}} bin/win-x86_64/rel/*
+          cd "${{github.workspace}}/bin/${{matrix.arch}}/rel/"
+          zip -rv "${{env.OUT}}" *
+          cd -
       # upload to the release
       - name: upload release
         uses: softprops/action-gh-release@v2
