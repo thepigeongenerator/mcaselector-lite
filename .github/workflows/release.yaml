@@ -29,7 +29,7 @@ jobs:
           override: true
       # compile the binary
       - run: make compile ARCH=linux-x86_64
-      - run: -rv zip ${{env.OUT}} bin/linux-x86_64/rel/*
+      - run: zip -rv ${{env.OUT}} bin/linux-x86_64/rel/*
       # upload to the release
       - name: upload release
         uses: softprops/action-gh-release@v2
