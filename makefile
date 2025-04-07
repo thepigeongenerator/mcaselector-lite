@@ -57,7 +57,7 @@ TARGET    := $(DIR_BUILD)/$(NAME)$(EXT)
 endif
 
 define wr_colour
-	@echo -e "\033[$(2)m$(1)\033[0m"
+	@printf "\033[%sm%s\033[0m\n" $(2) $(1)
 endef
 
 # compiles and executes the produced binary
