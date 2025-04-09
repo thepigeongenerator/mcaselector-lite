@@ -2,7 +2,6 @@
 #  - make
 #  - clang
 #  - rustc
-#  - bear (debug)
 #  - git bash (windows)
 NAME    := mcaselector-lite
 DEBUG   ?= 0
@@ -99,7 +98,7 @@ $(DIR):
 	mkdir -p $@
 
 # update compile commands if the makefile has been updated (for linting)
-ifeq ($(DEBUG),1)
+ifneq ($(shell which bear),)
 compile_commands.json: makefile
 	$(MAKE) clean
 	@touch compile_commands.json
