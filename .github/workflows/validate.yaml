@@ -2,12 +2,10 @@ name: validate
 on:
   push:
     branches:
-      - dev
-      - $default-branch
+      - '**'
   pull_request:
     branches:
-      - dev
-      - $default-branch
+      - '**'
 jobs:
   # TODO: add unit test job here
   compile-and-lint:
