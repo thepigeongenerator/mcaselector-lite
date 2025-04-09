@@ -59,34 +59,39 @@ DIR_OBJ   := obj/$(ARCH)/$(PROF)
 BIN       := $(DIR_BIN)/$(NAME)$(EXT)
 endif
 
-define wr_colour
+define log_col
 	@printf "\033[%sm%s\033[0m\n" $(2) $(1)
 endef
+comp = $(call log_col,$(1),92)
+mesg = $(call log_col,$(1),94)
+warn = $(call log_col,$(1),93)
+fail = $(call log_col,$(1),91)
 
 # compiles and executes the produced binary
 run: compile
 	./$(BIN)
 compile: compile_commands.json $(BIN)
 clean:
+	@$(call warn,"cleaning!")
 	rm -rf bin/ obj/ target/ compile_commands.json
 # TODO: write a structure for the unit tests in this
 
 # create the binary (linking step)
 $(BIN): $(C_OBJ) $(RS_LIB)
-	@$(call wr_colour,"RUSTC: '$(RUSTC)'",94)
-	@$(call wr_colour,"CC: '$(CC)'",94)
-	@$(call wr_colour,"CFLAGS: '$(CFLAGS)'",94)
-	@$(call wr_colour,"RSFLAGS: '$(RSFLAGS)'",94)
-	@$(call wr_colour,"LDFLAGS: '$(LDFLAGS)'",94)
-	@$(call wr_colour,"linking to: '$@'",92)
+	@$(call mesg,"RUSTC: '$(RUSTC)'")
+	@$(call mesg,"CC: '$(CC)'")
+	@$(call mesg,"CFLAGS: '$(CFLAGS)'")
+	@$(call mesg,"RSFLAGS: '$(RSFLAGS)'")
+	@$(call mesg,"LDFLAGS: '$(LDFLAGS)'")
+	@$(call comp,"linking to: '$@'")
 
 	@mkdir -p $(@D)
 	@$(CC) $(LDFLAGS) -o $@ $(C_OBJ) $(RS_LIB)
-	@$(call wr_colour,"current profile: '$(PROF)'",93)
+	@$(call warn,"current profile: '$(PROF)'")
 
 # create .o and .d files for C sources
 $(DIR_OBJ)/%.o: src/%.c
-	@$(call wr_colour,"compiling $(notdir $@) from $(notdir $<)",92)
+	@$(call comp,"compiling $(notdir $@) from $(notdir $<)")
 	@mkdir -p $(@D)
 	@$(CC) $(CFLAGS) -c -MD -MP -std=$(CSTD) -x c -o $@ $<
 
