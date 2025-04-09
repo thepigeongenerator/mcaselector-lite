@@ -9,7 +9,6 @@ ARCH    ?= 0
 
 # C compiler options
 CC      := clang
-CLANG   := c
 CSTD    := c17
 CFLAGS  := -Wall -Wextra -Wpedantic -Wno-pointer-arith -static
 LDFLAGS :=
@@ -47,17 +46,17 @@ endif
 endif
 
 ifneq ($(ARCH),0)
-C_SRC  := $(wildcard src/*.c) $(wildcard src/**/*.c) $(wildcard src/**/**/*.c) $(wildcard src/**/**/**/*.c) $(wildcard src/**/**/**/**/*.c)
+C_SRC  := $(shell find -name '*.c')
 C_OBJ  := $(patsubst src/%,obj/$(ARCH)/$(PROF)/%,$(C_SRC:.c=.o))
 C_DEP  := $(C_OBJ:.o=.d)
-RS_SRC := $(wildcard src/*.rs) $(wildcard src/**/*.rs) $(wildcard src/**/**/*.rs) $(wildcard src/**/**/**/*.rs) $(wildcard src/**/**/**/**/*.rs)
+RS_SRC := $(shell find -name '*.rs')
 RS_LIB := $(RSOUT)/libmcaselector_lite.a
 RS_DEP := $(RSOUT)/libmcaselector_lite.d
 RSOUT  :=
 
-DIR       := bin/$(ARCH)/$(PROF) $(sort obj/$(ARCH)/$(PROF) $(dir $(C_SRC))  $(dir $(RS_SRC)))
-DIR_BUILD := bin/$(ARCH)/$(PROF)
-TARGET    := $(DIR_BUILD)/$(NAME)$(EXT)
+DIR_BIN   := bin/$(ARCH)/$(PROF)
+DIR_OBJ   := obj/$(ARCH)/$(PROF)
+BIN       := $(DIR_BIN)/$(NAME)$(EXT)
 endif
 
 define wr_colour
@@ -66,14 +65,14 @@ endef
 
 # compiles and executes the produced binary
 run: compile
-	./$(TARGET)
-compile: compile_commands.json $(DIR) $(TARGET)
+	./$(BIN)
+compile: compile_commands.json $(BIN)
 clean:
 	rm -rf bin/ obj/ target/ compile_commands.json
 # TODO: write a structure for the unit tests in this
 
 # create the binary (linking step)
-$(TARGET): $(C_OBJ) $(RS_LIB)
+$(BIN): $(C_OBJ) $(RS_LIB)
 	@$(call wr_colour,"RUSTC: '$(RUSTC)'",94)
 	@$(call wr_colour,"CC: '$(CC)'",94)
 	@$(call wr_colour,"CFLAGS: '$(CFLAGS)'",94)
@@ -81,21 +80,19 @@ $(TARGET): $(C_OBJ) $(RS_LIB)
 	@$(call wr_colour,"LDFLAGS: '$(LDFLAGS)'",94)
 	@$(call wr_colour,"linking to: '$@'",92)
 
+	@mkdir -p $(@D)
 	@$(CC) $(LDFLAGS) -o $@ $(C_OBJ) $(RS_LIB)
 	@$(call wr_colour,"current profile: '$(PROF)'",93)
 
 # create .o and .d files for C sources
-$(C_OBJ): $(C_SRC)
+$(DIR_OBJ)/%.o: src/%.c
 	@$(call wr_colour,"compiling $(notdir $@) from $(notdir $<)",92)
-	@$(CC) $(CFLAGS) -c -MD -MP -std=$(CSTD) -x $(CLANG) -o $@ $<
+	@mkdir -p $(@D)
+	@$(CC) $(CFLAGS) -c -MD -MP -std=$(CSTD) -x c -o $@ $<
 
-# create .o and .d files for RUST sources
+# create .o and .d files for the entire rust codebase
 $(RS_LIB): $(RS_SRC)
 	$(RUSTC) $(RSFLAGS)
-
-# create directories
-$(DIR):
-	mkdir -p $@
 
 # update compile commands if the makefile has been updated (for linting)
 ifneq ($(shell which bear),)
