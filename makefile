@@ -18,11 +18,11 @@ RUSTC   := cargo rustc
 RSFLAGS :=
 
 ifeq ($(DEBUG),1)
-CFLAGS  += -DDEBUG -g -Og
+CFLAGS  += -g -Og
 RSOUT   := debug
 PROF    := dbg
 else
-CFLAGS  += -O2 -Werror
+CFLAGS  += -DNDEBUG -O2 -Werror
 RSOUT   := release
 RSFLAGS := --release
 PROF    := rel
