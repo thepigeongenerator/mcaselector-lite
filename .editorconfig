@@ -8,10 +8,6 @@ trim_trailing_whitespace = true
 indent_style = tab
 indent_size = tab
 
-[*.{rs}]
-indent_style = space
-intent_size = 4
-
 [{makefile}]
 indent_style = tab
 indent_size = tab

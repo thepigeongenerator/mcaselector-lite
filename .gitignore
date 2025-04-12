@@ -14,5 +14,4 @@
 /bin/
 /obj/
 *.lock
-/target/
 compile_commands.json
