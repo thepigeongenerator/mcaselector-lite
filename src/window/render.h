@@ -1,0 +1,10 @@
+#pragma once
+
+#include <GLFW/glfw3.h>
+
+struct renderdat {
+	GLFWwindow* win;
+};
+
+int render_init(struct renderdat* restrict rdat);
+void render_free(struct renderdat* restrict rdat);
