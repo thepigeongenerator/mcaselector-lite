@@ -53,7 +53,7 @@ BIN       := $(DIR_BIN)/$(NAME)$(EXT)
 C_SRC  := $(shell find src/ -name '*.c')
 C_OBJ  := $(patsubst src/%,$(DIR_OBJ)/%,$(C_SRC:.c=.o))
 C_DEP  := $(C_OBJ:.o=.d)
-RS_SRC := $(shell find -name '*.rs')
+RS_SRC := $(shell find src/ -name '*.rs')
 RS_LIB := $(RSOUT)/libmcaselector_lite.a
 RS_DEP := $(RSOUT)/libmcaselector_lite.d
 RSOUT  :=
@@ -108,6 +108,9 @@ compile_commands.json: makefile
 else
 compile_commands.json:
 endif
+
+# disable implicit rules
+.SUFFIXES:
 
 # include the dependencies
 -include $(C_DEP)
