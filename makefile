@@ -10,8 +10,8 @@ ARCH    ?= 0
 # C compiler options
 CC      := clang
 CSTD    := c17
-CFLAGS  := -Wall -Wextra -Wpedantic -Wno-pointer-arith -static
-LDFLAGS :=
+CFLAGS  := $(shell pkg-config --cflags glfw3) -Wall -Wextra -Wpedantic -Wno-pointer-arith -static
+LDFLAGS := $(shell pkg-config --libs glfw3)
 
 # Rust compiler options
 RUSTC   := cargo rustc
