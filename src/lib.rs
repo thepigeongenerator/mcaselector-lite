@@ -6,8 +6,16 @@ fn panic(_info: &core::panic::PanicInfo) -> ! {
     loop {}
 }
 
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn get_str() -> *const u8 {
-    let str = "Hello, World\0";
-    return str.as_ptr();
+// contains all publicly facing functions
+
+mod error;
+
+pub extern "C" fn test() {
+    unsafe {
+        debug!("%s", "hi");
+        info!("%s", "hi");
+        warn!("%s", "hi");
+        error!("%s", "hi");
+        fatal!("%s", "hi");
+    }
 }
