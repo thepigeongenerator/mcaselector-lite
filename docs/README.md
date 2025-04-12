@@ -1,5 +1,5 @@
 # mca selector lite
-A from-scratch rewrite of [mcaselector](https://github.com/Querz/mcaselector) in C and Rust.
+A from-scratch rewrite of [mcaselector](https://github.com/Querz/mcaselector) in C.
 
 [![licence](https://img.shields.io/github/license/thepigeongenerator/mcaselector-lite.svg)](https://github.com/thepigeongenerator/mcaselector-lite/blob/master/LICENSE)
 [![latest release](https://img.shields.io/github/release/thepigeongenerator/mcaselector-lite.svg)](https://github.com/thepigeongenerator/mcaselector-lite/releases/)
@@ -15,7 +15,6 @@ Although not the intended main use case, it is also possible to use this tool to
 
 ## why does this project exist?
 MCA selector is a tool written in Java. Where it depends upon JRE21 and JavaFX. Where the application is primarily developed for Windows users, where other platforms get a `.jar` file, which can at times be clunky to work with.
-The goal of this project is to create a version of the original MCA selector, but written in C and Rust, leveraging the improved performance due to native execution and more low-level control.
+The goal of this project is to create a version of the original MCA selector, but written in C, leveraging the improved performance due to native execution and more low-level control.
 I have picked C as the language for the core portions of the application, where I prefer fine-grained control with little abstractions.
-Rust is used for the front-end due to it's more verbose and memory safe nature, making the visual portion of the application easier to write.
 This version is not intended to serve to entirely replace MCA selector, just to offer an alternative. Both tools will have their strengths and weaknesses.

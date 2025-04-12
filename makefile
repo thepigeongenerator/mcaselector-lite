@@ -1,7 +1,6 @@
 # dependencies:
 #  - make
 #  - clang
-#  - rustc
 #  - git bash (windows)
 NAME    := mcaselector-lite
 DEBUG   ?= 0
