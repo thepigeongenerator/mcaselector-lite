@@ -13,7 +13,7 @@ CSTD    := c17
 CFLAGS  := -Wall -Wextra -Wpedantic -Wno-pointer-arith -static
 LDFLAGS :=
 
-ifeq ($(DEBUG),1)
+ifneq ($(DEBUG),0)
 CFLAGS  += -g -Og
 PROF    := dbg
 else
