@@ -1,7 +1,8 @@
 # dependencies:
 #  - make
 #  - clang
-#  - git bash (windows)
+#  - glfw3 (install glfw3:x64-mingw-dynamic via vcpkg for win cross compilation)
+#  - vcpkg (win cross-compilation)
 NAME    := mcaselector-lite
 DEBUG   ?= 0
 ARCH    ?= 0
@@ -9,8 +10,8 @@ ARCH    ?= 0
 # C compiler options
 CC      := clang
 CSTD    := c17
-CFLAGS  := $(shell pkg-config --cflags glfw3) -Wall -Wextra -Wpedantic -Wno-pointer-arith -static
-LDFLAGS := $(shell pkg-config --libs glfw3)
+CFLAGS  := -Wall -Wextra -Wpedantic -Wno-pointer-arith -static
+LDFLAGS :=
 
 ifeq ($(DEBUG),1)
 CFLAGS  += -g -Og
@@ -22,11 +23,11 @@ endif
 
 ifneq ($(MAKECMDGOALS),clean)
 ifeq      ($(ARCH),linux-x86_64)
-CFLAGS  += -target x86_64-pc-linux-gnu
-LDFLAGS += -target x86_64-pc-linux-gnu
+CFLAGS  += -target x86_64-pc-linux-gnu $(shell pkg-config --cflags glfw3)
+LDFLAGS += -target x86_64-pc-linux-gnu $(shell pkg-config --libs glfw3)
 else ifeq ($(ARCH),win-x86_64)
-CFLAGS  += -target x86_64-pc-windows-gnu
-LDFLAGS += -target x86_64-pc-windows-gnu
+CFLAGS  += -target x86_64-pc-windows-gnu -I$(VCPKG_ROOT)/installed/x64-mingw-dynamic/include
+LDFLAGS += -target x86_64-pc-windows-gnu -L$(VCPKG_ROOT)/installed/x64-mingw-dynamic/lib -lglfw3dll -fuse-ld=lld
 EXT     := .exe
 else
 $(error you must set the ARCH environment variable to one of these: 'linux-x86_64' 'win-x86_64')
