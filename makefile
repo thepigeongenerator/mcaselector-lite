@@ -42,6 +42,8 @@ BIN       := $(DIR_BIN)/$(NAME)$(EXT)
 C_SRC  := $(shell find src/ -name '*.c')
 C_OBJ  := $(patsubst src/%,$(DIR_OBJ)/%,$(C_SRC:.c=.o))
 C_DEP  := $(C_OBJ:.o=.d)
+
+COMPILE_COMMANDS := $(DIR_OBJ)/compile_commands.json
 endif
 
 define log_col
@@ -55,7 +57,7 @@ fail = $(call log_col,$(1),91)
 # compiles and executes the produced binary
 run: compile
 	./$(BIN)
-compile: compile_commands.json $(BIN)
+compile: compile_commands $(BIN)
 clean:
 	@$(call warn,"cleaning!")
 	rm -rf bin/ obj/ compile_commands.json
@@ -79,13 +81,22 @@ $(DIR_OBJ)/%.o: src/%.c
 	@$(CC) $(CFLAGS) -c -MD -MP -std=$(CSTD) -x c -o $@ $<
 
 # update compile commands if the makefile has been updated (for linting)
+compile_commands: # default, empty rule
 ifneq ($(shell which bear),)
-compile_commands.json: makefile
-	$(MAKE) clean
-	@touch compile_commands.json
-	bear -- make compile
-else
-compile_commands.json:
+ifneq ($(COMPILE_COMMANDS),)
+ifeq ($(NOCMDS),)
+.NOTPARALLEL .PHONY:
+compile_commands: $(COMPILE_COMMANDS)
+	@[ "$(readlink compile_commands.json)" != "$<" ] && ln -sf $< compile_commands.json
+
+.NOTPARALLEL:
+$(COMPILE_COMMANDS): makefile
+	@$(call warn,"regenerating compile_commands.json thus recompiling.")
+	@mkdir -p ${@D} # ensure the target directory exists
+	@touch $@       # create the file so it isn't retriggered (will just change modification time if already exists)
+	@bear --output $@ -- make -B compile NOCMDS=1 # rebuild the current target using bear, to create the compile commands
+endif
+endif
 endif
 
 # disable implicit rules
