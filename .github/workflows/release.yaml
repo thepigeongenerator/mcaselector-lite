@@ -24,7 +24,7 @@ jobs:
       OUT: ${{github.workspace}}/mcaselector-lite-${{matrix.arch}}-${{github.event.release.tag_name || github.event.inputs.release_tag}}.zip
     steps:
       - uses: actions/checkout@v4
-      - run: make compile ARCH=${{matrix.arch}}
+      - run: make compile ARCH=${{matrix.arch}} -j
       - name: compress binary information
         run: |
           cd "${{github.workspace}}/bin/${{matrix.arch}}/rel/"
