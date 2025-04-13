@@ -19,5 +19,5 @@ jobs:
           - win-x86_64
     steps:
       - uses: actions/checkout@v4
-      - run: make compile ARCH=${{matrix.arch}}
+      - run: make compile ARCH=${{matrix.arch}} -j
       # TODO: add linting checking here
