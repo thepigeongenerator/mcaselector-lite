@@ -70,7 +70,7 @@ $(BIN): $(C_OBJ)
 
 	@mkdir -p $(@D)
 	@$(CC) $(LDFLAGS) -o $@ $(C_OBJ)
-	@$(call warn,"current profile: '$(PROF)'")
+	@$(call mesg,"current profile: '$(PROF)'")
 
 # create .o and .d files for C sources
 $(DIR_OBJ)/%.o: src/%.c
