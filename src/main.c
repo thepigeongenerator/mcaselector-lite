@@ -1,3 +1,5 @@
+// Copyright (c) 2025 Quinn
+// Licensed under the MIT Licence. See LICENSE for details
 #include "GLFW/glfw3.h"
 #include "error.h"
 #include "window/render.h"
