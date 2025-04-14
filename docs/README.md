@@ -4,7 +4,7 @@
 # mca selector lite
 A from-scratch rewrite of [mcaselector](https://github.com/Querz/mcaselector) in C.
 
-[![licence](https://img.shields.io/github/license/thepigeongenerator/mcaselector-lite.svg)](https://github.com/thepigeongenerator/mcaselector-lite/blob/master/LICENSE)
+[![licence](https://img.shields.io/github/license/thepigeongenerator/mcaselector-lite.svg)](https://github.com/thepigeongenerator/mcaselector-lite/blob/main/LICENSE)
 [![latest release](https://img.shields.io/github/release/thepigeongenerator/mcaselector-lite.svg)](https://github.com/thepigeongenerator/mcaselector-lite/releases/)
 [![issues](https://img.shields.io/github/issues/thepigeongenerator/mcaselector-lite.svg)](https://github.com/thepigeongenerator/mcaselector-lite/issues/)
 
