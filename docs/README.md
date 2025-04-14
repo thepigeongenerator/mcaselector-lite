@@ -8,7 +8,8 @@ A from-scratch rewrite of [mcaselector](https://github.com/Querz/mcaselector) in
 [![latest release](https://img.shields.io/github/release/thepigeongenerator/mcaselector-lite.svg)](https://github.com/thepigeongenerator/mcaselector-lite/releases/)
 [![issues](https://img.shields.io/github/issues/thepigeongenerator/mcaselector-lite.svg)](https://github.com/thepigeongenerator/mcaselector-lite/issues/)
 
-[![validate](https://github.com/thepigeongenerator/mcaselector-lite/actions/workflows/validate.yaml/badge.svg)](https://github.com/thepigeongenerator/mcaselector-lite/actions/workflows/validate.yaml)
+[![binary creation status](https://github.com/thepigeongenerator/mcaselector-lite/actions/workflows/ci-bin.yaml/badge.svg)](https://github.com/thepigeongenerator/mcaselector-lite/actions/workflows/ci-bin.yaml/badge.svg)
+[![test execution status](https://github.com/thepigeongenerator/mcaselector-lite/actions/workflows/ci-tests.yaml/badge.svg)](https://github.com/thepigeongenerator/mcaselector-lite/actions/workflows/ci-tests.yaml/badge.svg)
 
 
 ## what does it do
