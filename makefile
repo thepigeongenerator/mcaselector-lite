@@ -10,7 +10,7 @@ ARCH    ?= 0
 # C compiler options
 CC      := clang
 CSTD    := c17
-CFLAGS  := -Wall -Wextra -Wpedantic -Wno-pointer-arith -static
+CFLAGS  := -Wall -Wextra -Wpedantic -Wno-pointer-arith -Ilib
 LDFLAGS :=
 
 ifneq ($(DEBUG),0)
