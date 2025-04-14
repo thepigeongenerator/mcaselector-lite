@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Quinn
 // Licensed under the MIT Licence. See LICENSE for details
-#include "render.h"
+#include "window.h"
 
 #include <GLFW/glfw3.h>
 #include <stdlib.h>
@@ -10,7 +10,7 @@
 #define WIN_DEFAULT_WIDTH  640
 #define WIN_DEFAULT_HEIGHT 480
 
-int render_init(struct renderdat* restrict rdat) {
+int window_init(struct renderdat* restrict rdat) {
 	GLFWwindow* const win = glfwCreateWindow(WIN_DEFAULT_WIDTH, WIN_DEFAULT_HEIGHT, WIN_NAME, NULL, NULL);
 	if (win == NULL) return 1;
 	rdat->win = win;
@@ -18,6 +18,6 @@ int render_init(struct renderdat* restrict rdat) {
 	return 0;
 }
 
-void render_free(struct renderdat* restrict rdat) {
+void window_free(struct renderdat* restrict rdat) {
 	glfwDestroyWindow(rdat->win);
 }
