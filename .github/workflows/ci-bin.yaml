@@ -1,0 +1,22 @@
+name: bin
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/thepigeongenerator/mcaselector-lite:latest
+    strategy:
+      matrix:
+        arch:
+          - linux-x86_64
+          - win-x86_64
+    steps:
+      - uses: actions/checkout@v4
+      - run: make compile ARCH=${{matrix.arch}} -j
+
