@@ -15,6 +15,7 @@ atrb_nonnull(1) atrb_format(printf, 1, 2) static inline void info(char const*, .
 atrb_nonnull(1) atrb_format(printf, 1, 2) static inline void warn(char const*, ...);
 atrb_nonnull(1) atrb_format(printf, 1, 2) static inline void error(char const*, ...);
 atrb_nonnull(1) atrb_format(printf, 1, 2) noreturn static inline void fatal(char const*, ...);
+atrb_nonnull(2) static inline void error_callback(int err, char const* const msg);
 
 // macro to write fmt vardiac args to buf
 #define WRITE_VA_ARGS(buf, fmt)                    \
@@ -59,6 +60,11 @@ void fatal(char const* fmt, ...) {
 	WRITE_VA_ARGS(buf, fmt);
 	fprintf(stderr, "\033[101mF: \"%s\"\033[0m\n", buf);
 	abort();
+}
+
+// callback for GLFW errors
+void error_callback(int err, char const* const msg) {
+	fprintf(stderr, "\033[91mE: glfw returned (%i); \"%s\"\033[0m\n", err, msg);
 }
 
 #undef WRITE_VA_ARGS
