@@ -8,5 +8,5 @@ struct renderdat {
 	GLFWwindow* win;
 };
 
-int render_init(struct renderdat* restrict rdat);
-void render_free(struct renderdat* restrict rdat);
+int window_init(struct renderdat* restrict rdat);
+void window_free(struct renderdat* restrict rdat);
