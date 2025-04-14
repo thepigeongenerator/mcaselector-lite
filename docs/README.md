@@ -1,3 +1,6 @@
+> [!CAUTION]
+> this application is under active development and it is not recommended to use yet.
+
 # mca selector lite
 A from-scratch rewrite of [mcaselector](https://github.com/Querz/mcaselector) in C.
 
