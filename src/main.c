@@ -7,6 +7,7 @@
 struct renderdat rdat; // contains the relevant data needed for rendering, contains rubbish data until init was
 
 static inline int init(void) {
+	glfwSetErrorCallback(error_callback);
 	glfwInitHint(GLFW_JOYSTICK_HAT_BUTTONS, GLFW_FALSE); // disable joystick buttons
 
 	if (!glfwInit()) return 1;        // initialize GLFW
