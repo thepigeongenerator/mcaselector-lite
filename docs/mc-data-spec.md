@@ -128,6 +128,13 @@ The uncompressed data is in NBT format and follows the chunk format.
 If the value of compression scheme increases by 128, the compressed data is saved in a file called `c.x.z.mcc`, where x and z are the chunk's coordinates, instead of the usual position.
 
 ### MCA format specification
+The Anvil file format has some edits compared to the region file format;
+- Build height increase from 128 to 256
+- Empty sections of the world are not loaded into memory or saved to disk.
+- Maximum block ID increased from 265 to 4096. By adding a 4-bit data layer (similar to how metadata is stored).
+- Block ordering has been changed from XZY to YZX in order to improve compression.
+- Packets for sending chunks has been optimized (a chunk without air is smaller than in the same chunk in the old format, and a chunk with lots of air is even smaller).
+- Biomes are saved per X,Z column, rather than being calculated on the fly.
 
 ## sources
 - https://minecraft.wiki/w/Region_file_format
