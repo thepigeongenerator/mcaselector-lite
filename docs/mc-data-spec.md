@@ -1,5 +1,27 @@
 # Minecraft data specification
-## NBT
+## NBT specification
+NBT (named binary tag) is a tree data structure. Tags have a numeric type ID, name and a payload. The human-readable variant of this data is SNBT (stringified named binary tag)
+NBT files are a compressed `compound` tag. GZip is the compression used in most cases, in some rare cases it's stored uncompressed.
+A tag is an individual part of the data tree, where the first byte is the ID, followed by a `uint16_t` for the length of the name, then the name as `UTF-8`. (end tag does not contain name)
+
+note: UUID are stored as an integer array.
+
+### tag types
+| ID   | tag name     | payload specification               |
+|-----:|:-------------|:------------------------------------|
+|  `0` | `end`        | -                                   |
+|  `1` | `byte`       | `int8_t`                            |
+|  `2` | `short`      | `int16_t` (BE)                      |
+|  `3` | `int`        | `int32_t` (BE)                      |
+|  `4` | `long`       | `int64_t` (BE)                      |
+|  `5` | `float`      | `float`   (BE)                      |
+|  `6` | `double`     | `double`  (BE)                      |
+|  `7` | `byte array` | `int32_t`     (len) -> `int8_t`     |
+|  `8` | `string`     | `uint16_t`    (len) -> `UTF-8`      |
+|  `9` | `list`       | ID: `int32_t` (len) -> ID           |
+| `10` | `compound`   | list of tags delimited with end tag |
+| `11` | `int array`  | `int32_t`     (len) -> `int32_t`    |
+| `12` | `long array` | `int32_t`     (len) -> `int64_t`    |
 
 ## world data
 There is a difference between \*.mca and \*.mcr files.
@@ -66,7 +88,6 @@ The uncompressed data is in NBT format and follows the chunk format.
 If the value of compression scheme increases by 128, the compressed data is saved in a file called `c.x.z.mcc`, where x and z are the chunk's coordinates, instead of the usual position.
 
 ### MCA format specification
-
 
 ## sources
 - https://minecraft.wiki/w/Region_file_format
