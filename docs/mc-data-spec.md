@@ -49,7 +49,47 @@ return (x >> 5) - (x & 0x80000000);
 
 
 ### chunk format specification
+Chunks are stored as NBT-formatted data.
+The actual structure of this is best illustrated by [the wiki](https://minecraft.wiki/w/Chunk_format#NBT_structure).
 
+#### notable tags
+| path                                       | tag type     | description                                                                   |
+|:-------------------------------------------|:-------------|-------------------------------------------------------------------------------|
+| `DataVersion`                              | `int`        | version of the NBT structure                                                  |
+| `xPos`                                     | `int`        | X chunk position of the chunk from the world origin                           |
+| `zPos`                                     | `int`        | Z chunk position of the chunk from the world origin                           |
+| `yPos`                                     | `int`        | lowest Y section position in the chunk                                        |
+| `InhabitedTime`                            | `long`       | the accumilative number of ticks that players have been present in this chunk |
+| `sections`                                 | `list`       | list of compounds containing the chunk sections                               |
+| `sections[i].Y`                            | `byte/int`   | the Y block position of this section (can be int in versions ≥`1.18`          |
+| `sections[i].block_states.palette`         | `list`       | contains the block states for this particular section                         |
+| `sections[i].block_states.palette[i].Name` | `string`     | block [resource location](https://minecraft.wiki/w/Resource_location)         |
+| `sections[i].block_states.data`            | `long array` | [view below](#block-state-data)                                               |
+##### block state data
+Contains 4096 indices, which are packed in a specific way.
+All indices are the same with, though the width is decided by the minimum width required to index the palette. In versions ≥`1.16`, the indices are not packed across multiple elements of the array.
+So they have an alignment requirement of 64 bits.
+There might be an additional section at the top and or bottom of the world used to store light, so that light travels properly over and under the world limits.
+This is an example on how to access individual block info from a single section;
+```c
+unsigned w = 0;
+int32_t tmp = block_states->palette.len;
+while (tmp >>= 1) w++; // get the width of the palette length
+
+// get the data for calculating the index (NOTE: this process is only applicable for mc versions <1.16)
+unsigned pos = (y << 8) + (z << 4) + x; // acquire the position in the data array according to; 16²•y + 16•z + x
+unsigned bit = pos * w;                 // calc which bit the value starts at.
+unsigned sgmt = bit / 64;               // calc which segment the data lives in
+unsigned offs = bit & 63;               // calc the offset within the segment
+
+// calculate the correct index
+uint16_t idx;
+idx = (block_states->dat[sgmt] >> offs);                                // acquire the data in the segment
+idx |= !((offs + w) > 64) ? 0 : block_states->dat[sgmt+1] << (64-offs); // complete with the data from the other segment, if present
+idx &= (1 << w) - 1;                                                    // truncate the data to only contain what we desire.
+
+blockdat blk = block_states->palette.dat[idx];
+```
 
 ### MCR format specification
 #### header
