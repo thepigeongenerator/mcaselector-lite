@@ -58,6 +58,8 @@ fail = $(call log_col,$(1),91)
 run: compile
 	./$(BIN)
 compile: compile_commands $(BIN)
+
+.NOTPARALLEL:
 clean:
 	@$(call warn,"cleaning!")
 	rm -rf bin/ obj/ compile_commands.json
