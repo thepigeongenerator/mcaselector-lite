@@ -14,7 +14,8 @@ CFLAGS  := -Wall -Wextra -Wpedantic -Wno-pointer-arith -Ilib
 LDFLAGS :=
 
 ifneq ($(DEBUG),0)
-CFLAGS  += -g -Og
+CFLAGS  += -g -Og -fsanitize=address,undefined
+LDFLAGS += -fsanitize=address,undefined
 PROF    := dbg
 else
 CFLAGS  += -DNDEBUG -O2 -Werror
