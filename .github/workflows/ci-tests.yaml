@@ -15,7 +15,7 @@ jobs:
       matrix:
         arch:
           - linux-x86_64
-          - win-x86_64
+          # WARN: not testing win-x86_64... Probably a good idea to do that
     steps:
-      # TODO: add unit test job here
-      - run: echo "TODO"
+      - uses: actions/checkout@v4
+      - run: make run-test ARCH=${{matrix.arch}} -j
