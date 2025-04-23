@@ -13,6 +13,7 @@ CSTD    := c17
 CFLAGS  := -Wall -Wextra -Wpedantic -Wno-pointer-arith -Ilib
 LDFLAGS :=
 
+# profiles
 ifneq ($(DEBUG),0)
 CFLAGS  += -g -Og -fsanitize=address,undefined
 LDFLAGS += -fsanitize=address,undefined
@@ -22,6 +23,7 @@ CFLAGS  += -DNDEBUG -O2 -Werror
 PROF    := rel
 endif
 
+# targets
 ifneq ($(MAKECMDGOALS),clean)
 ifeq      ($(ARCH),linux-x86_64)
 CFLAGS  += -target x86_64-pc-linux-gnu $(shell pkg-config --cflags glfw3)
@@ -35,6 +37,7 @@ $(error you must set the ARCH environment variable to one of these: 'linux-x86_6
 endif
 endif
 
+# output files
 ifneq ($(ARCH),0)
 DIR_BIN   := bin/$(ARCH)/$(PROF)
 DIR_OBJ   := obj/$(ARCH)/$(PROF)
@@ -55,9 +58,30 @@ mesg = $(call log_col,$(1),94)
 warn = $(call log_col,$(1),93)
 fail = $(call log_col,$(1),91)
 
+# creates the binary (linking step)
+define link_bin
+$1: $2
+	@$$(call mesg,"CC: '$$(CC)'")
+	@$$(call mesg,"CFLAGS: '$$(CFLAGS)'")
+	@$$(call mesg,"LDFLAGS: '$$(LDFLAGS)'")
+	@$$(call comp,"linking to: '$$@'")
+
+	@mkdir -p $$(@D)
+	@$$(CC) $$(LDFLAGS) -o $$@ $$^
+	@$$(call mesg,"current profile: '$$(PROF)'")
+
+endef
+
+# creates .o and .d files
+define compile_obj
+$1/%.o: $2/%.c
+	@$$(call comp,"compiling $$@	from $$<")
+	@mkdir -p $$(@D)
+	@$$(CC) $$(CFLAGS) -c -MD -MP -std=$$(CSTD) -x c -o $$@ $$<
+endef
+
 # compiles and executes the produced binary
-run: compile
-	./$(BIN)
+run: compile; cd $(DIR_BIN) && ./$(NAME)$(EXT)
 compile: compile_commands $(BIN)
 
 .NOTPARALLEL:
@@ -66,22 +90,9 @@ clean:
 	rm -rf bin/ obj/ compile_commands.json
 # TODO: write a structure for the unit tests in this
 
-# create the binary (linking step)
-$(BIN): $(C_OBJ)
-	@$(call mesg,"CC: '$(CC)'")
-	@$(call mesg,"CFLAGS: '$(CFLAGS)'")
-	@$(call mesg,"LDFLAGS: '$(LDFLAGS)'")
-	@$(call comp,"linking to: '$@'")
-
-	@mkdir -p $(@D)
-	@$(CC) $(LDFLAGS) -o $@ $(C_OBJ)
-	@$(call mesg,"current profile: '$(PROF)'")
-
-# create .o and .d files for C sources
-$(DIR_OBJ)/%.o: src/%.c
-	@$(call comp,"compiling $(notdir $@) from $(notdir $<)")
-	@mkdir -p $(@D)
-	@$(CC) $(CFLAGS) -c -MD -MP -std=$(CSTD) -x c -o $@ $<
+# compilation macros
+$(eval $(call link_bin,$(BIN),$(C_OBJ)))                       # link the binary
+$(eval $(call compile_obj,$(DIR_OBJ),src))                     # compile the objects for the binary
 
 # update compile commands if the makefile has been updated (for linting)
 compile_commands: # default, empty rule
