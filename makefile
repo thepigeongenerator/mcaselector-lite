@@ -43,9 +43,13 @@ DIR_BIN   := bin/$(ARCH)/$(PROF)
 DIR_OBJ   := obj/$(ARCH)/$(PROF)
 BIN       := $(DIR_BIN)/$(NAME)$(EXT)
 
-C_SRC  := $(shell find src/ -name '*.c')
-C_OBJ  := $(patsubst src/%,$(DIR_OBJ)/%,$(C_SRC:.c=.o))
-C_DEP  := $(C_OBJ:.o=.d)
+C_SRC   := $(shell find src/ -name '*.c')
+C_OBJ   := $(patsubst src/%,$(DIR_OBJ)/%,$(C_SRC:.c=.o))
+C_DEP   := $(C_OBJ:.o=.d)
+C_TSRC  := $(shell find test/src/ -name '*.c')
+C_TOBJ  := $(patsubst test/src/%,test/$(DIR_OBJ)/%,$(C_TSRC:.c=.o))
+C_TDEP  := $(C_TOBJ:.o=.d)
+C_TOBJ  += $(filter-out $(DIR_OBJ)/main.o, $(C_OBJ))
 
 COMPILE_COMMANDS := $(DIR_OBJ)/compile_commands.json
 endif
@@ -83,16 +87,19 @@ endef
 # compiles and executes the produced binary
 run: compile; cd $(DIR_BIN) && ./$(NAME)$(EXT)
 compile: compile_commands $(BIN)
+run-test: compile-test; cd test/$(DIR_BIN) && ./test$(EXT)
+compile-test: test/$(DIR_BIN)/test$(EXT)
 
 .NOTPARALLEL:
 clean:
 	@$(call warn,"cleaning!")
-	rm -rf bin/ obj/ compile_commands.json
-# TODO: write a structure for the unit tests in this
+	rm -rf bin/ obj/ test/obj test/bin compile_commands.json
 
 # compilation macros
 $(eval $(call link_bin,$(BIN),$(C_OBJ)))                       # link the binary
 $(eval $(call compile_obj,$(DIR_OBJ),src))                     # compile the objects for the binary
+$(eval $(call link_bin,test/$(DIR_BIN)/test$(EXT),$(C_TOBJ)))  # link the testing binary
+$(eval $(call compile_obj,test/$(DIR_OBJ),test/src))           # compile the objects for the testing binary
 
 # update compile commands if the makefile has been updated (for linting)
 compile_commands: # default, empty rule
@@ -118,3 +125,4 @@ endif
 
 # include the dependencies
 -include $(C_DEP)
+-include $(C_TDEP)
