@@ -13,5 +13,7 @@
 *.out
 /bin/
 /obj/
+/test/bin/
+/test/obj/
 *.lock
 compile_commands.json
