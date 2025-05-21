@@ -194,7 +194,7 @@ IndentCaseBlocks:      false
 IndentGotoLabels:      true
 IndentExternBlock:     AfterExternBlock  # (AfterExternBlock,NoIndent,Indent)
 IndentRequiresClause:  false
-IndentPPDirectives:    AfterHash         # preprocessor indent style (None,AfterHash,BeforeHash)
+IndentPPDirectives:    None              # preprocessor indent style (None,AfterHash,BeforeHash)
 PPIndentWidth:         1
 
 ---
