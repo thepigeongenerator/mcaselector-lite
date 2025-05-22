@@ -10,24 +10,28 @@ on:
         description: the tag to release for
         default: ""
 jobs:
-  compile:
+  release:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/thepigeongenerator/mcaselector-lite:latest
-    needs: install-deps
     strategy:
       matrix:
-        arch:
-          - linux-x86_64
-          - win-x86_64
+        include:
+          - kernel: linux
+            march: x86_64
+            cc: x86_64-linux-gnu-gcc
+          - kernel: mingw
+            march: x86_64
+            cc: x86_64-w64-mingw32-gcc
     env:
-      OUT: ${{github.workspace}}/mcaselector-lite-${{matrix.arch}}-${{github.event.release.tag_name || github.event.inputs.release_tag}}.zip
+      OUT: ${{github.workspace}}/mcaselector-lite-${{matrix.march}}-${{matrix.kernel}}-${{github.event.release.tag_name || github.event.inputs.release_tag}}.zip
     steps:
       - uses: actions/checkout@v4
-      - run: make compile ARCH=${{matrix.arch}} -j
+      - name: compile ${{matrix.march}}-${{matrix.kernel}}
+        run: make compile MARCH=${{matrix.march}} KERNEL=${{matrix.kernel}} CC=${{matrix.cc}} -j
       - name: compress binary information
         run: |
-          cd "${{github.workspace}}/bin/${{matrix.arch}}/rel/"
+          cd "${{github.workspace}}/bin/${{matrix.march}}-${{matrix.kernel}}/${{github.event.release.tag_name || github.event.inputs.release_tag}}/rel/" || exit 1
           zip -rv "${{env.OUT}}" *
           cd -
       # upload to the release

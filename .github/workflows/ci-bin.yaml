@@ -13,10 +13,18 @@ jobs:
       image: ghcr.io/thepigeongenerator/mcaselector-lite:latest
     strategy:
       matrix:
-        arch:
-          - linux-x86_64
-          - win-x86_64
+        include:
+          - kernel: linux
+            march: x86_64
+            cc: x86_64-linux-gnu-gcc
+          - kernel: mingw
+            march: x86_64
+            cc: x86_64-w64-mingw32-gcc
     steps:
       - uses: actions/checkout@v4
-      - run: make compile ARCH=${{matrix.arch}} -j
-
+      - name: compile ${{matrix.march}}-${{matrix.kernel}}
+        run: make compile MARCH=${{matrix.march}} KERNEL=${{matrix.kernel}} CC=${{matrix.cc}} -j
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{matrix.march}}-${{matrix.kernel}}-rel
+          path: obj/
