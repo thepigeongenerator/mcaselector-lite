@@ -7,7 +7,7 @@ on:
     branches:
       - '**'
 jobs:
-  compile:
+  exec-lint:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/thepigeongenerator/mcaselector-lite:latest
