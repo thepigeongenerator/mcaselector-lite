@@ -1,4 +1,4 @@
-name: bin
+name: CI
 on:
   push:
     branches:
@@ -28,3 +28,23 @@ jobs:
         with:
           name: ${{matrix.march}}-${{matrix.kernel}}-rel
           path: obj/
+  test:
+    needs: compile
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/thepigeongenerator/mcaselector-lite:latest
+    strategy:
+      matrix:
+        include:
+          - kernel: linux
+            march: x86_64
+            cc: x86_64-linux-gnu-gcc
+            # WARN: not testing win-x86_64... Probably a good idea to do that
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{matrix.march}}-${{matrix.kernel}}-rel
+          path: obj/
+      - name: execute tests for ${{matrix.march}}-${{matrix.kernel}}
+        run: make DEBUG=test run MARCH=${{matrix.march}} KERNEL=${{matrix.kernel}} CC=${{matrix.cc}} -j
