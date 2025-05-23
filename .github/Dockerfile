@@ -19,6 +19,7 @@ RUN apt update && apt install -y --no-install-recommends \
 	gcc gcc-multilib g++ mingw-w64                           \
 	libc6-dev                                                \
 	libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev \
+	libglfw3                                                 \
 	nodejs                                                   \
 	&& rm -rf /var/lib/apt/lists/*;
 
