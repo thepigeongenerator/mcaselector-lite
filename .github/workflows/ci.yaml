@@ -6,8 +6,25 @@ on:
   pull_request:
     branches:
       - '**'
+env:
+  VCPKG_DISABLE_METRICS: 1
+  VCPKG_ROOT: /opt/vcpkg
 jobs:
+  setup-vcpkg:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/thepigeongenerator/mcaselector-lite:latest
+    steps:
+      - run: git clone https://github.com/microsoft/vcpkg.git "${{env.VCPKG_ROOT}}"
+      - run: ${{env.VCPKG_ROOT}}/bootstrap-vcpkg.sh
+      - name: install vcpkg packages
+        run: ${{env.VCPKG_ROOT}}/vcpkg install glfw3:x64-linux-dynamic glfw3:x64-mingw-static;
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vcpkg
+          path: ${{env.VCPKG_ROOT}}
   compile:
+    needs: setup-vcpkg
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/thepigeongenerator/mcaselector-lite:latest
@@ -22,6 +39,11 @@ jobs:
             cc: x86_64-w64-mingw32-gcc
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: vcpkg
+          path: ${{env.VCPKG_ROOT}}
+      # compile
       - name: compile ${{matrix.march}}-${{matrix.kernel}}
         run: make compile MARCH=${{matrix.march}} KERNEL=${{matrix.kernel}} CC=${{matrix.cc}} -j
       - uses: actions/upload-artifact@v4
@@ -46,5 +68,9 @@ jobs:
         with:
           name: ${{matrix.march}}-${{matrix.kernel}}-rel
           path: obj/
+      - uses: actions/download-artifact@v4
+        with:
+          name: vcpkg
+          path: ${{env.VCPKG_ROOT}}
       - name: execute tests for ${{matrix.march}}-${{matrix.kernel}}
         run: make DEBUG=test run MARCH=${{matrix.march}} KERNEL=${{matrix.kernel}} CC=${{matrix.cc}} -j

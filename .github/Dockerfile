@@ -4,11 +4,6 @@ FROM debian:testing-slim
 LABEL org.opencontainers.image.source="https://github.com/thepigeongenerator/mcaselector-lite"
 LABEL org.opencontainers.image.source-path="/.github/Dockerfile"
 
-# set environment variables
-ENV VCPKG_DISABLE_METRICS="1"
-ENV VCPKG_ROOT="/opt/vcpkg"
-ENV PATH="${VCPKG_ROOT}:${PATH}"
-
 # install the dependencies
 RUN apt update && apt install -y --no-install-recommends \
 	ca-certificates                                          \
@@ -22,10 +17,5 @@ RUN apt update && apt install -y --no-install-recommends \
 	libglfw3                                                 \
 	nodejs                                                   \
 	&& rm -rf /var/lib/apt/lists/*;
-
-# install packages / VCPKG
-RUN git clone https://github.com/microsoft/vcpkg.git "${VCPKG_ROOT}" \
-	&& "${VCPKG_ROOT}/bootstrap-vcpkg.sh" \
-	&& vcpkg install glfw3:x64-linux-dynamic glfw3:x64-mingw-static;
 
 CMD ["bash"]
