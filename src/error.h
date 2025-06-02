@@ -4,7 +4,6 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdnoreturn.h>
 
 #include "util/atrb.h"
 
@@ -14,7 +13,7 @@ atrb_nonnull(1) atrb_format(printf, 1, 2) static inline void debug(char const*, 
 atrb_nonnull(1) atrb_format(printf, 1, 2) static inline void info(char const*, ...);
 atrb_nonnull(1) atrb_format(printf, 1, 2) static inline void warn(char const*, ...);
 atrb_nonnull(1) atrb_format(printf, 1, 2) static inline void error(char const*, ...);
-atrb_nonnull(1) atrb_format(printf, 1, 2) noreturn static inline void fatal(char const*, ...);
+atrb_nonnull(1) atrb_format(printf, 1, 2) atrb_noreturn static inline void fatal(char const*, ...);
 atrb_nonnull(2) static inline void error_callback(int err, char const* const msg);
 
 // macro to write fmt vardiac args to buf

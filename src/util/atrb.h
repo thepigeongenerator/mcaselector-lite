@@ -8,6 +8,7 @@
 #define atrb_unused
 #define atrb_pure
 #define atrb_const
+#define atrb_noreturn
 #define atrb_format()
 #define atrb_nonnull()
 
@@ -32,6 +33,11 @@
 #if __has_attribute(const)
 #undef atrb_const
 #define atrb_const __attribute__((const))
+#endif
+
+#if __has_attribute(noreturn)
+#undef atrb_noreturn
+#define atrb_noreturn __attribute__((noreturn))
 #endif
 
 #if __has_attribute(format)

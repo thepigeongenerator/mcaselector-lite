@@ -9,7 +9,7 @@ NAME    := mcaselector-lite
 VERSION := 0.0.0
 DEBUG   ?= 0
 CC      ?= cc
-CFLAGS  += -c -std=c17 -Wall -Wextra -Wpedantic -Ilib -MMD -MP
+CFLAGS  += -c -std=gnu99 -Wall -Wextra -Wpedantic -Ilib -MMD -MP
 LDFLAGS +=
 MARCH   ?= $(shell uname -m)
 KERNEL  ?= $(shell uname -s | tr '[:upper:]' '[:lower:]')
