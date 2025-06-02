@@ -12,8 +12,7 @@ env:
 jobs:
   setup-vcpkg:
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/thepigeongenerator/mcaselector-lite:latest
+    container: ghcr.io/thepigeongenerator/mcaselector-lite:latest
     steps:
       - run: git clone https://github.com/microsoft/vcpkg.git "${{env.VCPKG_ROOT}}"
       - run: ${{env.VCPKG_ROOT}}/bootstrap-vcpkg.sh
@@ -26,8 +25,7 @@ jobs:
   compile:
     needs: setup-vcpkg
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/thepigeongenerator/mcaselector-lite:latest
+    container: ghcr.io/thepigeongenerator/mcaselector-lite:latest
     strategy:
       matrix:
         include:
@@ -53,8 +51,7 @@ jobs:
   test:
     needs: compile
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/thepigeongenerator/mcaselector-lite:latest
+    container: ghcr.io/thepigeongenerator/mcaselector-lite:latest
     strategy:
       matrix:
         include:
