@@ -5,12 +5,10 @@
 A from-scratch rewrite of [mcaselector](https://github.com/Querz/mcaselector) in C.
 
 [![licence](https://img.shields.io/github/license/thepigeongenerator/mcaselector-lite.svg)](https://github.com/thepigeongenerator/mcaselector-lite/blob/main/LICENSE)
-[![latest release](https://img.shields.io/github/release/thepigeongenerator/mcaselector-lite.svg)](https://github.com/thepigeongenerator/mcaselector-lite/releases/)
 [![issues](https://img.shields.io/github/issues/thepigeongenerator/mcaselector-lite.svg)](https://github.com/thepigeongenerator/mcaselector-lite/issues/)
 
-[![binary creation status](https://github.com/thepigeongenerator/mcaselector-lite/actions/workflows/ci-bin.yaml/badge.svg)](https://github.com/thepigeongenerator/mcaselector-lite/actions/workflows/ci-bin.yaml/badge.svg)
-[![test execution status](https://github.com/thepigeongenerator/mcaselector-lite/actions/workflows/ci-tests.yaml/badge.svg)](https://github.com/thepigeongenerator/mcaselector-lite/actions/workflows/ci-tests.yaml/badge.svg)
-
+[![CI](https://github.com/thepigeongenerator/mcaselector-lite/actions/workflows/ci.yaml/badge.svg)](https://github.com/thepigeongenerator/mcaselector-lite/actions/workflows/ci.yaml)
+[![release](https://github.com/thepigeongenerator/mcaselector-lite/actions/workflows/release.yaml/badge.svg)](https://github.com/thepigeongenerator/mcaselector-lite/actions/workflows/release.yaml)
 
 ## what does it do
 MCA selector lite is a tool used to edit [region files](https://minecraft.wiki/w/Region_file_format) of your [Minecraft java](https://minecraft.wiki/w/Java_Edition) worlds.
