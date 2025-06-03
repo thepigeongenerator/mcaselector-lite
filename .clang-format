@@ -14,14 +14,14 @@ ContinuationIndentWidth: 4                   # width for a line continuation
 # ---------------------------
 # alignment options
 # ---------------------------
-AlignAfterOpenBracket:        Align            # (Align,DontAlign,AlwaysBreak,BlockIndent)
+AlignAfterOpenBracket:        DontAlign        # (Align,DontAlign,AlwaysBreak,BlockIndent)
 AlignArrayOfStructures:       Left             # (Left,Right,None)
 AlignConsecutiveMacros:       AcrossEmptyLines # (None,Consecutive,AcrossEmptyLines,AcrossComments,AcrossEmptyLinesAndComments)
 AlignConsecutiveAssignments:  None             # (None,Consecutive,AcrossEmptyLines,AcrossComments,AcrossEmptyLinesAndComments)
 AlignConsecutiveBitFields:    AcrossEmptyLines # (None,Consecutive,AcrossEmptyLines,AcrossComments,AcrossEmptyLinesAndComments)
 AlignConsecutiveDeclarations: None             # (None,Consecutive,AcrossEmptyLines,AcrossComments,AcrossEmptyLinesAndComments)
 AlignEscapedNewlines:         Left             # (DontAlign,Left,LeftWithLastLine,Right)
-AlignOperands:                Align            # (DontAlign,Align,AlignAfterOperator)
+AlignOperands:                DontAlign        # (DontAlign,Align,AlignAfterOperator)
 AlignTrailingComments:        Always           # (Leave,Always,Never)
 
 # ---------------------------
@@ -86,6 +86,7 @@ BinPackArguments:  false                      # false: function calls either on 
 DerivePointerAlignment: false      # automatically detect pointer alignment
 PointerAlignment:       Left       # (Left,Right,Middle)
 ReferenceAlignment:     Pointer    # (Pointer,Left,Right,Middle)
+QualifierAlignment:     Right      # (Leave,Left,Right,Custom)
 
 # ---------------------------
 # include settings and sorting
