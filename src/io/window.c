@@ -3,8 +3,10 @@
 #include "window.h"
 
 #include <stdio.h>
+#include <string.h>
 
 #include "../error.h"
+#include "../util/vec/float3.h"
 
 // include before GLFW
 #define GLAD_GL_IMPLEMENTATION
@@ -13,6 +15,7 @@
 // include system libraries
 #include <GLFW/glfw3.h>
 #include <assert.h>
+#include <stdint.h>
 #include <stdlib.h>
 
 #include "input.h"
@@ -60,13 +63,75 @@ int window_init(void) {
 	return 0;
 }
 
+/* initialize a shader */
+static uint32_t init_shader(GLenum type, char const* src) {
+	uint32_t shader = glCreateShader(type);
+	glShaderSource(shader, 1, &src, NULL);
+	glCompileShader(shader);
+	return shader;
+}
+
+/* initialize the graphics pipeline */
+static uint32_t init_pipe(void) {
+	// create the graphics pipeline context
+	uint32_t pipe = glCreateProgram();
+
+	uint32_t vs = init_shader(GL_VERTEX_SHADER, "#version 330 core\nin vec4 pos; void main() { gl_Position = vec4(pos.x, pos.y, pos.z, pos.w); }");
+	uint32_t fs = init_shader(GL_FRAGMENT_SHADER, "#version 330 core\nout vec4 colour; void main() { colour = vec4(1.0F, 0.5F, 0.0F, 0.1F); }");
+
+	glAttachShader(pipe, vs);
+	glAttachShader(pipe, fs);
+	glLinkProgram(pipe);
+
+	glDeleteShader(vs);
+	glDeleteShader(fs);
+
+	glValidateProgram(pipe);
+
+	return pipe;
+}
+
 void window_loop(void) {
 	assert(win != NULL);
 
+	uint32_t pipe = init_pipe();
+
+	float3 vert[] = {
+		{-0.8F, -0.8F, +0.0F},
+		{+0.8F, -0.8F, +0.0F},
+		{+0.0F, +0.8F, +0.0F},
+	};
+
+	uint32_t vbo; // vertex buffer object
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vert), vert, GL_STATIC_DRAW);
+
+	GLuint vao; // vertex array object
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), NULL);
+	glBindVertexArray(0);
+	glDisableVertexAttribArray(0);
+
 	while (!glfwWindowShouldClose(win)) {
 		glfwWaitEvents(); // wait till an update has been given
+
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
+
+		int w, h;
+		glfwGetWindowSize(win, &w, &h);
+		glViewport(0, 0, w, h);
 		glClearColor(0.1F, 0.1F, 0.1F, 1.0F);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+		glUseProgram(pipe);
+
+		glBindVertexArray(vao);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
 		glfwSwapBuffers(win);
 	}
 
