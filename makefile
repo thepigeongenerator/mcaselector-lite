@@ -2,6 +2,7 @@
 #  - make
 #  - C compiler
 #  - glfw3 (install glfw3:x64-mingw-dynamic via vcpkg for cross compilation)
+#  - xxd (tinyxxd recommended; faster)
 #  - (windows) git bash (recommended)
 
 # build configuration, information about the current build process
@@ -9,6 +10,7 @@ NAME    := mcaselector-lite
 VERSION := 0.0.0
 DEBUG   ?= 0
 CC      ?= cc
+LD      ?= ld
 CFLAGS  += -c -std=gnu99 -Wall -Wextra -Wpedantic -Ilib -MMD -MP
 LDFLAGS +=
 MARCH   ?= $(shell uname -m)
@@ -69,10 +71,11 @@ else
 SRC    := $(filter-out src/main.c, $(shell find test/ src/ -name '*.c'))
 CFLAGS += -DGLFW_DLL
 endif
+RES   := $(shell find res/ -type f)
 
 # output files
 BIN := $(DIR_BIN)/$(NAME)
-OBJ := $(SRC:%.c=$(DIR_OBJ)/%.o)
+OBJ := $(SRC:%.c=$(DIR_OBJ)/%.o) $(RES:%=$(DIR_OBJ)/%.o)
 DEP := $(OBJ:.o=.d)
 
 COMPILE_COMMANDS := $(DIR_OBJ)/compile_commands.json
@@ -90,6 +93,11 @@ $(BIN): $(OBJ)
 $(DIR_OBJ)/%.o: %.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -o $@ $<
+
+# use linker to embed the resources into the final binary
+$(DIR_OBJ)/res/%.o: res/%
+	@mkdir -p $(@D)
+	$(LD) -r -b binary -o $@ $<
 
 .PHONY .NOTPARALLEL:
 clean:

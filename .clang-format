@@ -95,12 +95,16 @@ IncludeIsMainSourceRegex: ''                        # only [*.{c,cc,cpp,c++,cxx,
 IncludeIsMainRegex:       '([-_](test|unittest))?$' # regex used for identifying an include as "main", to assign catagory 0
 IncludeBlocks:      Regroup                         # (Preserve,Merge,Regroup)
 IncludeCategories:
-  - Regex:         '^<.*\.h>' # system headers
+  - Regex:         '^<glad/gl\.h>' # always include glad before system headers
     Priority:      1
     SortPriority:  0
     CaseSensitive: true
-  - Regex:         '^".*'     # custom headers
+  - Regex:         '^<.*\.h>'      # system headers
     Priority:      2
+    SortPriority:  0
+    CaseSensitive: true
+  - Regex:         '^".*'          # custom headers
+    Priority:      3
     SortPriority:  0
     CaseSensitive: true
 
