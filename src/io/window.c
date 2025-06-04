@@ -1,16 +1,14 @@
 // Copyright (c) 2025 Quinn
 // Licensed under the MIT Licence. See LICENSE for details
+#define GLAD_GL_IMPLEMENTATION
 #include "window.h"
 
+#include <glad/gl.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "../error.h"
-#include "../util/vec/float3.h"
-
-// include before GLFW
-#define GLAD_GL_IMPLEMENTATION
-#include <glad/gl.h>
+#include "../util/vec/float2.h"
 
 // include system libraries
 #include <GLFW/glfw3.h>
@@ -96,10 +94,15 @@ void window_loop(void) {
 
 	uint32_t pipe = init_pipe();
 
-	float3 vert[] = {
-		{-0.8F, -0.8F, +0.0F},
-		{+0.8F, -0.8F, +0.0F},
-		{+0.0F, +0.8F, +0.0F},
+	unsigned vertc = 6;
+	float2 vert[] = {
+		{-1, -1   },
+		{1,  -1   },
+		{1,  -0.9F},
+
+		{-1, -0.9F},
+		{1,  -0.9F},
+		{-1, -1   },
 	};
 
 	uint32_t vbo; // vertex buffer object
@@ -110,10 +113,12 @@ void window_loop(void) {
 	GLuint vao; // vertex array object
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), NULL);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float2), NULL);
+
 	glBindVertexArray(0);
-	glDisableVertexAttribArray(0);
 
 	while (!glfwWindowShouldClose(win)) {
 		glfwWaitEvents(); // wait till an update has been given
@@ -129,8 +134,7 @@ void window_loop(void) {
 		glUseProgram(pipe);
 
 		glBindVertexArray(vao);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_TRIANGLES, 0, vertc);
 
 		glfwSwapBuffers(win);
 	}
