@@ -5,9 +5,11 @@
 #undef GLAD_GL_IMPLEMENTATION
 
 #include <GLFW/glfw3.h>
+#include <stdlib.h>
 
 #include "error.h"
 #include "io/window.h"
+
 
 #define WIN_NAME           "MCA Selector Lite"
 #define WIN_DEFAULT_WIDTH  640
@@ -29,7 +31,12 @@ static inline void quit(void) {
 
 int main(int argc, char** argv) {
 	(void)argc, (void)argv;
+
 	if (init()) fatal("failed to initialize!");
+
 	window_loop();
 	quit();
+
+	// return success, since some architectures do not follow 0=success
+	return EXIT_SUCCESS;
 }

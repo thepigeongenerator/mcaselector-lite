@@ -4,7 +4,7 @@
 
 #include "../atrb.h"
 
-// stores a 3D point using a floating-point number
+// stores a 2D point using a floating-point number
 struct float2 {
 	float x;
 	float y;
@@ -42,7 +42,7 @@ atrb_const static inline float2 float2_div_s(float2 v, float n) {
 }
 
 atrb_const static inline float2 float2_neg(float2 v) {
-	return (float2){-v.x, -v.y };
+	return (float2){-v.x, -v.y};
 }
 
 // gets the squared magnitude/length of float2
