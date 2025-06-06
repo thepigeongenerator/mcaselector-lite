@@ -16,6 +16,8 @@ extern char const NAM_S(sh_vert_glsl)[];
 extern char const NAM_E(sh_vert_glsl)[];
 extern char const NAM_S(sh_frag_glsl)[];
 extern char const NAM_E(sh_frag_glsl)[];
+extern char const NAM_S(sh_geom_glsl)[];
+extern char const NAM_E(sh_geom_glsl)[];
 // NOLINTEND
 
 /* compile a shader */
@@ -41,10 +43,14 @@ static GLuint shader_compile(GLenum type, char const* src, size_t len) {
 int shader_init(GLuint pipe) {
 	GLuint vs = COMPILE_NAME(GL_VERTEX_SHADER, sh_vert_glsl);
 	GLuint fs = COMPILE_NAME(GL_FRAGMENT_SHADER, sh_frag_glsl);
+	GLuint gs = COMPILE_NAME(GL_GEOMETRY_SHADER, sh_geom_glsl);
 
 	glAttachShader(pipe, vs);
 	glAttachShader(pipe, fs);
+	glAttachShader(pipe, gs);
+
 	glDeleteShader(vs);
 	glDeleteShader(fs);
+	glDeleteShader(gs);
 	return 1;
 }
