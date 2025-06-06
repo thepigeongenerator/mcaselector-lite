@@ -1,5 +1,9 @@
 // Copyright (c) 2025 Quinn
 // Licensed under the MIT Licence. See LICENSE for details
+#define GLAD_GL_IMPLEMENTATION
+#include <glad/gl.h>
+#undef GLAD_GL_IMPLEMENTATION
+
 #include <math.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -54,8 +58,8 @@ int main(void) {
 		{&test_float3_norm,        &(float3){2.0F, 0.67F, 5.0F}},
 		{&test_float3_norm,        &(float3){0.2F, 0.4F, 0.1F} },
 		{&test_colour32_endianess, (uint32_t[]){0, 1}          },
-		{&test_compat_endianess,   (uint32_t[]){0x15F59267}}
-	};
+		{&test_compat_endianess,   (uint32_t[]){0x15F59267}    }
+    };
 
 	// get test count
 	size_t n = sizeof(tests) / sizeof(tests[0]);
