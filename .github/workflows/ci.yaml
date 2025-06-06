@@ -55,12 +55,8 @@ jobs:
       # compile
       - name: compile ${{matrix.march}}-${{matrix.kernel}}
         run: make compile MARCH=${{matrix.march}} KERNEL=${{matrix.kernel}} CC=${{matrix.cc}} -j
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ${{matrix.march}}-${{matrix.kernel}}-rel
-          path: obj/
   test:
-    needs: compile
+    needs: setup-vcpkg
     runs-on: ubuntu-latest
     container: ghcr.io/thepigeongenerator/mcaselector-lite:latest
     strategy:
@@ -76,9 +72,5 @@ jobs:
           path: ${{env.VCPKG_ROOT}}
           key: vcpkg-${{runner.os}}
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          name: ${{matrix.march}}-${{matrix.kernel}}-rel
-          path: obj/
       - name: execute tests for ${{matrix.march}}-${{matrix.kernel}}
         run: make DEBUG=test run MARCH=${{matrix.march}} KERNEL=${{matrix.kernel}} CC=${{matrix.cc}} -j
