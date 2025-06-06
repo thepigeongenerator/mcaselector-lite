@@ -10,6 +10,7 @@
 
 #include "../util/vec/float2.h"
 #include "shader.h"
+#include "../error.h"
 
 #define VERTC 6
 GLuint pipe;
@@ -35,6 +36,15 @@ int render_init(void) {
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
+
+	int len;
+	glGetProgramiv(pipe, GL_INFO_LOG_LENGTH, &len);
+	if (len > 0) {
+		char log[len];
+		glGetProgramInfoLog(pipe, len, &len, log);
+		log[len - 1] = '\0'; // terminate the string one character sooner since the log includes a newline
+		fatal("error whilst linking the pipe: '%s'", log);
+	}
 
 	// init the VAO
 	glGenVertexArrays(1, &vao);

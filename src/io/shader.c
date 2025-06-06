@@ -5,6 +5,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "../error.h"
+
 #define NAM_S(name) _binary_res_##name##_start // name of a start variable
 #define NAM_E(name) _binary_res_##name##_end   // name of an end variable
 
@@ -22,6 +24,16 @@ static GLuint shader_compile(GLenum type, char const* src, size_t len) {
 	GLuint shader = glCreateShader(type);
 	glShaderSource(shader, 1, &src, &ilen);
 	glCompileShader(shader);
+
+	// repurposing ilen for the max length of the shader log
+	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &ilen);
+	if (ilen > 0) {
+		char log[ilen];
+		glGetShaderInfoLog(shader, ilen, &ilen, log);
+		log[ilen - 1] = '\0'; // terminate the string one character sooner since the log includes a newline
+		error("error whilst compiling shader type '0x%x': '%s'", type, log);
+	}
+
 	return shader;
 }
 
