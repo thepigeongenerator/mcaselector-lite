@@ -13,8 +13,8 @@ static inline int assert_helper(int cond, char const* restrict fname, unsigned l
 	return !cond;
 }
 
-#define assert_true(expr)  assert_helper(!!(expr), __FILE_NAME__, __LINE__, __func__, #expr) // evaluation expected to be true
-#define assert_false(expr) assert_helper(!(expr), __FILE_NAME__, __LINE__, __func__, #expr)  // evaluation expected to be false
+#define assert_true(expr)  assert_helper(!!(expr), __FILE__, __LINE__, __func__, #expr) // evaluation expected to be true
+#define assert_false(expr) assert_helper(!(expr), __FILE__, __LINE__, __func__, #expr)  // evaluation expected to be false
 
 // contains the data for executing a single test
 struct testdat {

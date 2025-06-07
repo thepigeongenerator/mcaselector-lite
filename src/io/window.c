@@ -21,7 +21,7 @@ static GLFWwindow* win = NULL;
 
 int window_init(void) {
 #ifndef NDEBUG
-	glfwWindowHint(GLFW_CONTEXT_DEBUG, GLFW_TRUE);
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 #endif
 
 	// initialize the window
