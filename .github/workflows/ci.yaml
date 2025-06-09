@@ -83,4 +83,4 @@ jobs:
       # compile and execute tests
       - uses: actions/checkout@v4
       - name: execute tests for ${{matrix.march}}-${{matrix.kernel}}
-        run: make DEBUG=test run MARCH=${{matrix.march}} KERNEL=${{matrix.kernel}} CC=${{matrix.cc}} -j
+        run: make KERNEL=${{matrix.kernel}} CC=${{matrix.cc}} DEBUG=test run MARCH=${{matrix.march}} -j
