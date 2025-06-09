@@ -45,6 +45,7 @@ VCPKG_TRIPLET ?= $(strip                        \
 
 # override the pkg config path, so it is used instead of system packages
 export PKG_CONFIG_PATH := $(VCPKG_ROOT)/installed/$(VCPKG_TRIPLET)/lib/pkgconfig
+$(info using PKG_CONFIG_PATH: '$(PKG_CONFIG_PATH)')
 else ifneq ($(shell which pkg-config),)
 $(warning couldn't find VCPKG_ROOT, attempting to use system packages using pkg-config!)
 else
