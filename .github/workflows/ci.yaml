@@ -8,7 +8,7 @@ on:
       - '**'
 env:
   VCPKG_DISABLE_METRICS: 1
-  VCPKG_ROOT: /opt/vcpkg
+  VCPKG_ROOT: ${{github.workspace}}/.vcpkg
   DEPS_VCPKG: glfw3:x64-linux-dynamic glfw3:x64-mingw-static
 jobs:
   setup-deps:
