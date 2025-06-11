@@ -11,8 +11,9 @@ env:
   VCPKG_ROOT: ${{github.workspace}}/.vcpkg
   DEPS_VCPKG: glfw3:x64-linux-dynamic glfw3:x64-mingw-static
 jobs:
-  setup-deps:
+  setup-vcpkg:
     runs-on: ubuntu-latest
+    container: ghcr.io/thepigeongenerator/mcaselector-lite:latest
     outputs:
       CACHE_KEY_VCPKG: ${{steps.gen-keys.outputs.HASH_VCPKG}}
     steps:
@@ -28,13 +29,13 @@ jobs:
       # setup vcpkg if the cache didn't hit
       - if: steps.vcpkg-cache.outputs.cache-hit != 'true'
         run: |
-          sudo apt update && sudo apt install -y --no-install-recommends gcc-multilib mingw-w64 libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev
           git clone https://github.com/microsoft/vcpkg.git "$VCPKG_ROOT"
           "$VCPKG_ROOT/bootstrap-vcpkg.sh"
           "$VCPKG_ROOT/vcpkg" install $DEPS_VCPKG
   compile:
-    needs: setup-deps
+    needs: setup-vcpkg
     runs-on: ubuntu-latest
+    container: ghcr.io/thepigeongenerator/mcaselector-lite:latest
     strategy:
       matrix:
         include:
@@ -50,18 +51,17 @@ jobs:
         id: cache-vcpkg
         with:
           path: ${{env.VCPKG_ROOT}}
-          key: ${{needs.setup-deps.outputs.CACHE_KEY_VCPKG}}
+          key: ${{needs.setup-vcpkg.outputs.CACHE_KEY_VCPKG}}
       - if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: echo -e "\033[31mcache failed to load!\033[0m" >&2; exit 1
-      # install APT deps
-      - run: sudo apt update && sudo apt install -y --no-install-recommends gcc-multilib mingw-w64
       - uses: actions/checkout@v4
       # compile
       - name: compile ${{matrix.march}}-${{matrix.kernel}}
         run: make compile MARCH=${{matrix.march}} KERNEL=${{matrix.kernel}} CC=${{matrix.cc}} -j
   test:
-    needs: setup-deps
+    needs: setup-vcpkg
     runs-on: ubuntu-latest
+    container: ghcr.io/thepigeongenerator/mcaselector-lite:latest
     strategy:
       matrix:
         include:
@@ -75,11 +75,9 @@ jobs:
         id: cache-vcpkg
         with:
           path: ${{env.VCPKG_ROOT}}
-          key: ${{needs.setup-deps.outputs.CACHE_KEY_VCPKG}}
+          key: ${{needs.setup-vcpkg.outputs.CACHE_KEY_VCPKG}}
       - if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: echo -e "\033[31mcache failed to load!\033[0m" >&2; exit 1
-      # install APT deps
-      - run: sudo apt update && sudo apt install -y --no-install-recommends gcc-multilib mingw-w64 libglfw3
       # compile and execute tests
       - uses: actions/checkout@v4
       - name: execute tests for ${{matrix.march}}-${{matrix.kernel}}
