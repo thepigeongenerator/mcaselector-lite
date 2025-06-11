@@ -14,7 +14,7 @@ int conf_procbuf(char const* restrict buf, size_t buflen, struct conf_entry cons
 		ERR_INVALID_TYPE = 3,
 	};
 
-	bool isval = 0;           // whether we're reading the value at the moment (used as index)
+	unsigned idx = 0;         // index to the data below
 	char const* dat[2] = {0}; // stores key-value data
 	unsigned len[2] = {0};    // stores the length of the data
 	for (size_t i = 0; i < buflen; i++) {
@@ -31,14 +31,14 @@ int conf_procbuf(char const* restrict buf, size_t buflen, struct conf_entry cons
 		if (brk) break;
 
 		// everything after `=` is interpreted as a value
-		if (buf[i] == '=' && !isval) {
-			isval++;
+		if (buf[i] == '=' && !idx) {
+			idx++;
 			continue;
 		}
 
 		// set the value pointer to the current buffer char
-		dat[isval] = dat[isval] ? dat[isval] : &buf[i];
-		len[isval]++;
+		dat[idx] = dat[idx] ? dat[idx] : &buf[i];
+		len[idx]++;
 	}
 	if (!(dat[0] && dat[1])) return ERR_ABSENT;
 
