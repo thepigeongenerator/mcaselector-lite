@@ -15,90 +15,6 @@ struct str {
 	unsigned cap; // current string capacity
 };
 
-/* utility function for conf_getpat to concatenate 3 strings, where we already know the size */
-__attribute_nonnull__((1, 3)) static inline char* conf_getpat_concat(
-	char const* restrict s1, char const* restrict s2, char const* restrict s3,
-	size_t s1len, size_t s2len, size_t s3len) {
-	char *buf, *ptr;
-
-	// allocate enough data for all three to the buffer
-	ptr = malloc(s1len + s2len + s3len + 1);
-	if (!ptr) return NULL;
-
-	// copy data to the buffer
-	buf = strcpy(ptr, s1);                           // copy s1 data to the buffer
-	if (s2len) ptr = memcpy(ptr + s1len, s2, s2len); // increment ptr by s1len, and copy s2 data to the buffer (excluding null-terminator)
-	(void)strcpy(ptr + s2len, s3);                   // add s2len to the pointer and copy s3 as a string, thus including null-terminator
-
-	// return the buffer
-	return buf;
-}
-
-/* appends str to the config directory string we acquire from environment variables. */
-char* conf_getpat(char const* restrict str) {
-	char* buf = NULL;
-	size_t len;
-	size_t str_len = strlen(str);
-#if defined(__linux__)
-	buf = getenv("XDG_CONFIG_HOME");
-	if (!buf) {
-		buf = getenv("HOME");
-		if (!buf) return NULL;
-		len = strlen(buf);
-		return conf_getpat_concat(buf, "/.config", str, len, 8, str_len);
-	}
-	return conf_getpat_concat(buf, NULL, str, strlen(buf), 0, str_len);
-#elif defined(__APPLE__)
-	buf = getenv("HOME");
-	if (!buf) return NULL;
-	len = strlen(buf);
-	return conf_getpat_concat(buf, "/Library/Application Support", str, len, 28, str_len);
-#elif defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
-	buf = getenv("APPDATA");
-	if (!buf) {
-		cfgpat = getenv("USERPROFILE");
-		if (!buf) return NULL;
-		len = strlen(buf);
-		return conf_getpat_concat(buf, "\\AppData\\Roaming", str, buf, 16, str_len);
-	}
-	return conf_getpat_concat(buf, NULL, str, strlen(buf), 0, str_len);
-#else
-#error platform unsupported!
-#endif
-}
-
-/* appends src onto dest.dat, if test.dat hasn't been allocated, or does not have enough space.
-   The size is the nearest 2ˣ rounded-up value of src_len.
-   returns 0 upon success, 1 upon failure. */
-__attribute_nonnull__((1, 3)) static inline int str_put(struct str* restrict dest, size_t dest_len, char const* restrict src, size_t src_len) {
-	// check if (re)allocation needs to occur
-	if (dest->cap <= src_len) {                                 // check for equality as well due to `\0`
-		dest->cap = src_len;                                    // using src_len as-is, since it is string length, thus already one short.
-		for (unsigned i = 1; i < (sizeof(size_t) * 8); i <<= 1) // then loop through each 2ˣ bit in size_t
-			dest->cap |= dest->cap >> i;                        // OR together the shifted result (shifted 1, 2, 4, 8, 16 on 32 bit systems)
-		dest->cap++;                                            // round to the most significant bit (0111 -> 1000)
-
-		// (re)allocate the array
-		if (!dest->dat) {
-			dest->dat = malloc(dest->cap); // allocate memory for this capacity
-			if (!dest->dat) return 1;      // return 1 upon failure
-		} else {
-			void* ptr = realloc(dest->dat, dest->cap); // reallocate to the new capacity
-			if (!ptr) {
-				free(dest->dat); // free up resources by the old (still valid) pointer, and return failure
-				return 1;
-			}
-			dest->dat = ptr;
-		}
-	}
-
-
-	// copy the missing data to the end of the destination
-	memcpy(dest->dat + dest_len, src, src_len - dest_len);
-	dest->dat[src_len] = '\0'; // null-terminate the destination
-	return 0;
-}
-
 /* loads the config file */
 int conf_loadfile(char const* pat, struct conf_entry* dat, size_t cnt) {
 	FILE* f = fopen(pat, "r");
@@ -147,4 +63,54 @@ int conf_loadfile(char const* pat, struct conf_entry* dat, size_t cnt) {
 
 	fclose(f);
 	return 0;
+}
+
+/* utility function for conf_getpat to concatenate 3 strings, where we already know the size */
+static inline char* conf_getpat_concat(char const* restrict s1, char const* restrict s2, char const* restrict s3, size_t s1len, size_t s2len, size_t s3len) __attribute_nonnull__((1, 3)) {
+	char *buf, *ptr;
+
+	// allocate enough data for all three to the buffer
+	ptr = malloc(s1len + s2len + s3len + 1);
+	if (!ptr) return NULL;
+
+	// copy data to the buffer
+	buf = strcpy(ptr, s1);                           // copy s1 data to the buffer
+	if (s2len) ptr = memcpy(ptr + s1len, s2, s2len); // increment ptr by s1len, and copy s2 data to the buffer (excluding null-terminator)
+	(void)strcpy(ptr + s2len, s3);                   // add s2len to the pointer and copy s3 as a string, thus including null-terminator
+
+	// return the buffer
+	return buf;
+}
+
+/* appends str to the config directory string we acquire from environment variables. */
+char* conf_getpat(char const* restrict str) {
+	char* buf = NULL;
+	size_t len;
+	size_t str_len = strlen(str);
+#if defined(__linux__)
+	buf = getenv("XDG_CONFIG_HOME");
+	if (!buf) {
+		buf = getenv("HOME");
+		if (!buf) return NULL;
+		len = strlen(buf);
+		return conf_getpat_concat(buf, "/.config", str, len, 8, str_len);
+	}
+	return conf_getpat_concat(buf, NULL, str, strlen(buf), 0, str_len);
+#elif defined(__APPLE__)
+	buf = getenv("HOME");
+	if (!buf) return NULL;
+	len = strlen(buf);
+	return conf_getpat_concat(buf, "/Library/Application Support", str, len, 28, str_len);
+#elif defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
+	buf = getenv("APPDATA");
+	if (!buf) {
+		cfgpat = getenv("USERPROFILE");
+		if (!buf) return NULL;
+		len = strlen(buf);
+		return conf_getpat_concat(buf, "\\AppData\\Roaming", str, buf, 16, str_len);
+	}
+	return conf_getpat_concat(buf, NULL, str, strlen(buf), 0, str_len);
+#else
+#error platform unsupported!
+#endif
 }

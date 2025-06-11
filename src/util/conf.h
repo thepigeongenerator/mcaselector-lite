@@ -23,7 +23,7 @@ enum config_primitive {
 /* for outputting a fixed string as this config field */
 struct conf_fstr {
 	size_t len; // length in BYTES of the output data
-	char* datl; // output data location
+	char* datl; // where we will output the data
 };
 
 /* defines the structure of a config file entry */
