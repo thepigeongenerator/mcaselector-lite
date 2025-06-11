@@ -7,61 +7,65 @@
 #include <string.h>
 #include <sys/cdefs.h>
 
-#define BUFS 64
+int conf_procbuf(char const* restrict buf, size_t buflen, struct conf_entry const* opts, size_t optc) {
+	enum {
+		ERR_ABSENT = 1,
+		ERR_NOMATCH = 2,
+		ERR_INVALID_TYPE = 3,
+	};
 
-/* contains the basic structure for a string */
-struct str {
-	char* dat;    // pointer to the string data
-	unsigned cap; // current string capacity
-};
-
-/* loads the config file */
-int conf_loadfile(char const* pat, struct conf_entry* dat, size_t cnt) {
-	FILE* f = fopen(pat, "r");
-	if (!f) return 1;
-
-	size_t ln = 0;
-	char buf[BUFS];
-	while (fgets(buf, BUFS, f)) {
-		bool isval = 0;     // whether we're reading the value at the moment (used as index)
-		bool nodat = false; // whether there is no more data after this point
-		bool brk = false;   // whether we broke out of the loop
-		unsigned vallen = 0;
-		unsigned keylen = 0;
-
-		// loop through each character
-		for (unsigned i = 0; i < BUFS; i++) {
-			//
-			switch (buf[i]) {
-			case '\n':
-			case '\0':
-				brk = true;
-				break; // break out of the switch
-			case '#':
-				nodat = true; // specify that there is no more data from this point onwards
-				continue;     // continue in the loop
-			case '=':
-				if (!isval) {
-					isval = 1;
-					continue;
-				} else break;
-			}
-			if (brk) break;
-			if (nodat) continue;
-
-			if (isval) vallen++;
-			else keylen++;
-
-			// TODO: key/value are initialized NULL
-			// TODO: key/value caches the pointer to the data in the buffer
+	bool isval = 0;           // whether we're reading the value at the moment (used as index)
+	char const* dat[2] = {0}; // stores key-value data
+	unsigned len[2] = {0};    // stores the length of the data
+	for (size_t i = 0; i < buflen; i++) {
+		// handling of termination tokens
+		bool brk = false; // whether we broke out of the loop, and are done reading
+		switch (buf[i]) {
+		case '\n':
+		case '\r':
+		case '\0':
+		case '#':
+			brk = true;
+			break;
 		}
-		// TODO: key/value are checked for NULL, if either are NULL; something went wrong.
-		// TODO: append the key/value to the str_put thingie
-		// TODO: check what type we're converting the data to and go and do that.
-		// FIX: rewrite the whole thing to make testing easier. i.e. don't handle file reading AND conf parsing in the same funciton
+		if (brk) break;
+
+		// everything after `=` is interpreted as a value
+		if (buf[i] == '=' && !isval) {
+			isval++;
+			continue;
+		}
+
+		// set the value pointer to the current buffer char
+		dat[isval] = dat[isval] ? dat[isval] : &buf[i];
+		len[isval]++;
+	}
+	if (!(dat[0] && dat[1])) return ERR_ABSENT;
+
+	// find a match for the current key
+	size_t i = 0;
+	for (; i < optc; i++) {
+		if (strcmp(opts[i].key, dat[0]) == 0) break;
+	}
+	if (i >= optc) return ERR_NOMATCH; // no match was found
+
+	// TODO: keys and vals are not stored as null-terminated strings, thus we should do that
+	switch (opts[i].type) {
+	case CONF_I8: break;
+	case CONF_I16: break;
+	case CONF_I32: break;
+	case CONF_I64: break;
+	case CONF_U8: break;
+	case CONF_U16: break;
+	case CONF_U32: break;
+	case CONF_U64: break;
+	case CONF_F32: break;
+	case CONF_F64: break;
+	case CONF_STR: break;
+	case CONF_FSTR: break;
+	default: return ERR_INVALID_TYPE;
 	}
 
-	fclose(f);
 	return 0;
 }
 

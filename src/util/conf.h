@@ -33,6 +33,10 @@ struct conf_entry {
 	uint8_t type;    // the primitive type which we are querying for
 };
 
+/* processes an incoming buffer for conf_entry
+ * returns 0 upon success, 1 upon failure*/
+int conf_procbuf(char const*, size_t, struct conf_entry const*, size_t);
+
 /* acquires the config file path, appending str to the end (you need to handle path separators yourself)
  * expecting str to be null-terminated
  * - linux:   reads $XDG_CONFIG_HOME, if empty $HOME/.config is used, if $HOME is empty NULL is returned.
@@ -40,6 +44,3 @@ struct conf_entry {
  * - osx:     reads $HOME, uses $HOME/Library/Application Support, if $HOME is empty NULL is returned.
  * !! A malloc'd null-terminated string is returned !! */
 __attribute_malloc__ __attribute_nonnull__((1)) char* conf_getpat(char const*);
-
-/* loads the config file with cnt of dat options */
-int conf_loadfile(char const* pat, struct conf_entry* dat, size_t cnt);
