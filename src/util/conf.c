@@ -14,8 +14,7 @@
 #include "atrb.h"
 
 int conf_procbuf(char const* restrict buf, char* restrict kout, char* restrict vout, size_t len) {
-	// length data storage
-	unsigned idx = 0; // index to the data below
+	bool feq = false; // whether we've found the equal sign
 
 	// data traversal
 	char* pos = kout; // will point to the next point in the buffer, where we'll write data
@@ -35,20 +34,24 @@ int conf_procbuf(char const* restrict buf, char* restrict kout, char* restrict v
 		if (brk) break;
 
 		// everything after `=` is interpreted as a value
-		if (buf[i] == '=' && !idx) {
+		if (!feq && buf[i] == '=') {
+			feq = true;
 			*pos = '\0'; // terminate string
 			pos = vout;  // move pointer to start of value data
-			idx++;
 			continue;
 		}
 		*pos = buf[i]; // copy over the buffer's data
 		pos++;         // increment the position pointer
 	}
-	if (pos == kout) return 0; // line was ignored if pos didn't move
-
 	// null-terminate what we've got now (yes, there should be enough space for this since \0 isn't stored)
+	// this also ensures the value is valid, even if none is given
 	*pos = '\0';
-	return 0;
+
+	// no data if we didn't move from the key position
+	// syntax error if we couldn't find the equal sign
+	return (pos == kout)
+		? CONF_ENODAT
+		: (!feq ? CONF_ESYNTAX : 0);
 }
 
 struct conf_entry const* conf_matchopt(struct conf_entry const* opts, size_t optc, char const* restrict key) {
