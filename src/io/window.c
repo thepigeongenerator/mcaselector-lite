@@ -6,6 +6,7 @@
 
 #include <GLFW/glfw3.h>
 #include <assert.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "../error.h"
@@ -46,11 +47,16 @@ int window_init(void) {
 	glfwSetKeyCallback(win, key_callback);
 
 	// print the OpenGL version information
-	debug("version info:");
-	debug("\tvendor:       %s", glGetString(GL_VENDOR));
-	debug("\trenderer:     %s", glGetString(GL_RENDERER));
-	debug("\tversion:      %s", glGetString(GL_VERSION));
-	debug("\tshading lang: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
+	debug(
+		"version info:\n"
+		"\tvendor:       %s\n"
+		"\trenderer:     %s\n"
+		"\tversion:      %s\n"
+		"\tshading lang: %s\n",
+		glGetString(GL_VENDOR),
+		glGetString(GL_RENDERER),
+		glGetString(GL_VERSION),
+		glGetString(GL_SHADING_LANGUAGE_VERSION));
 
 	return 0;
 }
