@@ -121,7 +121,9 @@ int conf_procval(struct conf_entry const* opt, char const* restrict val) {
 	case CONF_I32: *(int32_t*)opt->out = *(int32_t*)dat; return 0;
 	case CONF_U64:
 	case CONF_I64: *(int64_t*)opt->out = *(int64_t*)dat; return 0;
-	default: abort(); // abort; this shouldn't be possible, so I blame the programmer
+	case CONF_F32: *(float*)opt->out = *(float*)dat; return 0;
+	case CONF_F64: *(double*)opt->out = *(double*)dat; return 0;
+	default: fatal("invalid switch state, all cases should be handled already"); // abort; this shouldn't be possible, so I blame the programmer
 	}
 }
 
