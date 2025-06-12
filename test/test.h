@@ -4,10 +4,12 @@
 #include <stdio.h>
 
 char const* test_ctest;
+size_t test_runs = 0;
 
 // evaluates the test
 // returns 1 upon error
 static inline int assert_helper(int cond, char const* restrict fname, unsigned ln, char const* restrict fnname, char const* restrict expr) {
+	test_runs++;
 	if (cond)
 		printf("[\033[32;1m  OK  \033[0m] %s %s -> %s:%u (%s)\n", test_ctest, fnname, fname, ln, expr);
 	else
@@ -39,8 +41,8 @@ static inline size_t exec_tests(testdat* dat, size_t ntests) {
 
 	// give final score
 	if (!err)
-		fprintf(stdout, "tests completed! (%zu/%zu)\n", ntests - err, ntests);
+		fprintf(stdout, "tests completed! (%zu/%zu)\n", test_runs - err, test_runs);
 	else
-		fprintf(stderr, " tests failed! (%zu/%zu)\n", ntests - err, ntests);
+		fprintf(stderr, " tests failed! (%zu/%zu)\n", test_runs - err, test_runs);
 	return err;
 }
