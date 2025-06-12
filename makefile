@@ -25,7 +25,8 @@ CFLAGS  += -Og -g -fsanitize=address,undefined
 LDFLAGS += -fsanitize=address,undefined
 PROF    := dbg
 else ifeq ($(DEBUG),test) # check whether we're perhaps testing
-CFLAGS  += -O2
+CFLAGS  += -O2 -g -fsanitize=address
+LDFLAGS += -fsanitize=address
 PROF    := test
 else                      # otherwise, assume release
 CFLAGS  += -O2 -DNDEBUG
