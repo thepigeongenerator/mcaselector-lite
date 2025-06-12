@@ -10,6 +10,7 @@
 #define atrb_pure         __attribute__((pure))
 #define atrb_const        __attribute__((const))
 #define atrb_noreturn     __attribute__((noreturn))
+#define atrb_malloc       __attribute__((malloc))
 #define atrb_format(...)  __attribute__((format(__VA_ARGS__)))
 #define atrb_nonnull(...) __attribute__((nonnull(__VA_ARGS__)))
 #elif defined(_MSC_VER)
@@ -23,6 +24,7 @@
 #define atrb_pure
 #define atrb_const
 #define atrb_noreturn
+#define atrb_malloc
 #define atrb_format()
 #define atrb_nonnull()
 #endif

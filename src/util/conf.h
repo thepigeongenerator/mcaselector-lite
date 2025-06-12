@@ -2,7 +2,9 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include <sys/cdefs.h>
+#include <stdlib.h>
+
+#include "atrb.h"
 
 /* defines the primitive types available in the config file */
 enum config_primitive {
@@ -43,4 +45,4 @@ int conf_procbuf(char const*, size_t, struct conf_entry const*, size_t);
  * - windows: reads %APPDATA%, if empty %USERPROFILE%\AppData\Roaming is used, if both are empty NULL is returned.
  * - osx:     reads $HOME, uses $HOME/Library/Application Support, if $HOME is empty NULL is returned.
  * !! A malloc'd null-terminated string is returned !! */
-__attribute_malloc__ __attribute_nonnull__((1)) char* conf_getpat(char const*);
+atrb_malloc atrb_nonnull(1) char* conf_getpat(char const*);

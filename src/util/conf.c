@@ -5,7 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/cdefs.h>
+
+#include "atrb.h"
 
 int conf_procbuf(char const* restrict buf, size_t buflen, struct conf_entry const* opts, size_t optc) {
 	enum {
@@ -70,7 +71,7 @@ int conf_procbuf(char const* restrict buf, size_t buflen, struct conf_entry cons
 }
 
 /* utility function for conf_getpat to concatenate 3 strings, where we already know the size */
-__nonnull((1, 3)) static inline char* conf_getpat_concat(char const* restrict s1, char const* restrict s2, char const* restrict s3, size_t s1len, size_t s2len, size_t s3len) {
+atrb_nonnull(1, 3) static inline char* conf_getpat_concat(char const* restrict s1, char const* restrict s2, char const* restrict s3, size_t s1len, size_t s2len, size_t s3len) {
 	char *buf, *ptr;
 
 	// allocate enough data for all three to the buffer
