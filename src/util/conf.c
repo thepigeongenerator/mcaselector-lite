@@ -2,6 +2,7 @@
 // Licensed under the MIT Licence. See LICENSE for details
 #include "conf.h"
 
+#include <assert.h>
 #include <errno.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -129,16 +130,18 @@ int conf_procval(struct conf_entry const* opt, char const* restrict val) {
 
 /* utility function for conf_getpat to concatenate 3 strings, where we already know the size */
 atrb_nonnull(1, 3) static inline char* conf_getpat_concat(char const* restrict s1, char const* restrict s2, char const* restrict s3, size_t s1len, size_t s2len, size_t s3len) {
+	assert(s2 || (!s2 && !s2len)); // ensuring the programmer passes both s2 and s2len as 0, if they intend to
 	char *buf, *ptr;
 
 	// allocate enough data for all three to the buffer
 	ptr = malloc(s1len + s2len + s3len + 1);
 	if (!ptr) return NULL;
+	buf = ptr; // store the head pointer into buf
 
 	// copy data to the buffer
-	buf = strcpy(ptr, s1);                           // copy s1 data to the buffer
-	if (s2len) ptr = memcpy(ptr + s1len, s2, s2len); // increment ptr by s1len, and copy s2 data to the buffer (excluding null-terminator)
-	(void)strcpy(ptr + s2len, s3);                   // add s2len to the pointer and copy s3 as a string, thus including null-terminator
+	ptr = mempcpy(ptr, s1, s1len);            // copy s1 data to the buffer
+	if (s2len) ptr = mempcpy(ptr, s2, s2len); // copy s2 data to the buffer (excluding null-terminator)
+	(void)strcpy(ptr, s3);                    // copy s3 as a string, thus including null-terminator
 
 	// return the buffer
 	return buf;
