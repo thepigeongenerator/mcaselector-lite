@@ -109,10 +109,10 @@ char* conf_getpat(char const* restrict str) {
 #elif defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
 	buf = getenv("APPDATA");
 	if (!buf) {
-		cfgpat = getenv("USERPROFILE");
+		buf = getenv("USERPROFILE");
 		if (!buf) return NULL;
 		len = strlen(buf);
-		return conf_getpat_concat(buf, "\\AppData\\Roaming", str, buf, 16, str_len);
+		return conf_getpat_concat(buf, "\\AppData\\Roaming", str, len, 16, str_len);
 	}
 	return conf_getpat_concat(buf, NULL, str, strlen(buf), 0, str_len);
 #else
