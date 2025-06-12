@@ -1,24 +1,25 @@
 #include "conf.h"
 
+#include <errno.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
 
+#include "../error.h"
 #include "atrb.h"
 
-int conf_procbuf(char const* restrict buf, size_t buflen, struct conf_entry const* opts, size_t optc) {
-	enum {
-		ERR_ABSENT = 1,
-		ERR_NOMATCH = 2,
-		ERR_INVALID_TYPE = 3,
-	};
+int conf_procbuf(char const* restrict buf, char* restrict kout, char* restrict vout, size_t len) {
+	// length data storage
+	unsigned idx = 0; // index to the data below
 
-	unsigned idx = 0;         // index to the data below
-	char const* dat[2] = {0}; // stores key-value data
-	unsigned len[2] = {0};    // stores the length of the data
-	for (size_t i = 0; i < buflen; i++) {
+	// data traversal
+	char* pos = kout; // will point to the next point in the buffer, where we'll write data
+
+	// acquire data
+	for (size_t i = 0; i < len; i++) {
 		// handling of termination tokens
 		bool brk = false; // whether we broke out of the loop, and are done reading
 		switch (buf[i]) {
@@ -33,41 +34,90 @@ int conf_procbuf(char const* restrict buf, size_t buflen, struct conf_entry cons
 
 		// everything after `=` is interpreted as a value
 		if (buf[i] == '=' && !idx) {
+			*pos = '\0'; // terminate string
+			pos = vout;  // move pointer to start of value data
 			idx++;
 			continue;
 		}
-
-		// set the value pointer to the current buffer char
-		dat[idx] = dat[idx] ? dat[idx] : &buf[i];
-		len[idx]++;
+		*pos = buf[i]; // copy over the buffer's data
+		pos++;         // increment the position pointer
 	}
-	if (!(dat[0] && dat[1])) return ERR_ABSENT;
+	if (pos == kout) return 0; // line was ignored if pos didn't move
 
+	// null-terminate what we've got now (yes, there should be enough space for this since \0 isn't stored)
+	*pos = '\0';
+	return 0;
+}
+
+struct conf_entry const* conf_matchopt(struct conf_entry const* opts, size_t optc, char const* restrict key) {
 	// find a match for the current key
 	size_t i = 0;
 	for (; i < optc; i++) {
-		if (strcmp(opts[i].key, dat[0]) == 0) break;
+		if (strcmp(opts[i].key, key) == 0)
+			return opts + i;
 	}
-	if (i >= optc) return ERR_NOMATCH; // no match was found
+	return NULL;
+}
 
-	// TODO: keys and vals are not stored as null-terminated strings, thus we should do that
-	switch (opts[i].type) {
-	case CONF_I8: break;
-	case CONF_I16: break;
-	case CONF_I32: break;
-	case CONF_I64: break;
-	case CONF_U8: break;
-	case CONF_U16: break;
-	case CONF_U32: break;
-	case CONF_U64: break;
-	case CONF_F32: break;
-	case CONF_F64: break;
-	case CONF_STR: break;
-	case CONF_FSTR: break;
-	default: return ERR_INVALID_TYPE;
+int conf_procval(struct conf_entry const* opt, char const* restrict val) {
+	// parse the data
+	errno = 0;
+	char* end;
+	int8_t dat[sizeof(long)];
+
+	switch (opt->type) {
+	// signed integer data parsing
+	case CONF_I8:
+	case CONF_I16:
+	case CONF_I32:
+	case CONF_I64:
+		*(long*)dat = strtol(val, &end, 10);
+		break;
+	// unsigned integer data parsing
+	case CONF_U8:
+	case CONF_U16:
+	case CONF_U32:
+	case CONF_U64:
+		*(ulong*)dat = strtoul(val, &end, 10);
+		break;
+
+	// floating-point data parsing
+	case CONF_F32: *(float*)dat = strtof(val, &end); break;
+	case CONF_F64: *(double*)dat = strtod(val, &end); break;
+
+	// string data parsing
+	case CONF_STR:
+		if (*(char**)opt->out) {
+			free(*(char**)opt->out); // if the same key is given multiple times, free the memory so we don't leak.
+			warn("encountered a dynamic string multiple times, this is sub-optimal.");
+		}
+		*(char**)opt->out = strdup(val);
+		return 0;
+	case CONF_FSTR: {
+		struct conf_fstr* s = opt->out;
+		strncpy(s->out, val, s->len);
+		s->out[s->len - 1] = '\0'; // ensure the string is null-terminated
+		return 0;
+	}
+	default: return CONF_EINVALIDTYPE; // return error code indicating function not implemented
 	}
 
-	return 0;
+	if (errno || end == val || *end != '\0') {
+		error("failed to parse '%s' as a numeric value", val);
+		return CONF_EPARSE;
+	}
+
+	switch (opt->type) {
+	case CONF_U8:
+	case CONF_I8: *(int8_t*)opt->out = *(int8_t*)dat; return 0;
+	case CONF_U16:
+	case CONF_I16: *(int16_t*)opt->out = *(int16_t*)dat; return 0;
+	case CONF_U32:
+	case CONF_I32: *(int32_t*)opt->out = *(int32_t*)dat; return 0;
+	case CONF_U64:
+	case CONF_I64: *(int64_t*)opt->out = *(int64_t*)dat; return 0;
+	default: abort(); // abort; this shouldn't be possible, so I blame the programmer
+	}
 }
 
 /* utility function for conf_getpat to concatenate 3 strings, where we already know the size */

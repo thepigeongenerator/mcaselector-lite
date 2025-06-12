@@ -6,8 +6,17 @@
 
 #include "atrb.h"
 
+/* error codes */
+enum conf_err {
+	CONF_ENODAT = -1,      // no data was found
+	CONF_ESYNTAX = 1,      // couldn't extract clear key/val data
+	CONF_ENOMATCH = 2,     // couldn't find a match for the inputted key
+	CONF_EINVALIDTYPE = 3, // the type inputted in conf_entry was invalid
+	CONF_EPARSE = 4,       // something went wrong whilst parsing
+};
+
 /* defines the primitive types available in the config file */
-enum config_primitive {
+enum conf_primitive {
 	CONF_STR = 0,               // expects: `char**`, will output malloc'd data !!must be freed!!
 	CONF_I8 = 1,                // expects: `int8_t*`, will point to a location in memory where an i8 is stored.
 	CONF_I16 = 2,               // expects: `int16_t*`, will point to a location in memory where an i16 is stored.
@@ -25,7 +34,7 @@ enum config_primitive {
 /* for outputting a fixed string as this config field */
 struct conf_fstr {
 	size_t len; // length in BYTES of the output data
-	char* datl; // where we will output the data
+	char* out;  // where we will output the data
 };
 
 /* defines the structure of a config file entry */
@@ -35,9 +44,20 @@ struct conf_entry {
 	uint8_t type;    // the primitive type which we are querying for
 };
 
-/* processes an incoming buffer for conf_entry
- * returns 0 upon success, 1 upon failure*/
-int conf_procbuf(char const*, size_t, struct conf_entry const*, size_t);
+/* processes an incoming buffer.
+ * `buf`, `kout` and `vout` mustn't overlap, and must be (at least) `len` bytes long!
+ * `kout` and `vout` will contain a null-terminated string if the function returned successfully.
+ * returns `0` on success, `<0` when no data was found. `>0` when data was invalid but something went wrong.
+ * see `CONF_E*` or `enum conf_err` */
+int conf_procbuf(char const* restrict buf, char* restrict kout, char* restrict vout, size_t len);
+
+/* matches the key with one of the options and returns the pointer. Returns NULL if none could be found. */
+struct conf_entry const* conf_matchopt(struct conf_entry const* opts, size_t optc, char const* restrict key);
+
+/* processes the value belonging to the key and outputs the result to opts.
+ * - `val` points to a null-terminated string which contains the key and value.
+ * returns `0` upon success, non-zero upon failure. For information about specific error codes, see `enum conf_err` */
+int conf_procval(struct conf_entry const* opts, char const* restrict val);
 
 /* acquires the config file path, appending str to the end (you need to handle path separators yourself)
  * expecting str to be null-terminated
