@@ -3,13 +3,15 @@
 #pragma once
 #include <stdio.h>
 
+char const* test_ctest;
+
 // evaluates the test
 // returns 1 upon error
 static inline int assert_helper(int cond, char const* restrict fname, unsigned ln, char const* restrict fnname, char const* restrict expr) {
 	if (cond)
-		printf("[\033[32;1m  OK  \033[0m] %s -> %s:%u (%s)\n", fnname, fname, ln, expr);
+		printf("[\033[32;1m  OK  \033[0m] %s %s -> %s:%u (%s)\n", test_ctest, fnname, fname, ln, expr);
 	else
-		printf("[\033[31;1m FAIL \033[0m] %s -> %s:%u (%s)\n", fnname, fname, ln, expr);
+		printf("[\033[31;1m FAIL \033[0m] %s %s -> %s:%u (%s)\n", test_ctest, fnname, fname, ln, expr);
 	return !cond;
 }
 
@@ -18,6 +20,7 @@ static inline int assert_helper(int cond, char const* restrict fname, unsigned l
 
 // contains the data for executing a single test
 struct testdat {
+	char const* name;   // test name
 	int (*test)(void*); // test, returns 0 upon success, non-zero upon failure
 	void* args;         // arguments to the test
 };
@@ -29,8 +32,10 @@ static inline size_t exec_tests(testdat* dat, size_t ntests) {
 	size_t err = 0;
 
 	// perform tests and count the error state
-	for (i = 0; i < ntests; i++)
+	for (i = 0; i < ntests; i++) {
+		test_ctest = dat[i].name;
 		err += !!(dat[i].test(dat[i].args));
+	}
 
 	// give final score
 	if (!err)
