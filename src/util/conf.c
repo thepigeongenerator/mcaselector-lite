@@ -77,14 +77,14 @@ int conf_procval(struct conf_entry const* opt, char const* restrict val) {
 	case CONF_I16:
 	case CONF_I32:
 	case CONF_I64:
-		*(long*)dat = strtol(val, &end, 10);
+		*(long*)dat = strtol(val, &end, 10); // for signed integer types
 		break;
 	// unsigned integer data parsing
 	case CONF_U8:
 	case CONF_U16:
 	case CONF_U32:
 	case CONF_U64:
-		*(ulong*)dat = strtoul(val, &end, 10);
+		*(long*)dat = strtoul(val, &end, 10); // for unsigned integer types
 		break;
 
 	// floating-point data parsing
