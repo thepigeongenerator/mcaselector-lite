@@ -43,10 +43,15 @@ jobs:
       #
       # compilation
       #
-      - run: make compile MARCH=x86_64 KERNEL=linux CC=x86_64-linux-gnu-gcc -j
-      - run: make compile MARCH=x86_64 KERNEL=mingw CC=x86_64-w64-mingw32-gcc -j
+      - run: make compile MARCH=x86_64 KERNEL=linux CC=x86_64-linux-gnu-gcc -j || echo "::error::failed compilation for linux x86_64"
+      - run: make compile MARCH=x86_64 KERNEL=mingw CC=x86_64-w64-mingw32-gcc -j || echo "::error::failed compilation for win x86_64"
       #
       # executing unit tests
       #
-      - run: make run MARCH=x86_64 KERNEL=linux CC=x86_64-linux-gnu-gcc DEBUG=test -j
+      - run: make run MARCH=x86_64 KERNEL=linux CC=x86_64-linux-gnu-gcc DEBUG=test -j || echo "::error::failed tests for linux x86_64"
         # WARN: not testing windows, probably should do that
+      - name: exit on errors
+        run: |
+          [ -f "$GITHUB_STEP_SUMMARY" ] &&
+            grep -q "::error::" "$GITHUB_STEP_SUMMARY" &&
+            exit 1
