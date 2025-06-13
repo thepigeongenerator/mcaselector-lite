@@ -43,10 +43,13 @@ jobs:
       #
       # compilation
       #
-      - run: make compile MARCH=x86_64 KERNEL=linux CC=x86_64-linux-gnu-gcc -j
-      - run: make compile MARCH=x86_64 KERNEL=mingw CC=x86_64-w64-mingw32-gcc -j
+      - run: make compile MARCH=x86_64 KERNEL=linux CC=x86_64-linux-gnu-gcc -j || echo "JOB_FAILED=1" >>"$GITHUB_ENV"
+      - run: make compile MARCH=x86_64 KERNEL=mingw CC=x86_64-w64-mingw32-gcc -j || echo "JOB_FAILED=1" >>"$GITHUB_ENV"
       #
       # executing unit tests
       #
-      - run: make run MARCH=x86_64 KERNEL=linux CC=x86_64-linux-gnu-gcc DEBUG=test -j
+      - run: make run MARCH=x86_64 KERNEL=linux CC=x86_64-linux-gnu-gcc DEBUG=test -j || echo "JOB_FAILED=1" >>"$GITHUB_ENV"
         # WARN: not testing windows, probably should do that
+      - name: exit on errors
+        run: |
+          [ "$JOB_FAILED" != "1" ]
