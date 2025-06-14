@@ -15,6 +15,7 @@ RUN \
 		binutils                                                                \
 		git curl                                                                \
 		zip unzip                                                               \
+		wine wine64                                                             \
 		make cmake pkg-config                                                   \
 		gcc gcc-multilib g++ mingw-w64                                          \
 		libc6-dev                                                               \
@@ -24,7 +25,12 @@ RUN \
 	apt-get clean;                                                                     \
 	rm -rf /var/lib/apt/lists/* /usr/share/doc/* /usr/share/man/* /usr/share/locale/*; \
 	rm -rf /usr/lib/node_modules/npm/docs /usr/lib/node_modules/npm/html;              \
+	rm -rf /usr/share/wine/fonts /usr/share/wine/mono;                                 \
 	find /usr -name "*.py" -delete;                                                    \
+	find /usr/lib/wine -name "*.a" -delete;                                            \
+	find /usr/lib/wine -name "*.la" -delete;                                           \
+	find /usr/lib/wine -name "*.def" -delete;                                          \
+	strip /usr/bin/wine* || true;                                                      \
     rm -rf /var/cache/* /var/log/*;
 
 CMD ["bash"]
