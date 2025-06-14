@@ -69,7 +69,7 @@ int conf_procval(struct conf_entry const* opt, char const* restrict val) {
 	// parse the data
 	errno = 0;
 	char* end;
-	int8_t dat[sizeof(long)];
+	int8_t dat[sizeof(int64_t)];
 
 	switch (opt->type) {
 	// signed integer data parsing
@@ -77,14 +77,14 @@ int conf_procval(struct conf_entry const* opt, char const* restrict val) {
 	case CONF_I16:
 	case CONF_I32:
 	case CONF_I64:
-		*(long*)dat = strtol(val, &end, 10); // for signed integer types
+		*(int64_t*)dat = strtoll(val, &end, 10); // for signed integer types
 		break;
 	// unsigned integer data parsing
 	case CONF_U8:
 	case CONF_U16:
 	case CONF_U32:
 	case CONF_U64:
-		*(long*)dat = strtoul(val, &end, 10); // for unsigned integer types
+		*(int64_t*)dat = strtoull(val, &end, 10); // for unsigned integer types
 		break;
 
 	// floating-point data parsing
