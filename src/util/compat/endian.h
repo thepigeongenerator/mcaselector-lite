@@ -2,10 +2,21 @@
 // Licensed under the MIT Licence. See LICENSE for details
 #pragma once
 
-#include <byteswap.h>
 #include <stdint.h>
 
 #include "../atrb.h"
+
+#if __has_include(<byteswap.h>)
+#include <byteswap.h>
+#elif defined(__GNUC__) || defined(__clang__)
+#define bswap_16 __builtin_bswap16
+#define bswap_32 __builtin_bswap32
+#define bswap_64 __builtin_bswap64
+#else
+// TODO: use custom bswap bacros
+#error WIP, no support
+#endif
+
 
 /* little endian */
 atrb_const static inline uint16_t le16ton(uint16_t); // converts little-endian (LE) encoding to native for a 16 bit integer. (NOOP if native is LE)
