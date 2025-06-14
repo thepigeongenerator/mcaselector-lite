@@ -5,17 +5,26 @@ LABEL org.opencontainers.image.source="https://github.com/thepigeongenerator/mca
 LABEL org.opencontainers.image.source-path="/.github/Dockerfile"
 
 # install the dependencies
-RUN apt update && apt install -y --no-install-recommends \
-	ca-certificates                                          \
-	git curl                                                 \
-	zip unzip                                                \
-	make cmake pkg-config                                    \
-	clang-tidy                                               \
-	gcc gcc-multilib g++ mingw-w64                           \
-	libc6-dev                                                \
-	libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev \
-	libglfw3                                                 \
-	nodejs                                                   \
-	&& rm -rf /var/lib/apt/lists/*;
+RUN \
+	echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/no-recommends; \
+	echo 'APT::Install-Suggests "false";' >> /etc/apt/apt.conf.d/no-recommends;  \
+	dpkg --add-architecture i386;                                                \
+	apt-get update -qq;                                                          \
+	apt-get install -y                                                           \
+		ca-certificates                                                         \
+		binutils                                                                \
+		git curl                                                                \
+		zip unzip                                                               \
+		make cmake pkg-config                                                   \
+		gcc gcc-multilib g++ mingw-w64                                          \
+		libc6-dev                                                               \
+		libxinerama-dev libxcursor-dev libxi-dev libxrandr-dev libglu1-mesa-dev \
+		libglfw3                                                                \
+		nodejs;                                                                 \
+	apt-get clean;                                                                     \
+	rm -rf /var/lib/apt/lists/* /usr/share/doc/* /usr/share/man/* /usr/share/locale/*; \
+	rm -rf /usr/lib/node_modules/npm/docs /usr/lib/node_modules/npm/html;              \
+	find /usr -name "*.py" -delete;                                                    \
+    rm -rf /var/cache/* /var/log/*;
 
 CMD ["bash"]
