@@ -69,7 +69,7 @@ int conf_procval(struct conf_entry const* opt, char const* restrict val) {
 	// parse the data
 	errno = 0;
 	char* end;
-	int8_t dat[sizeof(long)];
+	int8_t dat[sizeof(int64_t)];
 
 	switch (opt->type) {
 	// signed integer data parsing
