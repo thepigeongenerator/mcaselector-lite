@@ -21,13 +21,19 @@ ISWIN := $(if $(filter linux darwin freebsd netbsd openbsd,$(KERNEL)),0,1)
 
 # profiles
 ifeq ($(DEBUG),1)         # check whether we're debugging
-CFLAGS  += -Og -g -fsanitize=address,undefined
-LDFLAGS += -fsanitize=address,undefined
+CFLAGS  += -Og -g
 PROF    := dbg
+ifeq ($(ISWIN),0)
+CFLAGS  += -fsanitize=address,undefined
+LDFLAGS += -fsanitize=address,undefined
+endif
 else ifeq ($(DEBUG),test) # check whether we're perhaps testing
-CFLAGS  += -O2 -g -fsanitize=address
-LDFLAGS += -fsanitize=address
+CFLAGS  += -O2 -g
 PROF    := test
+ifeq ($(ISWIN),0)
+CFLAGS  += -fsanitize=address
+LDFLAGS += -fsanitize=address
+endif
 else                      # otherwise, assume release
 CFLAGS  += -O2 -DNDEBUG
 PROF    := rel
