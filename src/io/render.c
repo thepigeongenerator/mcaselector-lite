@@ -13,7 +13,7 @@
 // include GLFW
 #include <GLFW/glfw3.h>
 
-#define VERTC 1
+#define VERTC 3
 static GLuint pipe;
 static GLuint vbo;        // vertex buffer object
 static GLuint vao;        // vertex array object
@@ -21,7 +21,9 @@ static GLuint screen_loc; // location to where OpenGL sends to the shaders of th
 
 static void screen_resize(int w, int h) {
 	int32_t verts[VERTC][4] = {
-		{0, h, w, -20},
+		{0, 0,  w, 20    },
+		{0, 20, w, h - 40},
+		{0, h,  w, -20   },
 	};
 
 	glUniform2i(screen_loc, w, h);                                        // send the screen dimensions to the shader pipeline
