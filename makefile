@@ -77,7 +77,6 @@ ifneq ($(DEBUG),test)
 SRC := $(shell find src/ -name '*.c')
 else
 SRC    := $(filter-out src/main.c, $(shell find test/ src/ -name '*.c'))
-CFLAGS += -DGLFW_DLL
 endif
 RES   := $(shell find res/ -type f)
 
