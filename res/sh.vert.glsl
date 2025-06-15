@@ -1,3 +1,6 @@
+// Copyright (c) 2025 Quinn
+// Licensed under the MIT Licence. See LICENSE for details
+
 #version 330 core
 layout(location = 0) in ivec4 rect; // rectangle data
 uniform ivec2 screen;               // current screen dimensions

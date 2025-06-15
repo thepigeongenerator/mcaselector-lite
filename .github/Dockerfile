@@ -1,3 +1,6 @@
+# Copyright (c) 2025 Quinn
+# Licensed under the MIT Licence. See LICENSE for details
+
 # docker buildx build . -t ghcr.io/thepigeongenerator/mcaselector-lite:latest
 # docker push ghcr.io/thepigeongenerator/mcaselector-lite:latest
 FROM debian:testing-slim

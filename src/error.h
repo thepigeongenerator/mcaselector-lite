@@ -2,6 +2,10 @@
 // Licensed under the MIT Licence. See LICENSE for details
 #pragma once
 
+#if __INCLUDE_LEVEL__ > 0
+#include <stdio.h>
+#endif
+
 #define ERROR_STR_PRE(v) #v
 #define ERROR_STR(v)     ERROR_STR_PRE(v)
 
@@ -10,8 +14,8 @@
 #define warn(s, ...)     fprintf(stderr, "\033[93m" __FILE__ ":" ERROR_STR(__LINE__) ": [WAR]: " s "\033[0m\n", ##__VA_ARGS__)
 #define error(s, ...)    fprintf(stderr, "\033[91m" __FILE__ ":" ERROR_STR(__LINE__) ": [ERR]: " s "\033[0m\n", ##__VA_ARGS__)
 
-#define fatal(s, ...)                                                                              \
-	do {                                                                                           \
+#define fatal(s, ...)                                                                                  \
+	do {                                                                                               \
 		printf("\033[101m" __FILE__ ":" ERROR_STR(__LINE__) ": [FAT]: " s "\033[0m\n", ##__VA_ARGS__); \
-		exit(1);                                                                                   \
+		exit(1);                                                                                       \
 	} while (0)

@@ -6,8 +6,6 @@
 
 #include <GLFW/glfw3.h>
 #include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #include "../error.h"
 #include "input.h"

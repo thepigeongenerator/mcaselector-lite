@@ -1,3 +1,6 @@
+// Copyright (c) 2025 Quinn
+// Licensed under the MIT Licence. See LICENSE for details
+
 #version 330 core
 layout(points) in;
 layout(triangle_strip, max_vertices = 4) out; // output the vertices of this rectangle
