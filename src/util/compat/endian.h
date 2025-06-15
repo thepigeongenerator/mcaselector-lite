@@ -5,18 +5,7 @@
 #include <stdint.h>
 
 #include "../atrb.h"
-
-#if __has_include(<byteswap.h>)
-#include <byteswap.h>
-#elif defined(__GNUC__) || defined(__clang__)
-#define bswap_16 __builtin_bswap16
-#define bswap_32 __builtin_bswap32
-#define bswap_64 __builtin_bswap64
-#else
-// TODO: use custom bswap bacros
-#error WIP, no support
-#endif
-
+#include "bswap.h"
 
 /* little endian */
 atrb_const static inline uint16_t le16ton(uint16_t); // converts little-endian (LE) encoding to native for a 16 bit integer. (NOOP if native is LE)
@@ -41,12 +30,12 @@ uint64_t le64ton(uint64_t x) { return x; }
 uint16_t ntole16(uint16_t x) { return x; }
 uint32_t ntole32(uint32_t x) { return x; }
 uint64_t ntole64(uint64_t x) { return x; }
-uint16_t be16ton(uint16_t x) { return bswap_16(x); }
-uint32_t be32ton(uint32_t x) { return bswap_32(x); }
-uint64_t be64ton(uint64_t x) { return bswap_64(x); }
-uint16_t ntobe16(uint16_t x) { return bswap_16(x); }
-uint32_t ntobe32(uint32_t x) { return bswap_32(x); }
-uint64_t ntobe64(uint64_t x) { return bswap_64(x); }
+uint16_t be16ton(uint16_t x) { return bswap16(x); }
+uint32_t be32ton(uint32_t x) { return bswap32(x); }
+uint64_t be64ton(uint64_t x) { return bswap64(x); }
+uint16_t ntobe16(uint16_t x) { return bswap16(x); }
+uint32_t ntobe32(uint32_t x) { return bswap32(x); }
+uint64_t ntobe64(uint64_t x) { return bswap64(x); }
 #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 uint16_t le16ton(uint16_t x) { bswap_16(x); }
 uint32_t le32ton(uint32_t x) { bswap_32(x); }
