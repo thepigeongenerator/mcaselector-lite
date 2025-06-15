@@ -91,6 +91,12 @@ COMPILE_COMMANDS := $(DIR_OBJ)/compile_commands.json
 run:     compile_commands $(BIN); $(BIN)
 compile: compile_commands $(BIN)
 
+# some definitions for "default" and assumed compilers, for bulk selection
+.PHONY: all x86_64-linux-gnu-gcc x86_64-w64-mingw32-gcc
+all: x86_64-linux-gnu-gcc x86_64-w64-mingw32-gcc
+x86_64-linux-gnu-gcc:;   $(MAKE) $(CALL) $(MAKEFLAGS) CC=$@ MARCH=x86_64 KERNEL=linux NOCMDS=1
+x86_64-w64-mingw32-gcc:; $(MAKE) $(CALL) $(MAKEFLAGS) CC=$@ MARCH=x86_64 KERNEL=mingw NOCMDS=1
+
 # creates the binary (linking step)
 $(BIN): $(OBJ)
 	@mkdir -p $(@D)
