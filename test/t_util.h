@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 #include "../src/util/colour32.h"
-#include "../src/util/compat/endian.h"
+#include "../src/util/compat/bswap.h"
 #include "../src/util/vec/float3.h"
 #include "test.h"
 
@@ -23,24 +23,32 @@ int test_colour32_endianess(void* d) {
 	return assert_true(c.ch.r == 0xFF);
 }
 
-int test_compat_endianess(void* d) {
-	uint32_t x = *((uint32_t*)d + 0);
-	int res = 0;
+int test_bswap16(void* d) {
+	uint16_t* arg = d;
+	return assert_true(bswap16(arg[0]) == arg[1]);
+}
 
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-	res |= assert_false(be32ton(x) == x);
-	res |= assert_false(ntobe32(x) == x);
-	res |= assert_true(be32ton(ntobe32(x)) == x);
-	res |= assert_true(le32ton(x) == x);
-	res |= assert_true(ntole32(x) == x);
-#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-	res |= assert_false(le32ton(x) == x);
-	res |= assert_false(ntole32(x) == x);
-	res |= assert_true(le32ton(ntole32(x)) == x);
-	res |= assert_true(be32ton(x) == x);
-	res |= assert_true(ntobe32(x) == x);
-#else
-	res |= assert_false("platform unsupported!!");
-#endif
-	return res;
+int test_bswap32(void* d) {
+	uint32_t* arg = d;
+	return assert_true(bswap32(arg[0]) == arg[1]);
+}
+
+int test_bswap64(void* d) {
+	uint64_t* arg = d;
+	return assert_true(bswap64(arg[0]) == arg[1]);
+}
+
+int test_bswap16_impl(void* d) {
+	uint16_t* arg = d;
+	return assert_true(bswap16_impl(arg[0]) == arg[1]);
+}
+
+int test_bswap32_impl(void* d) {
+	uint32_t* arg = d;
+	return assert_true(bswap32_impl(arg[0]) == arg[1]);
+}
+
+int test_bswap64_impl(void* d) {
+	uint64_t* arg = d;
+	return assert_true(bswap64_impl(arg[0]) == arg[1]);
 }

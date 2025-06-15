@@ -1,5 +1,4 @@
 #include <stdint.h>
-#include <stdlib.h>
 
 #include "../src/util/conf.h"
 #include "../src/util/vec/float3.h"
@@ -10,7 +9,12 @@
 testdat tests[] = {
 	{"",		   test_float3_norm,        &(float3){2.0F, 0.67F, 5.0F}                                  },
 	{"",		   test_float3_norm,        &(float3){0.2F, 0.4F, 0.1F}                                   },
-	{"",		   test_compat_endianess,   (uint32_t[]){0x15F59267}                                      },
+	{"",		   test_bswap16,            (uint16_t[]){0x11EE, 0xEE11}                                  },
+	{"",		   test_bswap32,            (uint32_t[]){0x1142ADEE, 0xEEAD4211}                          },
+	{"",		   test_bswap64,            (uint64_t[]){0x114266897799ADEE, 0xEEAD997789664211}          },
+	{"",		   test_bswap16_impl,       (uint16_t[]){0x11EE, 0xEE11}                                  },
+	{"",		   test_bswap32_impl,       (uint32_t[]){0x1142ADEE, 0xEEAD4211}                          },
+	{"",		   test_bswap64_impl,       (uint64_t[]){0x114266897799ADEE, 0xEEAD997789664211}          },
 	{"k=v",        test_procbuf,            &(struct test_procbuf){"key=val", "key", "val", 0}            },
 	{"sometxt",    test_procbuf,            &(struct test_procbuf){"sometxt", "sometxt", "", CONF_ESYNTAX}},
 	{"comment",    test_procbuf,            &(struct test_procbuf){"# comment", "", "", CONF_ENODAT}      },
