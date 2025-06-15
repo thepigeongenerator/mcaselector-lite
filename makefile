@@ -88,7 +88,12 @@ DEP := $(OBJ:.o=.d)
 COMPILE_COMMANDS := $(DIR_OBJ)/compile_commands.json
 
 .PHONY: run compile echo
-run:     echo compile_commands $(BIN); $(BIN)
+run:     echo compile_commands $(BIN)
+ifeq ($(ISWIN),0)
+	$(BIN)
+else
+	wine $(BIN)
+endif
 compile: echo compile_commands $(BIN)
 echo:
 	$(info $(shell printf "\033[36m")compiling for: $(MARCH), $(KERNEL)$(shell printf "\033[0m"))
