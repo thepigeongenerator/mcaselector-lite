@@ -87,9 +87,12 @@ DEP := $(OBJ:.o=.d)
 
 COMPILE_COMMANDS := $(DIR_OBJ)/compile_commands.json
 
-.PHONY: run compile
-run:     compile_commands $(BIN); $(BIN)
-compile: compile_commands $(BIN)
+.PHONY: run compile echo
+run:     echo compile_commands $(BIN); $(BIN)
+compile: echo compile_commands $(BIN)
+echo:
+	$(info $(shell printf "\033[36m")compiling for: $(MARCH), $(KERNEL)$(shell printf "\033[0m"))
+	$(info $(shell printf "\033[36m")using compiler: $(CC)$(shell printf "\033[0m"))
 
 # some definitions for "default" and assumed compilers, for bulk selection
 .PHONY: all x86_64-linux-gnu-gcc x86_64-w64-mingw32-gcc
