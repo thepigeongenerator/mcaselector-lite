@@ -4,6 +4,7 @@
 
 #if __INCLUDE_LEVEL__ > 0
 #include <stdio.h>
+#include <stdlib.h>
 #endif
 
 #define ERROR_STR_PRE(v) #v

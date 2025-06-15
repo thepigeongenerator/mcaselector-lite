@@ -6,8 +6,6 @@
 
 #include <GLFW/glfw3.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #include "../error.h"
 #include "shader.h"
@@ -56,7 +54,7 @@ int render_init(void) {
 
 	// set VBO info
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(0); // set the array data index to 0
 	glVertexAttribIPointer(0, 4, GL_INT, 4 * sizeof(int32_t), NULL);
 
 	glBindVertexArray(0);
