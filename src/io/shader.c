@@ -11,14 +11,16 @@
 #define NAM_S(name) _binary_res_##name##_start // name of a start variable
 #define NAM_E(name) _binary_res_##name##_end   // name of an end variable
 
+// macro for generating the variable declarations
+#define DEF_GLSL(name)               \
+	extern char const NAM_S(name)[]; \
+	extern char const NAM_E(name)[]
+
 // NOTE: we are currently just sucking up the memory costs for ease. We can either include the source files themselves. Or use compression, where I'd prefer the latter for ease of installation.
 // NOLINTBEGIN (bugprone-reserved-identifier)
-extern char const NAM_S(sh_vert_glsl)[];
-extern char const NAM_E(sh_vert_glsl)[];
-extern char const NAM_S(sh_frag_glsl)[];
-extern char const NAM_E(sh_frag_glsl)[];
-extern char const NAM_S(sh_geom_glsl)[];
-extern char const NAM_E(sh_geom_glsl)[];
+DEF_GLSL(sh_vert_glsl);
+DEF_GLSL(sh_frag_glsl);
+DEF_GLSL(sh_geom_glsl);
 // NOLINTEND
 
 /* compile a shader */
@@ -34,13 +36,13 @@ static GLuint shader_compile(GLenum type, char const* src, size_t len) {
 		char log[ilen];
 		glGetShaderInfoLog(shader, ilen, &ilen, log);
 		log[ilen - 1] = '\0'; // terminate the string one character sooner since the log includes a newline
-		error("error whilst compiling shader type '0x%x': '%s'", type, log);
+		error("error whilst compiling shader type '0X%X': '%s'", type, log);
 	}
 
 	return shader;
 }
 
-#define COMPILE_NAME(_type, _name) shader_compile(_type, NAM_S(_name), NAM_E(_name) - NAM_S(_name))
+#define COMPILE_NAME(_type, _name) shader_compile(_type, NAM_S(_name), (uintptr_t)NAM_E(_name) - (uintptr_t)NAM_S(_name))
 int shader_init(GLuint pipe) {
 	GLuint vs = COMPILE_NAME(GL_VERTEX_SHADER, sh_vert_glsl);
 	GLuint fs = COMPILE_NAME(GL_FRAGMENT_SHADER, sh_frag_glsl);
