@@ -94,18 +94,16 @@ int test_matchopt(void* arg) {
 	return assert_true(conf_matchopt(opts, 3, dat->key) == xopt);
 }
 
-int test_procval_i32(void* arg) {
-	(void)arg;
-	int32_t out;
-	return assert_true(!conf_procval(&(struct conf_entry){NULL, &out, CONF_I32}, "42")) ||
-		assert_true(out == 42);
-}
-
-int test_procval_u64(void* arg) {
-	(void)arg;
+struct test_procval_int {
+	char const* val;
+	uint64_t xres;
+	uint8_t type;
+};
+int test_procval_int(void* arg) {
+	struct test_procval_int* dat = arg;
 	uint64_t out;
-	return assert_true(!conf_procval(&(struct conf_entry){NULL, &out, CONF_U64}, "3141592653589793238")) ||
-		assert_true(out == 3141592653589793238);
+	return assert_true(!conf_procval(&(struct conf_entry){NULL, &out, dat->type}, dat->val)) ||
+		assert_true(out == dat->xres);
 }
 
 int test_procval_f32(void* arg) {
