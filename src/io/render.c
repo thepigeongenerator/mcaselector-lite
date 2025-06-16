@@ -10,9 +10,6 @@
 #include "../error.h"
 #include "shader.h"
 
-// include GLFW
-#include <GLFW/glfw3.h>
-
 #define VERTC 3
 static GLuint pipe;
 static GLuint vbo;        // vertex buffer object
