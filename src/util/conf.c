@@ -68,7 +68,7 @@ int conf_procval(struct conf_entry const* opt, char const* restrict val) {
 	// parse the data
 	errno = 0;
 	char* end;
-	int8_t dat[sizeof(int64_t)];
+	int8_t dat[sizeof(long long)];
 
 	switch (opt->type) {
 	// signed integer data parsing
@@ -76,14 +76,14 @@ int conf_procval(struct conf_entry const* opt, char const* restrict val) {
 	case CONF_I16:
 	case CONF_I32:
 	case CONF_I64:
-		*(int64_t*)dat = strtoll(val, &end, 10); // for signed integer types
+		*(long long*)dat = strtoll(val, &end, 10); // for signed integer types
 		break;
 	// unsigned integer data parsing
 	case CONF_U8:
 	case CONF_U16:
 	case CONF_U32:
 	case CONF_U64:
-		*(int64_t*)dat = strtoull(val, &end, 10); // for unsigned integer types
+		*(long long*)dat = strtoull(val, &end, 10); // for unsigned integer types
 		break;
 
 	// floating-point data parsing
@@ -112,15 +112,17 @@ int conf_procval(struct conf_entry const* opt, char const* restrict val) {
 		return CONF_EPARSE;
 	}
 
+	typedef unsigned long long ull;
+	typedef signed long long ll;
 	switch (opt->type) {
-	case CONF_U8:
-	case CONF_I8: *(int8_t*)opt->out = *(int8_t*)dat; return 0;
-	case CONF_U16:
-	case CONF_I16: *(int16_t*)opt->out = *(int16_t*)dat; return 0;
-	case CONF_U32:
-	case CONF_I32: *(int32_t*)opt->out = *(int32_t*)dat; return 0;
-	case CONF_U64:
-	case CONF_I64: *(int64_t*)opt->out = *(int64_t*)dat; return 0;
+	case CONF_U8: *(uint8_t*)opt->out = *(ull*)dat >= UINT8_MAX ? UINT8_MAX : *(ull*)dat; return 0;
+	case CONF_U16: *(uint16_t*)opt->out = *(ull*)dat >= UINT16_MAX ? UINT16_MAX : *(ull*)dat; return 0;
+	case CONF_U32: *(uint32_t*)opt->out = *(ull*)dat >= UINT32_MAX ? UINT32_MAX : *(ull*)dat; return 0;
+	case CONF_U64: *(uint64_t*)opt->out = *(ull*)dat >= UINT64_MAX ? UINT64_MAX : *(ull*)dat; return 0;
+	case CONF_I8: *(int8_t*)opt->out = *(ll*)dat >= INT8_MAX ? INT8_MAX : (*(ll*)dat <= INT8_MIN ? INT8_MIN : *(ll*)dat); return 0;
+	case CONF_I16: *(int16_t*)opt->out = *(ll*)dat >= INT16_MAX ? INT16_MAX : (*(ll*)dat <= INT16_MIN ? INT16_MIN : *(ll*)dat); return 0;
+	case CONF_I32: *(int32_t*)opt->out = *(ll*)dat >= INT32_MAX ? INT32_MAX : (*(ll*)dat <= INT32_MIN ? INT32_MIN : *(ll*)dat); return 0;
+	case CONF_I64: *(int64_t*)opt->out = *(ll*)dat >= INT64_MAX ? INT64_MAX : (*(ll*)dat <= INT64_MIN ? INT64_MIN : *(ll*)dat); return 0;
 	case CONF_F32: *(float*)opt->out = *(float*)dat; return 0;
 	case CONF_F64: *(double*)opt->out = *(double*)dat; return 0;
 	default: fatal("invalid switch state, all cases should be handled already"); // abort; this shouldn't be possible, so I blame the programmer
