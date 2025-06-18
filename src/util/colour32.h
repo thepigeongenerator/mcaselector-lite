@@ -4,23 +4,17 @@
 #include <stdint.h>
 
 // stores colour in a rgba format stored as little-endian, each channel being a 8 bits wide.
-typedef union {
+typedef union colour32 {
 	uint32_t dat; // full colour data; little-endian
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 	// colour channel information for little-endian systems
 	struct {
-		uint8_t a;
-		uint8_t b;
-		uint8_t g;
-		uint8_t r;
+		uint8_t a, b, g, r;
 	} ch;
 #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 	// colour channel information for big-endian systems
 	struct {
-		uint8_t r;
-		uint8_t g;
-		uint8_t b;
-		uint8_t a;
+		uint8_t r, g, b, a;
 	} ch;
 #endif
 } colour32;
