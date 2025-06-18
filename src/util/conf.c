@@ -68,7 +68,7 @@ int conf_procval(struct conf_entry const* opt, char const* restrict val) {
 	// parse the data
 	errno = 0;
 	char* end;
-	int8_t dat[sizeof(long long)];
+	int8_t dat[sizeof(long long)]; // long long is guaranteed to be ≥64 bits in ISO C (double is always 64 bit)
 
 	switch (opt->type) {
 	// signed integer data parsing
