@@ -8,7 +8,9 @@
 #include <stdint.h>
 
 #include "../error.h"
+#include "../util/vec/int2.h"
 #include "shader.h"
+#include "window.h"
 
 #define VERTC 3
 static GLuint pipe;
@@ -68,10 +70,10 @@ void render_update(GLFWwindow* win) {
 	glfwGetWindowSize(win, &w, &h);
 	glUseProgram(pipe);
 
-	static int d = -1;  // initialize d to an impossible value so the condition below is always true on first execution
-	if ((h ^ w) != d) { // false negative when h and w swap integers, but this is quite a rare occurrence and it's impact is minimal
-		screen_resize(w, h);
-		d = h ^ w;
+	int2 windim = {0};
+	if (w != windim.x || h != windim.y) { // false negative when h and w swap integers, but this is quite a rare occurrence and it's impact is minimal
+		windim = (int2){w, h};
+		screen_resize(windim.x, windim.y);
 	}
 
 	glClearColor(0.1F, 0.1F, 0.1F, 1.0F);
