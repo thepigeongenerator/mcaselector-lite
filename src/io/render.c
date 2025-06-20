@@ -10,7 +10,6 @@
 #include "../error.h"
 #include "../util/vec/int2.h"
 #include "shader.h"
-#include "window.h"
 
 #define VERTC 3
 static GLuint pipe;
