@@ -102,7 +102,7 @@ struct test_procval_int {
 };
 int test_procval_int(void* arg) {
 	struct test_procval_int* dat = arg;
-	u64 out;
+	u64 out = 0;
 	return assert_true(!conf_procval(&(struct conf_entry){NULL, &out, dat->type}, dat->val)) ||
 		assert_true(out == dat->xres);
 }
