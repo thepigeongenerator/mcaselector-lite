@@ -8,6 +8,7 @@
 #include <stdint.h>
 
 #include "../error.h"
+#include "../util/types.h"
 #include "../util/vec/int2.h"
 #include "shader.h"
 
@@ -18,7 +19,7 @@ static GLuint vao;        // vertex array object
 static GLuint screen_loc; // location to where OpenGL sends to the shaders of the screen dimensions
 
 static void screen_resize(int w, int h) {
-	int32_t verts[VERTC][4] = {
+	i32 verts[VERTC][4] = {
 		{0, 0,  w, 20    },
 		{0, 20, w, h - 40},
 		{0, h,  w, -20   },
@@ -55,7 +56,7 @@ int render_init(void) {
 	// set VBO info
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0); // set the array data index to 0
-	glVertexAttribIPointer(0, 4, GL_INT, 4 * sizeof(int32_t), NULL);
+	glVertexAttribIPointer(0, 4, GL_INT, 4 * sizeof(i32), NULL);
 
 	glBindVertexArray(0);
 	return 0;

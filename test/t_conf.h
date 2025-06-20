@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "../src/util/conf.h"
+#include "../src/util/types.h"
 #include "test.h"
 
 // Environment saver structure for conf_getpat tests
@@ -96,19 +97,19 @@ int test_matchopt(void* arg) {
 
 struct test_procval_int {
 	char const* val;
-	uint64_t xres;
-	uint8_t type;
+	u64 xres;
+	u8 type;
 };
 int test_procval_int(void* arg) {
 	struct test_procval_int* dat = arg;
-	uint64_t out;
+	u64 out;
 	return assert_true(!conf_procval(&(struct conf_entry){NULL, &out, dat->type}, dat->val)) ||
 		assert_true(out == dat->xres);
 }
 
 int test_procval_f32(void* arg) {
 	(void)arg;
-	float out;
+	f32 out;
 	return assert_true(!conf_procval(&(struct conf_entry){NULL, &out, CONF_F32}, "3.14159265")) ||
 		assert_true(fabsf(out - 3.14159265F) < 1e-6F);
 }
@@ -149,7 +150,7 @@ int test_procval_fstr_trunc(void* arg) {
 
 int test_procval_eparse(void* arg) {
 	(void)arg;
-	int32_t out;
+	i32 out;
 	return assert_true(conf_procval(&(struct conf_entry){NULL, &out, CONF_I32}, "owo") == CONF_EPARSE);
 }
 
