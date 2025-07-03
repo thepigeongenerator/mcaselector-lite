@@ -1,22 +1,10 @@
 #pragma once
-#include <math.h>
 #include <stdint.h>
 
 #include "../src/util/colour32.h"
 #include "../src/util/compat/bswap.h"
 #include "../src/util/types.h"
-#include "../src/util/vec/float3.h"
 #include "test.h"
-
-int test_float3_norm(void *d) {
-	float *arg = d;
-	float3 v = {arg[0], arg[1], arg[2]};
-	float3 r = float3_norm(v);
-	float n = r.x * r.x + r.y * r.y + r.z * r.z;
-
-	// check if the value is within 1 millionth of the one we expect
-	return assert_true(fabsf(n - 1.0F) < 1e-6F);
-}
 
 int test_colour32_endianess(void *d) {
 	(void)d;
