@@ -1,30 +1,31 @@
-# Copyright (c) 2025 Quinn
-# Licensed under the MIT Licence. See LICENSE for details
 ---
 # ---------------------------
 # general style settings
 # ---------------------------
-BasedOnStyle:  ''
+BasedOnStyle:  GNU
 Standard:      Auto
 ColumnLimit:   0
 LineEnding:    LF
 UseTab:        ForContinuationAndIndentation
-TabWidth:      4
-IndentWidth:   4
-ContinuationIndentWidth: 4
+TabWidth:      8
+IndentWidth:   8
+ContinuationIndentWidth: 8
+AccessModifierOffset: -4
 
 # ---------------------------
 # alignment options
 # ---------------------------
 AlignAfterOpenBracket:        DontAlign
-AlignArrayOfStructures:       Left
+AlignOperands:                DontAlign
+AlignTrailingComments:        true
 AlignConsecutiveMacros:       AcrossEmptyLines
+AlignEscapedNewlines:         Left
+AlignArrayOfStructures:       Left
 AlignConsecutiveAssignments:  None
 AlignConsecutiveBitFields:    AcrossEmptyLines
 AlignConsecutiveDeclarations: None
-AlignEscapedNewlines:         Left
-AlignOperands:                DontAlign
-AlignTrailingComments:        Always
+AlignConsecutiveShortCaseStatements:
+  Enabled: true
 
 # ---------------------------
 # short constructs on a single line
@@ -40,16 +41,14 @@ AllowShortLoopsOnASingleLine:        true
 # ---------------------------
 # break and wrapping options
 # ---------------------------
-AlwaysBreakBeforeMultilineStrings: true
-BreakAfterReturnType:           Automatic
-BreakTemplateDeclarations:      MultiLine
-BreakBeforeBinaryOperators:     None
-BreakBeforeConceptDeclarations: Never
-BreakBeforeBraces:              Attach
-BreakInheritanceList:           BeforeColon
-BreakConstructorInitializers:   BeforeColon
-BreakBeforeTernaryOperators:    true
-BreakStringLiterals:            true
+AlwaysBreakBeforeMultilineStrings: false
+AlwaysBreakAfterReturnType:        Automatic
+BreakTemplateDeclarations:         false
+BreakBeforeBinaryOperators:        None
+BreakBeforeConceptDeclarations:    Never
+BreakBeforeBraces:                 Custom
+BreakBeforeTernaryOperators:       false
+BreakStringLiterals:               false
 
 # ---------------------------
 # brace wrapping configuration
@@ -70,25 +69,25 @@ BraceWrapping:
   BeforeLambdaBody:      false
   BeforeWhile:           false
   IndentBraces:          false
-  SplitEmptyFunction:    false
-  SplitEmptyRecord:      false
-  SplitEmptyNamespace:   false
+  SplitEmptyFunction:    true
+  SplitEmptyRecord:      true
+  SplitEmptyNamespace:   true
 
 # ---------------------------
 # constructor initializer and parameter packing options
 # ---------------------------
-ConstructorInitializerIndentWidth: 4
-PackConstructorInitializers: BinPack
+ConstructorInitializerIndentWidth: 8
+PackConstructorInitializers: NextLine
 BinPackParameters: true
-BinPackArguments:  false
+BinPackArguments:  true
 
 # ---------------------------
 # pointer alignment
 # ---------------------------
 DerivePointerAlignment: false
-PointerAlignment:       Left
-ReferenceAlignment:     Pointer
-QualifierAlignment:     Right
+PointerAlignment:   Right
+ReferenceAlignment: Pointer
+QualifierAlignment: Right
 
 # ---------------------------
 # include settings and sorting
@@ -111,67 +110,36 @@ IncludeCategories:
     CaseSensitive: true
 
 # ---------------------------
-# macro and language-specific settings
-# ---------------------------
-AttributeMacros:
-  - __capability
-ForEachMacros:
-  - foreach
-  - Q_FOREACH
-  - BOOST_FOREACH
-IfMacros:
-  - KJ_IF_MAYBE
-StatementAttributeLikeMacros:
-  - Q_EMIT
-StatementMacros:
-  - Q_UNUSED
-  - QT_REQUIRE_VERSION
-WhitespaceSensitiveMacros:
-  - STRINGIZE
-  - PP_STRINGIZE
-  - BOOST_PP_STRINGIZE
-  - NS_SWIFT_NAME
-  - CF_SWIFT_NAME
-
-# ---------------------------
 # additional formatting and sorting details
 # ---------------------------
+FixNamespaceComments:             false
+MaxEmptyLinesToKeep:              2
+ReflowComments:                   true
+RemoveBracesLLVM:                 false
 AllowAllArgumentsOnNextLine:      false
 AllowAllParametersOfDeclarationOnNextLine: false
 EmptyLineAfterAccessModifier:     Never
 EmptyLineBeforeAccessModifier:    LogicalBlock
 ExperimentalAutoDetectBinPacking: false
-FixNamespaceComments:             true
-MaxEmptyLinesToKeep:              4
-ReflowComments:                   true
-RemoveBracesLLVM:                 false
 SeparateDefinitionBlocks:         Leave
 ShortNamespaceLines:              1
 SortIncludes:                     CaseSensitive
 SortJavaStaticImport:             Before
-SortUsingDeclarations:            LexicographicNumeric
+SortUsingDeclarations:            false
 
 # ---------------------------
 # spacing options
 # ---------------------------
 SpaceAfterCStyleCast:             false
 SpaceAfterLogicalNot:             false
-SpaceAfterTemplateKeyword:        false
+SpaceAfterTemplateKeyword:        true
 SpaceBeforeAssignmentOperators:   true
 SpaceBeforeCaseColon:             false
+Cpp11BracedListStyle:             true
 SpaceBeforeCpp11BracedList:       false
 SpaceBeforeCtorInitializerColon:  true
 SpaceBeforeInheritanceColon:      true
 SpaceBeforeParens:                ControlStatements
-SpaceBeforeParensOptions:
-  AfterControlStatements:       true
-  AfterForeachMacros:           true
-  AfterFunctionDefinitionName:  false
-  AfterFunctionDeclarationName: false
-  AfterIfMacros:                true
-  AfterOverloadedOperator:      false
-  BeforeNonEmptyParentheses:    false
-SpaceAroundPointerQualifiers:     Default
 SpaceBeforeRangeBasedForLoopColon: true
 SpaceInEmptyBlock:                 true
 SpacesInParens:            Custom
@@ -183,7 +151,8 @@ SpacesInParensOptions:
 SpacesBeforeTrailingComments: 1
 SpacesInAngles:               Never
 SpacesInConditionalStatement: false
-SpacesInContainerLiterals:    true
+SpacesInContainerLiterals:    false
+SpacesInCStyleCastParentheses:     false
 SpacesInLineCommentPrefix:
   Minimum: 1
   Maximum: 1
@@ -193,25 +162,25 @@ SpaceBeforeSquareBrackets: false
 BitFieldColonSpacing:      Both
 
 # ---------------------------
+# penalty settings
+# ---------------------------
+PenaltyBreakAssignment: 10
+PenaltyBreakBeforeFirstCallParameter: 30
+PenaltyBreakComment: 10
+PenaltyBreakFirstLessLess: 0
+PenaltyBreakString: 10
+PenaltyExcessCharacter: 100
+PenaltyReturnTypeOnItsOwnLine: 60
+
+# ---------------------------
 # indentation details
 # ---------------------------
 IndentAccessModifiers: false
 IndentCaseLabels:      false
 IndentCaseBlocks:      false
-IndentGotoLabels:      true
+IndentGotoLabels:      false
 IndentExternBlock:     AfterExternBlock
 IndentRequiresClause:  false
 IndentPPDirectives:    None
 PPIndentWidth:         1
-
----
-# ---------------------------
-# Objective-C specific settings
-# ---------------------------
-Language:                        ObjC
-ObjCBinPackProtocolList:         Never
-ObjCBlockIndentWidth:            4
-ObjCBreakBeforeNestedBlockParam: true
-ObjCSpaceAfterProperty:          false
-ObjCSpaceBeforeProtocolList:     true
 ...
