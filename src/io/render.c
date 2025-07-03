@@ -9,7 +9,6 @@
 
 #include "../error.h"
 #include "../util/types.h"
-#include "../util/vec/int2.h"
 #include "shader.h"
 
 #define VERTC 3
@@ -17,6 +16,7 @@ static GLuint pipe;
 static GLuint vbo;        // vertex buffer object
 static GLuint vao;        // vertex array object
 static GLuint screen_loc; // location to where OpenGL sends to the shaders of the screen dimensions
+static int win_w, win_h;
 
 static void screen_resize(int w, int h) {
 	i32 verts[VERTC][4] = {
@@ -28,6 +28,8 @@ static void screen_resize(int w, int h) {
 	glUniform2i(screen_loc, w, h);                                        // send the screen dimensions to the shader pipeline
 	glViewport(0, 0, w, h);                                               // update the viewport
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_DYNAMIC_DRAW); // bind the data to it
+	win_w = w;
+	win_h = h;
 }
 
 int render_init(void) {
@@ -62,7 +64,7 @@ int render_init(void) {
 	return 0;
 }
 
-void render_update(GLFWwindow* win) {
+void render_update(GLFWwindow *win) {
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 
@@ -70,11 +72,8 @@ void render_update(GLFWwindow* win) {
 	glfwGetWindowSize(win, &w, &h);
 	glUseProgram(pipe);
 
-	int2 windim = {0};
-	if (w != windim.x || h != windim.y) { // false negative when h and w swap integers, but this is quite a rare occurrence and it's impact is minimal
-		windim = (int2){w, h};
-		screen_resize(windim.x, windim.y);
-	}
+	if (w != win_w || h != win_h)
+		screen_resize(w, h);
 
 	glClearColor(0.1F, 0.1F, 0.1F, 1.0F);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
