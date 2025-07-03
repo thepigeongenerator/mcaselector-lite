@@ -2,14 +2,11 @@
 
 #include "../src/util/conf.h"
 #include "../src/util/types.h"
-#include "../src/util/vec/float3.h"
 #include "t_conf.h"
 #include "t_util.h"
 #include "test.h"
 
 testdat tests[] = {
-	{"",            test_float3_norm,        &(float3){2.0F, 0.67F, 5.0F}                                                    },
-	{"",            test_float3_norm,        &(float3){0.2F, 0.4F, 0.1F}                                                     },
 	{"",            test_bswap16,            (u16[]){0x11EE, 0xEE11}							 },
 	{"",            test_bswap32,            (u32[]){0x1142ADEE, 0xEEAD4211}                                                 },
 	{"",            test_bswap64,            (u64[]){0x114266897799ADEE, 0xEEAD997789664211}                                 },
