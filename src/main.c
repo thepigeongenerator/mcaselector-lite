@@ -17,7 +17,7 @@
 #define WIN_DEFAULT_HEIGHT 480
 
 // callback for GLFW errors
-static void error_callback(int err, char const* const msg) {
+static void error_callback(int err, char const *const msg) {
 	fprintf(stderr, "\033[91mE: glfw returned (%i); \"%s\"\033[0m\n", err, msg);
 }
 
@@ -35,7 +35,7 @@ static inline void quit(void) {
 	glfwTerminate();
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
 	(void)argc, (void)argv;
 	printf("debug: [DBG], info: [INF], warning: [WAR], error: [ERR], fatal: [FAT]\n");
 	if (init()) fatal("failed to initialize!");

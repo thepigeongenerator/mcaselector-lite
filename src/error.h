@@ -14,8 +14,8 @@
 #define warn(s, ...)  fprintf(stderr, "\033[93m" __FILE__ ":" MACRO_STR2(__LINE__) ": [WAR]: " s "\033[0m\n", ##__VA_ARGS__)
 #define error(s, ...) fprintf(stderr, "\033[91m" __FILE__ ":" MACRO_STR2(__LINE__) ": [ERR]: " s "\033[0m\n", ##__VA_ARGS__)
 
-#define fatal(s, ...)                                                                                    \
-	do {                                                                                                 \
+#define fatal(s, ...)                                                                                           \
+	do {                                                                                                    \
 		printf("\033[101m" __FILE__ ":" MACRO_STR2(__LINE__) ": [FAT]: " s "\033[0m\n", ##__VA_ARGS__); \
-		exit(1);                                                                                         \
+		exit(1);                                                                                        \
 	} while (0)

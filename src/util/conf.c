@@ -14,11 +14,11 @@
 #include "atrb.h"
 #include "types.h"
 
-int conf_procbuf(char const* restrict buf, char* restrict kout, char* restrict vout, size_t len) {
+int conf_procbuf(char const *restrict buf, char *restrict kout, char *restrict vout, size_t len) {
 	bool feq = false; // whether we've found the equal sign
 
 	// data traversal
-	char* pos = kout; // will point to the next point in the buffer, where we'll write data
+	char *pos = kout; // will point to the next point in the buffer, where we'll write data
 
 	// acquire data
 	for (size_t i = 0; i < len; i++) {
@@ -50,12 +50,10 @@ int conf_procbuf(char const* restrict buf, char* restrict kout, char* restrict v
 
 	// no data if we didn't move from the key position
 	// syntax error if we couldn't find the equal sign
-	return (pos == kout)
-		? CONF_ENODAT
-		: (!feq ? CONF_ESYNTAX : 0);
+	return (pos == kout) ? CONF_ENODAT : (!feq ? CONF_ESYNTAX : 0);
 }
 
-struct conf_entry const* conf_matchopt(struct conf_entry const* opts, size_t optc, char const* restrict key) {
+struct conf_entry const *conf_matchopt(struct conf_entry const *opts, size_t optc, char const *restrict key) {
 	// find a match for the current key
 	size_t i = 0;
 	for (; i < optc; i++) {
@@ -65,10 +63,10 @@ struct conf_entry const* conf_matchopt(struct conf_entry const* opts, size_t opt
 	return NULL;
 }
 
-int conf_procval(struct conf_entry const* opt, char const* restrict val) {
+int conf_procval(struct conf_entry const *opt, char const *restrict val) {
 	// parse the data
 	errno = 0;
-	char* end;
+	char *end;
 	u8 dat[sizeof(u64)];
 
 	switch (opt->type) {
@@ -77,30 +75,30 @@ int conf_procval(struct conf_entry const* opt, char const* restrict val) {
 	case CONF_I16:
 	case CONF_I32:
 	case CONF_I64:
-		*(i64*)dat = strtoll(val, &end, 10); // for signed integer types
+		*(i64 *)dat = strtoll(val, &end, 10); // for signed integer types
 		break;
 	// unsigned integer data parsing
 	case CONF_U8:
 	case CONF_U16:
 	case CONF_U32:
 	case CONF_U64:
-		*(u64*)dat = strtoull(val, &end, 10); // for unsigned integer types
+		*(u64 *)dat = strtoull(val, &end, 10); // for unsigned integer types
 		break;
 
 	// floating-point data parsing
-	case CONF_F32: *(f32*)dat = strtof(val, &end); break;
-	case CONF_F64: *(f64*)dat = strtod(val, &end); break;
+	case CONF_F32: *(f32 *)dat = strtof(val, &end); break;
+	case CONF_F64: *(f64 *)dat = strtod(val, &end); break;
 
 	// string data parsing
 	case CONF_STR:
-		if (*(char**)opt->out) {
-			free(*(char**)opt->out); // if the same key is given multiple times, free the memory so we don't leak.
+		if (*(char **)opt->out) {
+			free(*(char **)opt->out); // if the same key is given multiple times, free the memory so we don't leak.
 			warn("encountered a dynamic string multiple times, this is sub-optimal.");
 		}
-		*(char**)opt->out = strdup(val);
+		*(char **)opt->out = strdup(val);
 		return 0;
 	case CONF_FSTR: {
-		struct conf_fstr* s = opt->out;
+		struct conf_fstr *s = opt->out;
 		strncpy(s->out, val, s->len);
 		s->out[s->len - 1] = '\0'; // ensure the string is null-terminated
 		return 0;
@@ -114,22 +112,22 @@ int conf_procval(struct conf_entry const* opt, char const* restrict val) {
 	}
 
 	switch (opt->type) {
-	case CONF_U8: *(u8*)opt->out = *(u64*)dat >= UINT8_MAX ? UINT8_MAX : *(u64*)dat; return 0;
-	case CONF_U16: *(u16*)opt->out = *(u64*)dat >= UINT16_MAX ? UINT16_MAX : *(u64*)dat; return 0;
-	case CONF_U32: *(u32*)opt->out = *(u64*)dat >= UINT32_MAX ? UINT32_MAX : *(u64*)dat; return 0;
-	case CONF_U64: *(u64*)opt->out = *(u64*)dat >= UINT64_MAX ? UINT64_MAX : *(u64*)dat; return 0;
-	case CONF_I8: *(i8*)opt->out = *(i64*)dat >= INT8_MAX ? INT8_MAX : (*(i64*)dat <= INT8_MIN ? INT8_MIN : *(i64*)dat); return 0;
-	case CONF_I16: *(i16*)opt->out = *(i64*)dat >= INT16_MAX ? INT16_MAX : (*(i64*)dat <= INT16_MIN ? INT16_MIN : *(i64*)dat); return 0;
-	case CONF_I32: *(i32*)opt->out = *(i64*)dat >= INT32_MAX ? INT32_MAX : (*(i64*)dat <= INT32_MIN ? INT32_MIN : *(i64*)dat); return 0;
-	case CONF_I64: *(i64*)opt->out = *(i64*)dat >= INT64_MAX ? INT64_MAX : (*(i64*)dat <= INT64_MIN ? INT64_MIN : *(i64*)dat); return 0;
-	case CONF_F32: *(f32*)opt->out = *(f32*)dat; return 0;
-	case CONF_F64: *(f64*)opt->out = *(f64*)dat; return 0;
-	default: fatal("invalid switch state, all cases should be handled already"); // abort; this shouldn't be possible, so I blame the programmer
+	case CONF_U8:  *(u8 *)opt->out = *(u64 *)dat >= UINT8_MAX ? UINT8_MAX : *(u64 *)dat; return 0;
+	case CONF_U16: *(u16 *)opt->out = *(u64 *)dat >= UINT16_MAX ? UINT16_MAX : *(u64 *)dat; return 0;
+	case CONF_U32: *(u32 *)opt->out = *(u64 *)dat >= UINT32_MAX ? UINT32_MAX : *(u64 *)dat; return 0;
+	case CONF_U64: *(u64 *)opt->out = *(u64 *)dat >= UINT64_MAX ? UINT64_MAX : *(u64 *)dat; return 0;
+	case CONF_I8:  *(i8 *)opt->out = *(i64 *)dat >= INT8_MAX ? INT8_MAX : (*(i64 *)dat <= INT8_MIN ? INT8_MIN : *(i64 *)dat); return 0;
+	case CONF_I16: *(i16 *)opt->out = *(i64 *)dat >= INT16_MAX ? INT16_MAX : (*(i64 *)dat <= INT16_MIN ? INT16_MIN : *(i64 *)dat); return 0;
+	case CONF_I32: *(i32 *)opt->out = *(i64 *)dat >= INT32_MAX ? INT32_MAX : (*(i64 *)dat <= INT32_MIN ? INT32_MIN : *(i64 *)dat); return 0;
+	case CONF_I64: *(i64 *)opt->out = *(i64 *)dat >= INT64_MAX ? INT64_MAX : (*(i64 *)dat <= INT64_MIN ? INT64_MIN : *(i64 *)dat); return 0;
+	case CONF_F32: *(f32 *)opt->out = *(f32 *)dat; return 0;
+	case CONF_F64: *(f64 *)opt->out = *(f64 *)dat; return 0;
+	default:       fatal("invalid switch state, all cases should be handled already"); // abort; this shouldn't be possible, so I blame the programmer
 	}
 }
 
 /* utility function for conf_getpat to concatenate 3 strings, where we already know the size */
-atrb_nonnull(1, 3) static char* conf_getpat_concat(char const* restrict s1, char const* restrict s2, char const* restrict s3, size_t s1len, size_t s2len, size_t s3len) {
+atrb_nonnull(1, 3) static char *conf_getpat_concat(char const *restrict s1, char const *restrict s2, char const *restrict s3, size_t s1len, size_t s2len, size_t s3len) {
 	assert(s2 || (!s2 && !s2len)); // ensuring the programmer passes both s2 and s2len as 0, if they intend to
 	char *buf, *ptr;
 
@@ -148,8 +146,8 @@ atrb_nonnull(1, 3) static char* conf_getpat_concat(char const* restrict s1, char
 }
 
 /* appends str to the config directory string we acquire from environment variables. */
-char* conf_getpat(char const* restrict str) {
-	char* buf = NULL;
+char *conf_getpat(char const *restrict str) {
+	char *buf = NULL;
 	size_t len;
 	size_t str_len = strlen(str);
 #if defined(__linux__)

@@ -36,13 +36,13 @@ enum conf_primitive {
 /* for outputting a fixed string as this config field */
 struct conf_fstr {
 	size_t len; // length in BYTES of the output data
-	char* out;  // where we will output the data
+	char *out;  // where we will output the data
 };
 
 /* defines the structure of a config file entry */
 struct conf_entry {
-	char const* key; // the key of this entry
-	void* out;       // the pointer to which the data is written value is read if the given option is incorrect or missing
+	char const *key; // the key of this entry
+	void *out;       // the pointer to which the data is written value is read if the given option is incorrect or missing
 	uint8_t type;    // the primitive type which we are querying for
 };
 
@@ -51,15 +51,15 @@ struct conf_entry {
  * `kout` and `vout` will contain a null-terminated string if the function returned successfully.
  * returns `0` on success, `<0` when no data was found. `>0` when data was invalid but something went wrong.
  * see `CONF_E*` or `enum conf_err` */
-int conf_procbuf(char const* restrict buf, char* restrict kout, char* restrict vout, size_t len);
+int conf_procbuf(char const *restrict buf, char *restrict kout, char *restrict vout, size_t len);
 
 /* matches the key with one of the options and returns the pointer. Returns NULL if none could be found. */
-struct conf_entry const* conf_matchopt(struct conf_entry const* opts, size_t optc, char const* restrict key);
+struct conf_entry const *conf_matchopt(struct conf_entry const *opts, size_t optc, char const *restrict key);
 
 /* processes the value belonging to the key and outputs the result to opts.
  * - `val` points to a null-terminated string which contains the key and value.
  * returns `0` upon success, non-zero upon failure. For information about specific error codes, see `enum conf_err` */
-int conf_procval(struct conf_entry const* opts, char const* restrict val);
+int conf_procval(struct conf_entry const *opts, char const *restrict val);
 
 /* acquires the config file path, appending str to the end (you need to handle path separators yourself)
  * expecting str to be null-terminated
@@ -67,4 +67,4 @@ int conf_procval(struct conf_entry const* opts, char const* restrict val);
  * - windows: reads %APPDATA%, if empty %USERPROFILE%\AppData\Roaming is used, if both are empty NULL is returned.
  * - osx:     reads $HOME, uses $HOME/Library/Application Support, if $HOME is empty NULL is returned.
  * !! A malloc'd null-terminated string is returned !! */
-atrb_malloc atrb_nonnull(1) char* conf_getpat(char const*);
+atrb_malloc atrb_nonnull(1) char *conf_getpat(char const *);

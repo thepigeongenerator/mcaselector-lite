@@ -13,7 +13,7 @@
 
 /* tests a files access with F_OK, X_OK, R_OK, W_OK OR'd together
    returns 0 upon success. -1 when errno is set and anything else when one or more of the permissions isn't set */
-static inline int faccess(char const* restrict fname, int perms);
+static inline int faccess(char const *restrict fname, int perms);
 
 // define the constants if they haven't been
 #ifndef F_OK
@@ -33,14 +33,14 @@ static inline int faccess(char const* restrict fname, int perms);
 #define PATH_SEP     '/' // contains the path separator as a character. Yes it is extremely annoying that this has to exist.
 #define PATH_SEP_STR "/" // contains the path separator as a string, useful for concatenation. Yes it is extremely annoying that this has to exist.
 
-int faccess(char const* restrict fname, int perms) {
+int faccess(char const *restrict fname, int perms) {
 	return access(fname, perms);
 }
 #elif defined(_WIN32)
 #define PATH_SEP     '\\' // contains the path separator as a character. Yes it is extremely annoying that this has to exist.
 #define PATH_SEP_STR "\\" // contains the path separator as a string, useful for concatenation. Yes it is extremely annoying that this has to exist.
 
-int faccess(char const* restrict fname, int perms) {
+int faccess(char const *restrict fname, int perms) {
 	return _access(fname, perms);
 }
 #else
