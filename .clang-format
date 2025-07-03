@@ -4,35 +4,35 @@
 # ---------------------------
 # general style settings
 # ---------------------------
-BasedOnStyle:  ''                            # (LLVM,Google,Chromium,Mozilla,WebKit,Microsoft,GNU,InheritParentConfig)
-Standard:      Auto                          # automatically detect the language version
-ColumnLimit:   0                             # 0: disable column limit
-LineEnding:    LF                            # use LF line endings
-UseTab:        ForContinuationAndIndentation # (Never,ForIndentation,ForContinuationAndIndentation,Always)
-TabWidth:      4                             # recommended to set this equal to IndentWidth
-IndentWidth:   4                             # how wide each indent is
-ContinuationIndentWidth: 4                   # width for a line continuation
+BasedOnStyle:  ''
+Standard:      Auto
+ColumnLimit:   0
+LineEnding:    LF
+UseTab:        ForContinuationAndIndentation
+TabWidth:      4
+IndentWidth:   4
+ContinuationIndentWidth: 4
 
 # ---------------------------
 # alignment options
 # ---------------------------
-AlignAfterOpenBracket:        DontAlign        # (Align,DontAlign,AlwaysBreak,BlockIndent)
-AlignArrayOfStructures:       Left             # (Left,Right,None)
-AlignConsecutiveMacros:       AcrossEmptyLines # (None,Consecutive,AcrossEmptyLines,AcrossComments,AcrossEmptyLinesAndComments)
-AlignConsecutiveAssignments:  None             # (None,Consecutive,AcrossEmptyLines,AcrossComments,AcrossEmptyLinesAndComments)
-AlignConsecutiveBitFields:    AcrossEmptyLines # (None,Consecutive,AcrossEmptyLines,AcrossComments,AcrossEmptyLinesAndComments)
-AlignConsecutiveDeclarations: None             # (None,Consecutive,AcrossEmptyLines,AcrossComments,AcrossEmptyLinesAndComments)
-AlignEscapedNewlines:         Left             # (DontAlign,Left,LeftWithLastLine,Right)
-AlignOperands:                DontAlign        # (DontAlign,Align,AlignAfterOperator)
-AlignTrailingComments:        Always           # (Leave,Always,Never)
+AlignAfterOpenBracket:        DontAlign
+AlignArrayOfStructures:       Left
+AlignConsecutiveMacros:       AcrossEmptyLines
+AlignConsecutiveAssignments:  None
+AlignConsecutiveBitFields:    AcrossEmptyLines
+AlignConsecutiveDeclarations: None
+AlignEscapedNewlines:         Left
+AlignOperands:                DontAlign
+AlignTrailingComments:        Always
 
 # ---------------------------
 # short constructs on a single line
 # ---------------------------
-AllowShortBlocksOnASingleLine:       Always        # (Never,Empty,Always)
-AllowShortFunctionsOnASingleLine:    All           # (None,InlineOnly,Empty,All)
-AllowShortLambdasOnASingleLine:      All           # (None,Empty,Inline,All)
-AllowShortIfStatementsOnASingleLine: AllIfsAndElse # (Never,WithoutElse,OnlyFirstIf,AllIfsAndElse)
+AllowShortBlocksOnASingleLine:       Always
+AllowShortFunctionsOnASingleLine:    All
+AllowShortLambdasOnASingleLine:      All
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse
 AllowShortCaseLabelsOnASingleLine:   true
 AllowShortEnumsOnASingleLine:        true
 AllowShortLoopsOnASingleLine:        true
@@ -40,14 +40,14 @@ AllowShortLoopsOnASingleLine:        true
 # ---------------------------
 # break and wrapping options
 # ---------------------------
-AlwaysBreakBeforeMultilineStrings: true      # when defining multi-line strings, linebreak should be inserted
-BreakAfterReturnType:           Automatic    # is decided by PenaltyReturnTypeOnItsOwnLine
-BreakTemplateDeclarations:      MultiLine    # (Leave,No,MultiLine,Yes)
-BreakBeforeBinaryOperators:     None         # (None,NonAssignment,All)
-BreakBeforeConceptDeclarations: Never        # (Never,Allowed,Always)
-BreakBeforeBraces:              Attach       # (Attach,Linux,Mozilla,Stroustrup,Allman,Whitesmiths,GNU,WebKit,Custom)
-BreakInheritanceList:           BeforeColon  # (BeforeColon,BeforeComma,AfterColon)
-BreakConstructorInitializers:   BeforeColon  # (BeforeColon,BeforeComma,AfterColon)
+AlwaysBreakBeforeMultilineStrings: true
+BreakAfterReturnType:           Automatic
+BreakTemplateDeclarations:      MultiLine
+BreakBeforeBinaryOperators:     None
+BreakBeforeConceptDeclarations: Never
+BreakBeforeBraces:              Attach
+BreakInheritanceList:           BeforeColon
+BreakConstructorInitializers:   BeforeColon
 BreakBeforeTernaryOperators:    true
 BreakStringLiterals:            true
 
@@ -55,7 +55,7 @@ BreakStringLiterals:            true
 # brace wrapping configuration
 # ---------------------------
 BraceWrapping:
-  AfterControlStatement: Never # (Never,MultiLine,Always)
+  AfterControlStatement: Never
   AfterCaseLabel:        false
   AfterClass:            false
   AfterEnum:             false
@@ -78,34 +78,34 @@ BraceWrapping:
 # constructor initializer and parameter packing options
 # ---------------------------
 ConstructorInitializerIndentWidth: 4
-PackConstructorInitializers: BinPack          # (Never,BinPack,CurrentLine,NextLine,NextLineOnly)
-BinPackParameters: true                       # use bin-packing for paramter lists
-BinPackArguments:  false                      # false: function calls either on one line or one per line
+PackConstructorInitializers: BinPack
+BinPackParameters: true
+BinPackArguments:  false
 
 # ---------------------------
 # pointer alignment
 # ---------------------------
-DerivePointerAlignment: false      # automatically detect pointer alignment
-PointerAlignment:       Left       # (Left,Right,Middle)
-ReferenceAlignment:     Pointer    # (Pointer,Left,Right,Middle)
-QualifierAlignment:     Right      # (Leave,Left,Right,Custom)
+DerivePointerAlignment: false
+PointerAlignment:       Left
+ReferenceAlignment:     Pointer
+QualifierAlignment:     Right
 
 # ---------------------------
 # include settings and sorting
 # ---------------------------
-IncludeIsMainSourceRegex: ''                        # only [*.{c,cc,cpp,c++,cxx,m,mm}] are considered to be "main"
-IncludeIsMainRegex:       '([-_](test|unittest))?$' # regex used for identifying an include as "main", to assign catagory 0
-IncludeBlocks:      Regroup                         # (Preserve,Merge,Regroup)
+IncludeIsMainSourceRegex: ''
+IncludeIsMainRegex:       '([-_](test|unittest))?$'
+IncludeBlocks:      Regroup
 IncludeCategories:
-  - Regex:         '^<glad/gl\.h>' # always include glad before system headers
+  - Regex:         '^<glad/gl\.h>'
     Priority:      1
     SortPriority:  0
     CaseSensitive: true
-  - Regex:         '^<.*\.h>'      # system headers
+  - Regex:         '^<.*\.h>'
     Priority:      2
     SortPriority:  0
     CaseSensitive: true
-  - Regex:         '^".*'          # custom headers
+  - Regex:         '^".*'
     Priority:      3
     SortPriority:  0
     CaseSensitive: true
@@ -138,18 +138,18 @@ WhitespaceSensitiveMacros:
 # ---------------------------
 AllowAllArgumentsOnNextLine:      false
 AllowAllParametersOfDeclarationOnNextLine: false
-EmptyLineAfterAccessModifier:     Never                # (Never,Leave,Always)
-EmptyLineBeforeAccessModifier:    LogicalBlock         # (Never,Leave,LogicalBlock,Always)
+EmptyLineAfterAccessModifier:     Never
+EmptyLineBeforeAccessModifier:    LogicalBlock
 ExperimentalAutoDetectBinPacking: false
-FixNamespaceComments:             true                 # adds comments at namespace delimiters
-MaxEmptyLinesToKeep:              4                    # what the maximum amount of empty lines that we're allowed to keep
-ReflowComments:                   true                 # reflow comment text to match column limits
-RemoveBracesLLVM:                 false                # don't automatically remove braces
-SeparateDefinitionBlocks:         Leave                # (Leave,Always.Never)
-ShortNamespaceLines:              1                    # how many lines a namespaces can be to be regarded "short"
-SortIncludes:                     CaseSensitive        # (Never,CaseSensitive,CaseInsensitive)
-SortJavaStaticImport:             Before               # (After,Before)
-SortUsingDeclarations:            LexicographicNumeric # (Never,Lexicographic,LexicographicNumeric)
+FixNamespaceComments:             true
+MaxEmptyLinesToKeep:              4
+ReflowComments:                   true
+RemoveBracesLLVM:                 false
+SeparateDefinitionBlocks:         Leave
+ShortNamespaceLines:              1
+SortIncludes:                     CaseSensitive
+SortJavaStaticImport:             Before
+SortUsingDeclarations:            LexicographicNumeric
 
 # ---------------------------
 # spacing options
@@ -162,7 +162,7 @@ SpaceBeforeCaseColon:             false
 SpaceBeforeCpp11BracedList:       false
 SpaceBeforeCtorInitializerColon:  true
 SpaceBeforeInheritanceColon:      true
-SpaceBeforeParens:                ControlStatements # (ControlStatements,ControlStatementsExceptControlMacros,NonEmptyParentheses,Always,Custom)
+SpaceBeforeParens:                ControlStatements
 SpaceBeforeParensOptions:
   AfterControlStatements:       true
   AfterForeachMacros:           true
@@ -171,7 +171,7 @@ SpaceBeforeParensOptions:
   AfterIfMacros:                true
   AfterOverloadedOperator:      false
   BeforeNonEmptyParentheses:    false
-SpaceAroundPointerQualifiers:     Default # (Default,Before,After,Both) recommend to use Default and let PointerAlignment decide
+SpaceAroundPointerQualifiers:     Default
 SpaceBeforeRangeBasedForLoopColon: true
 SpaceInEmptyBlock:                 true
 SpacesInParens:            Custom
@@ -181,7 +181,7 @@ SpacesInParensOptions:
   InCStyleCasts:           false
   Other:                   false
 SpacesBeforeTrailingComments: 1
-SpacesInAngles:               Never # (Never,Always,Leave)
+SpacesInAngles:               Never
 SpacesInConditionalStatement: false
 SpacesInContainerLiterals:    true
 SpacesInLineCommentPrefix:
@@ -190,7 +190,7 @@ SpacesInLineCommentPrefix:
 SpacesInParentheses:       false
 SpacesInSquareBrackets:    false
 SpaceBeforeSquareBrackets: false
-BitFieldColonSpacing:      Both # (Both,None,Before,After)
+BitFieldColonSpacing:      Both
 
 # ---------------------------
 # indentation details
@@ -199,9 +199,9 @@ IndentAccessModifiers: false
 IndentCaseLabels:      false
 IndentCaseBlocks:      false
 IndentGotoLabels:      true
-IndentExternBlock:     AfterExternBlock  # (AfterExternBlock,NoIndent,Indent)
+IndentExternBlock:     AfterExternBlock
 IndentRequiresClause:  false
-IndentPPDirectives:    None              # preprocessor indent style (None,AfterHash,BeforeHash)
+IndentPPDirectives:    None
 PPIndentWidth:         1
 
 ---
