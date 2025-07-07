@@ -11,7 +11,7 @@ note: UUID are stored as an integer array.
 |-----:|:-------------|:------------------------------------|
 |  `0` | `end`        | -                                   |
 |  `1` | `byte`       | `int8_t`                            |
-|  `2` | `short`      | `int16_t` (BE)                      |
+|  `2` | `short`      | `int16_t` (BE[^be])                 |
 |  `3` | `int`        | `int32_t` (BE)                      |
 |  `4` | `long`       | `int64_t` (BE)                      |
 |  `5` | `float`      | `float`   (BE)                      |
@@ -22,6 +22,7 @@ note: UUID are stored as an integer array.
 | `10` | `compound`   | list of tags delimited with end tag |
 | `11` | `int array`  | `int32_t`     (len) -> `int32_t`    |
 | `12` | `long array` | `int32_t`     (len) -> `int64_t`    |
+[^be] [big-endian](https://en.wikipedia.org/wiki/Endianness)
 
 ## world data
 There is a difference between \*.mca and \*.mcr files.
