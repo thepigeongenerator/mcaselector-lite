@@ -6,7 +6,6 @@
 
 #include "../atrb.h"
 #include "../types.h"
-#include "bswap.h"
 
 /* little endian */
 atrb_const static inline u16 le16ton(u16); // converts little-endian (LE) encoding to native for a 16 bit integer. (NOOP if native is LE)
@@ -31,19 +30,19 @@ u64 le64ton(u64 x) { return x; }
 u16 ntole16(u16 x) { return x; }
 u32 ntole32(u32 x) { return x; }
 u64 ntole64(u64 x) { return x; }
-u16 be16ton(u16 x) { return bswap16(x); }
-u32 be32ton(u32 x) { return bswap32(x); }
-u64 be64ton(u64 x) { return bswap64(x); }
-u16 ntobe16(u16 x) { return bswap16(x); }
-u32 ntobe32(u32 x) { return bswap32(x); }
-u64 ntobe64(u64 x) { return bswap64(x); }
+u16 be16ton(u16 x) { return __builtin_bswap16(x); }
+u32 be32ton(u32 x) { return __builtin_bswap32(x); }
+u64 be64ton(u64 x) { return __builtin_bswap64(x); }
+u16 ntobe16(u16 x) { return __builtin_bswap16(x); }
+u32 ntobe32(u32 x) { return __builtin_bswap32(x); }
+u64 ntobe64(u64 x) { return __builtin_bswap64(x); }
 #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-u16 le16ton(u16 x) { bswap_16(x); }
-u32 le32ton(u32 x) { bswap_32(x); }
-u64 le64ton(u64 x) { bswap_64(x); }
-u16 ntole16(u16 x) { bswap_16(x); }
-u32 ntole32(u32 x) { bswap_32(x); }
-u64 ntole64(u64 x) { bswap_64(x); }
+u16 le16ton(u16 x) { __builtin_bswap16(x); }
+u32 le32ton(u32 x) { __builtin_bswap32(x); }
+u64 le64ton(u64 x) { __builtin_bswap64(x); }
+u16 ntole16(u16 x) { __builtin_bswap16(x); }
+u32 ntole32(u32 x) { __builtin_bswap32(x); }
+u64 ntole64(u64 x) { __builtin_bswap64(x); }
 u16 be16ton(u16 x) { return x; }
 u32 be32ton(u32 x) { return x; }
 u64 be64ton(u64 x) { return x; }

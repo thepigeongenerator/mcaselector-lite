@@ -7,12 +7,6 @@
 #include "test.h"
 
 testdat tests[] = {
-	{"",            test_bswap16,            (u16[]){0x11EE, 0xEE11}							 },
-	{"",            test_bswap32,            (u32[]){0x1142ADEE, 0xEEAD4211}                                                 },
-	{"",            test_bswap64,            (u64[]){0x114266897799ADEE, 0xEEAD997789664211}                                 },
-	{"",            test_bswap16_impl,       (u16[]){0x11EE, 0xEE11}							 },
-	{"",            test_bswap32_impl,       (u32[]){0x1142ADEE, 0xEEAD4211}                                                 },
-	{"",            test_bswap64_impl,       (u64[]){0x114266897799ADEE, 0xEEAD997789664211}                                 },
 	{"k=v",         test_procbuf,            &(struct test_procbuf){"key=val", "key", "val", 0}                              },
 	{"sometxt",     test_procbuf,            &(struct test_procbuf){"sometxt", "sometxt", "", CONF_ESYNTAX}                  },
 	{"comment",     test_procbuf,            &(struct test_procbuf){"# comment", "", "", CONF_ENODAT}                        },
