@@ -86,7 +86,7 @@ unsigned offs = bit & 63;               // calc the offset within the segment
 // calculate the correct index
 uint16_t idx;
 idx = (block_states->dat[sgmt] >> offs);                                // acquire the data in the segment
-idx |= !((offs + w) > 64) ? 0 : block_states->dat[sgmt+1] << (64-offs); // complete with the data from the other segment, if present
+idx |= -!!((offs + w) > 64) & (block_states->dat[sgmt+1] << (64-offs)); // complete with the data from the other segment, if present
 idx &= (1 << w) - 1;                                                    // truncate the data to only contain what we desire.
 
 struct blockdat blk = block_states->palette.dat[idx];
