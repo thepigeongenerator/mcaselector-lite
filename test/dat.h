@@ -3,7 +3,6 @@
 #include "../src/util/conf.h"
 #include "../src/util/types.h"
 #include "t_conf.h"
-#include "t_util.h"
 #include "test.h"
 
 testdat tests[] = {
@@ -17,7 +16,7 @@ testdat tests[] = {
 	{"k=v (CRLF)",  test_procbuf,            &(struct test_procbuf){"k=v\r\na", "k", "v", 0}                                 },
 	{"get",         test_matchopt,           &(struct test_matchopt){"key3", 2}                                              },
 	{"invalid",     test_matchopt,           &(struct test_matchopt){"nono", -1}                                             },
-	{"",            test_colour32_endianess, NULL									    }, // NOTE: formatter is fucking with alignment making it use tabs @.@
+	// NOTE: formatter is fucking with alignment making it use tabs @.@
 	{"i32",         test_procval_int,        &(struct test_procval_int){"42", 42, CONF_I32}                                  },
 	{"i32_neg",     test_procval_int,        &(struct test_procval_int){"-42", (u32)-42, CONF_I32}                           },
 	{"u32_max",     test_procval_int,        &(struct test_procval_int){"4294967295", UINT32_MAX, CONF_U64}                  },

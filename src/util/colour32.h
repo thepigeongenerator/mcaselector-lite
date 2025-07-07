@@ -3,36 +3,19 @@
 #pragma once
 #include <stdint.h>
 
-#include "types.h"
+#include "vec.h"
 
-// stores colour in a rgba format stored as little-endian, each channel being a 8 bits wide.
-typedef union colour32 {
-	u32 dat; // full colour data; little-endian
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-	// colour channel information for little-endian systems
-	struct {
-		u8 a, b, g, r;
-	} ch;
-#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-	// colour channel information for big-endian systems
-	struct {
-		u8 r, g, b, a;
-	} ch;
-#endif
-} colour32;
-
-#define COLOUR32_BLACK   ((colour32){0x000000FF})
-#define COLOUR32_RED     ((colour32){0xFF0000FF})
-#define COLOUR32_YELLOW  ((colour32){0xFFFF00FF})
-#define COLOUR32_ORANGE  ((colour32){0xFF6D00FF})
-#define COLOUR32_GREEN   ((colour32){0x00FF00FF})
-#define COLOUR32_CYAN    ((colour32){0x00FFFFFF})
-#define COLOUR32_BLUE    ((colour32){0x0000FFFF})
-#define COLOUR32_MAGENTA ((colour32){0xFF00FFFF})
-#define COLOUR32_WHITE   ((colour32){0xFFFFFFFF})
+#define COLOUR32_BLACK   ((u8vec4){0x00, 0x00, 0x00, 0xFF})
+#define COLOUR32_RED     ((u8vec4){0xFF, 0x00, 0x00, 0xFF})
+#define COLOUR32_YELLOW  ((u8vec4){0xFF, 0xFF, 0x00, 0xFF})
+#define COLOUR32_ORANGE  ((u8vec4){0xFF, 0x6D, 0x00, 0xFF})
+#define COLOUR32_GREEN   ((u8vec4){0x00, 0xFF, 0x00, 0xFF})
+#define COLOUR32_CYAN    ((u8vec4){0x00, 0xFF, 0xFF, 0xFF})
+#define COLOUR32_BLUE    ((u8vec4){0x00, 0x00, 0xFF, 0xFF})
+#define COLOUR32_MAGENTA ((u8vec4){0xFF, 0x00, 0xFF, 0xFF})
+#define COLOUR32_WHITE   ((u8vec4){0xFF, 0xFF, 0xFF, 0xFF})
 
 // american macros:
-#define color32         colour32
 #define COLOR32_BLACK   COLOUR32_BLACK
 #define COLOR32_RED     COLOUR32_RED
 #define COLOR32_YELLOW  COLOUR32_YELLOW
