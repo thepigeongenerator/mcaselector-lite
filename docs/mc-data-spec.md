@@ -89,7 +89,7 @@ idx = (block_states->dat[sgmt] >> offs);                                // acqui
 idx |= !((offs + w) > 64) ? 0 : block_states->dat[sgmt+1] << (64-offs); // complete with the data from the other segment, if present
 idx &= (1 << w) - 1;                                                    // truncate the data to only contain what we desire.
 
-blockdat blk = block_states->palette.dat[idx];
+struct blockdat blk = block_states->palette.dat[idx];
 ```
 
 ### MCR format specification
