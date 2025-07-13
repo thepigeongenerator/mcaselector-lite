@@ -2,10 +2,12 @@
 
 #include "../src/util/conf.h"
 #include "../src/util/types.h"
+#include "t_arith.h"
 #include "t_conf.h"
 #include "test.h"
 
 testdat tests[] = {
+	{"ensure SAR",  test_sar,                NULL									    },
 	{"k=v",         test_procbuf,            &(struct test_procbuf){"key=val", "key", "val", 0}                              },
 	{"sometxt",     test_procbuf,            &(struct test_procbuf){"sometxt", "sometxt", "", CONF_ESYNTAX}                  },
 	{"comment",     test_procbuf,            &(struct test_procbuf){"# comment", "", "", CONF_ENODAT}                        },
