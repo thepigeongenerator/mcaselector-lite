@@ -39,13 +39,8 @@ Where \*.mca files are the newer variant.
 
 ### coordinate conversions
 ```c
-// block->chunk:
-return (x / 16) - sgn(x);
-return (x >> 4) - (x & 0x80000000);
-
-// chunk->region:
-return (x / 32) - sgn(x);
-return (x >> 5) - (x & 0x80000000);
+return (x >> 4); // block->chunk
+return (x >> 5); // chunk->region
 ```
 
 
