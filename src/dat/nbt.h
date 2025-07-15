@@ -2,6 +2,11 @@
 // Licensed under the MIT Licence. See LICENSE for details
 #pragma once
 
+#include <stdbool.h>
+#include <stdlib.h>
+
+#include "../util/types.h"
+
 /* NBT (named binary tag) is a tree data structure. Tags have a numeric type ID, name and a payload.
  * NBT files are a compressed `compound` tag. GZip is the compression used in most cases,
  * in some (rare) cases it's stored uncompressed.
@@ -27,3 +32,5 @@ enum nbt_tagid {
 	NBT_ARR_I32 = 0x0B,  // starts with a i32, denoting size, followed by the i32 data
 	NBT_ARR_I64 = 0x0C,  // starts with a i32, denoting size, followed by the u32 data
 };
+
+int nbt_proc(void **restrict datout, u8 const *restrict buf, size_t len);
