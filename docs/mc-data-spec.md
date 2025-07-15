@@ -7,21 +7,21 @@ A tag is an individual part of the data tree, where the first byte is the ID, fo
 note: UUID are stored as an integer array.
 
 ### tag types
-| ID   | tag name     | payload specification               |
-|-----:|:-------------|:------------------------------------|
-|  `0` | `end`        | -                                   |
-|  `1` | `byte`       | `int8_t`                            |
-|  `2` | `short`      | `int16_t` (BE[^be])                 |
-|  `3` | `int`        | `int32_t` (BE)                      |
-|  `4` | `long`       | `int64_t` (BE)                      |
-|  `5` | `float`      | `float`   (BE)                      |
-|  `6` | `double`     | `double`  (BE)                      |
-|  `7` | `byte array` | `int32_t`     (len) -> `int8_t`     |
-|  `8` | `string`     | `uint16_t`    (len) -> `UTF-8`      |
-|  `9` | `list`       | ID: `int32_t` (len) -> ID           |
-| `10` | `compound`   | list of tags delimited with end tag |
-| `11` | `int array`  | `int32_t`     (len) -> `int32_t`    |
-| `12` | `long array` | `int32_t`     (len) -> `int64_t`    |
+| ID    | tag name     | payload specification               |
+|:-----:|:-------------|:------------------------------------|
+| `0x0` | `end`        | -                                   |
+| `0x1` | `byte`       | `int8_t`                            |
+| `0x2` | `short`      | `int16_t` (BE[^be])                 |
+| `0x3` | `int`        | `int32_t` (BE)                      |
+| `0x4` | `long`       | `int64_t` (BE)                      |
+| `0x5` | `float`      | `float`   (BE)                      |
+| `0x6` | `double`     | `double`  (BE)                      |
+| `0x7` | `byte array` | `int32_t`     (len) -> `int8_t`     |
+| `0x8` | `string`     | `uint16_t`    (len) -> `UTF-8`      |
+| `0x9` | `list`       | ID: `int32_t` (len) -> ID           |
+| `0xA` | `compound`   | list of tags delimited with end tag |
+| `0xB` | `int array`  | `int32_t`     (len) -> `int32_t`    |
+| `0xC` | `long array` | `int32_t`     (len) -> `int64_t`    |
 [^be] [big-endian](https://en.wikipedia.org/wiki/Endianness)
 
 ## world data
