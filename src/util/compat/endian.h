@@ -2,53 +2,36 @@
 // Licensed under the MIT Licence. See LICENSE for details
 #pragma once
 
-#include <stdint.h>
-
-#include "../atrb.h"
-#include "../types.h"
-
-/* little endian */
-atrb_const static inline u16 le16ton(u16); // converts little-endian (LE) encoding to native for a 16 bit integer. (NOOP if native is LE)
-atrb_const static inline u32 le32ton(u32); // converts little-endian (LE) encoding to native for a 32 bit integer. (NOOP if native is LE)
-atrb_const static inline u64 le64ton(u64); // converts little-endian (LE) encoding to native for a 64 bit integer. (NOOP if native is LE)
-atrb_const static inline u16 ntole16(u16); // converts native encoding to little-endian (LE) for a 16 bit integer. (NOOP if native is LE)
-atrb_const static inline u32 ntole32(u32); // converts native encoding to little-endian (LE) for a 32 bit integer. (NOOP if native is LE)
-atrb_const static inline u64 ntole64(u64); // converts native encoding to little-endian (LE) for a 64 bit integer. (NOOP if native is LE)
-
-/* big endian */
-atrb_const static inline u16 be16ton(u16); // converts big-endian (BE) encoding to native for a 16 bit integer. (NOOP if native is BE)
-atrb_const static inline u32 be32ton(u32); // converts big-endian (BE) encoding to native for a 32 bit integer. (NOOP if native is BE)
-atrb_const static inline u64 be64ton(u64); // converts big-endian (BE) encoding to native for a 64 bit integer. (NOOP if native is BE)
-atrb_const static inline u16 ntobe16(u16); // converts native encoding to big-endian (BE) for a 16 bit integer. (NOOP if native is BE)
-atrb_const static inline u32 ntobe32(u32); // converts native encoding to big-endian (BE) for a 32 bit integer. (NOOP if native is BE)
-atrb_const static inline u64 ntobe64(u64); // converts native encoding to big-endian (BE) for a 64 bit integer. (NOOP if native is BE)
-
+#if __has_include(<endian.h>)
+#include <endian.h>
+#else
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-u16 le16ton(u16 x) { return x; }
-u32 le32ton(u32 x) { return x; }
-u64 le64ton(u64 x) { return x; }
-u16 ntole16(u16 x) { return x; }
-u32 ntole32(u32 x) { return x; }
-u64 ntole64(u64 x) { return x; }
-u16 be16ton(u16 x) { return __builtin_bswap16(x); }
-u32 be32ton(u32 x) { return __builtin_bswap32(x); }
-u64 be64ton(u64 x) { return __builtin_bswap64(x); }
-u16 ntobe16(u16 x) { return __builtin_bswap16(x); }
-u32 ntobe32(u32 x) { return __builtin_bswap32(x); }
-u64 ntobe64(u64 x) { return __builtin_bswap64(x); }
+#define le16toh(x) __uint16_identity(x)
+#define le32toh(x) __uint32_identity(x)
+#define le64toh(x) __uint64_identity(x)
+#define htole16(x) __uint16_identity(x)
+#define htole32(x) __uint32_identity(x)
+#define htole64(x) __uint64_identity(x)
+#define be16toh(x) __builtin_bswap16(x)
+#define be32toh(x) __builtin_bswap32(x)
+#define be64toh(x) __builtin_bswap64(x)
+#define htobe16(x) __builtin_bswap16(x)
+#define htobe32(x) __builtin_bswap32(x)
+#define htobe64(x) __builtin_bswap64(x)
 #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-u16 le16ton(u16 x) { __builtin_bswap16(x); }
-u32 le32ton(u32 x) { __builtin_bswap32(x); }
-u64 le64ton(u64 x) { __builtin_bswap64(x); }
-u16 ntole16(u16 x) { __builtin_bswap16(x); }
-u32 ntole32(u32 x) { __builtin_bswap32(x); }
-u64 ntole64(u64 x) { __builtin_bswap64(x); }
-u16 be16ton(u16 x) { return x; }
-u32 be32ton(u32 x) { return x; }
-u64 be64ton(u64 x) { return x; }
-u16 ntobe16(u16 x) { return x; }
-u32 ntobe32(u32 x) { return x; }
-u64 ntobe64(u64 x) { return x; }
+#define le16toh(x) __builtin_bswap16(x)
+#define le32toh(x) __builtin_bswap32(x)
+#define le64toh(x) __builtin_bswap64(x)
+#define htole16(x) __builtin_bswap16(x)
+#define htole32(x) __builtin_bswap32(x)
+#define htole64(x) __builtin_bswap64(x)
+#define be16toh(x) __uint16_identity(x)
+#define be32toh(x) __uint32_identity(x)
+#define be64toh(x) __uint64_identity(x)
+#define htobe16(x) __uint16_identity(x)
+#define htobe32(x) __uint32_identity(x)
+#define htobe64(x) __uint64_identity(x)
 #else
 #error machine architecture unsupported! Expected either big-endian or little-endian, make sure to use a compiler which defines __BYTE_ORDER__ (like clang or gcc)
+#endif
 #endif

@@ -1,9 +1,9 @@
 #include "nbt.h"
 
-#include <endian.h>
 #include <stddef.h>
 #include <string.h>
 
+#include "../util/compat/endian.h"
 #include "../util/types.h"
 
 /* returns the string length from a specific location in the buffer */
