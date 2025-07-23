@@ -40,6 +40,8 @@ int nbt_proc(void **restrict datout, u8 const *restrict buf, size_t len);
  * returns a boolean value. */
 atrb_const int nbt_isprim(u8 tag);
 
+/* gets the byte size of an NBT tag's data (excluding id and name), returns `0` upon error. */
+atrb_const size_t nbt_tagdatlen(u8 const *buf);
 
 /* gets the tag size of primitive types, returns `>0` on success, `<0` on failure */
 atrb_const int nbt_primsize(u8 tag);
