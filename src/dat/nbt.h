@@ -42,4 +42,4 @@ atrb_const int nbt_isprim(u8 tag);
 
 
 /* gets the tag size of primitive types, returns `>0` on success, `<0` on failure */
-atrb_const int nbt_prim_tagsize(u8 tag);
+atrb_const int nbt_primsize(u8 tag);

@@ -44,7 +44,7 @@ static u8 const *nbt_nexttag(u8 const *restrict buf) {
 	case NBT_I64:
 	case NBT_F32:
 	case NBT_F64:
-		nxt += nbt_prim_tagsize(*buf);
+		nxt += nbt_primsize(*buf);
 		return nxt;
 
 	case NBT_ARR_I64:
@@ -60,7 +60,7 @@ static u8 const *nbt_nexttag(u8 const *restrict buf) {
 		return nxt;
 
 	case NBT_LIST:
-		mems = nbt_prim_tagsize(*nxt);
+		mems = nbt_primsize(*nxt);
 		if (mems > 0) {
 			nxt += 1;
 			nxt += mems * nbt_arrlen(nxt);
@@ -87,7 +87,7 @@ int nbt_proc(void **restrict datout, u8 const *restrict buf, size_t len) {
 	return 0;
 }
 
-int nbt_prim_tagsize(u8 tag) {
+int nbt_primsize(u8 tag) {
 	switch (tag) {
 	case NBT_I8:  return 1;
 	case NBT_I16: return 2;
