@@ -37,12 +37,38 @@ static u8 const *nbt_nexttag(u8 const *restrict buf, u16 naml) {
 	return buf + naml + len + 3;
 }
 
+// TODO: not actually doing anything
+/* readies the output data for export, returns the new buffer position, or `NULL` upon an error (may be out of bounds) */
+static u8 const *nbt_proctag(u8 const *restrict buf, u16 slen) {
+	u8 const *ptr = buf + 3 + slen;
+	u8 dat[8];
+	size_t arrlen = 0;
+
+	switch (*buf) {
+	// integral types
+	case NBT_I8:  *dat = *ptr; return ptr;
+	case NBT_I16: *(u16 *)dat = be16toh(*(u16 *)ptr); return ptr + 2;
+	case NBT_I32: __attribute__((fallthrough));
+	case NBT_F32: *(u32 *)dat = be16toh(*(u32 *)ptr); return ptr + 4;
+	case NBT_I64: __attribute__((fallthrough));
+	case NBT_F64: *(u64 *)dat = be16toh(*(u64 *)ptr); return ptr + 8;
+
+	// arrays, handled differently
+	case NBT_LIST:    __attribute__((fallthrough));
+	case NBT_ARR_I8:  __attribute__((fallthrough));
+	case NBT_STR:     __attribute__((fallthrough));
+	case NBT_ARR_I32: __attribute__((fallthrough));
+	case NBT_ARR_I64:
+		// arrlen = nbt_arrbsize(ptr);
+		break;
+
+	default: return NULL;
+	}
+	if (!arrlen) return NULL;
+	return ptr + nbt_primsize(*buf);
+}
+
 int nbt_proc(void **restrict datout, u8 const *restrict buf, size_t len) {
-
-	// first byte should be a compound tag
-	if (*buf != NBT_COMPOUND) return 1;
-	uint ncomp = 1;
-
 	// ignore the first tag + its name, so we start with the juicy data
 	uint tmp = nbt_strlen(buf + 1) + 3;
 	buf += tmp;
