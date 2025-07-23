@@ -91,9 +91,9 @@ int nbt_prim_tagsize(u8 tag) {
 	switch (tag) {
 	case NBT_I8:  return 1;
 	case NBT_I16: return 2;
-	case NBT_I32: return 4;
-	case NBT_I64: return 8;
+	case NBT_I32:
 	case NBT_F32: return 4;
+	case NBT_I64:
 	case NBT_F64: return 8;
 	default:      return -1;
 	}
