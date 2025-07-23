@@ -38,11 +38,11 @@ static u8 const *nbt_nexttag(u8 const *restrict buf) {
 
 	uint mems = 0;
 	switch (*buf) {
-	case NBT_I8:
-	case NBT_I16:
-	case NBT_I32:
-	case NBT_I64:
-	case NBT_F32:
+	case NBT_I8:  __attribute__((fallthrough));
+	case NBT_I16: __attribute__((fallthrough));
+	case NBT_I32: __attribute__((fallthrough));
+	case NBT_I64: __attribute__((fallthrough));
+	case NBT_F32: __attribute__((fallthrough));
 	case NBT_F64:
 		nxt += nbt_primsize(*buf);
 		return nxt;
@@ -91,9 +91,9 @@ int nbt_primsize(u8 tag) {
 	switch (tag) {
 	case NBT_I8:  return 1;
 	case NBT_I16: return 2;
-	case NBT_I32:
+	case NBT_I32: __attribute__((fallthrough));
 	case NBT_F32: return 4;
-	case NBT_I64:
+	case NBT_I64: __attribute__((fallthrough));
 	case NBT_F64: return 8;
 	default:      return -1;
 	}
@@ -101,11 +101,11 @@ int nbt_primsize(u8 tag) {
 
 int nbt_isprim(u8 tag) {
 	switch (tag) {
-	case NBT_I8:
-	case NBT_I16:
-	case NBT_I32:
-	case NBT_F32:
-	case NBT_I64:
+	case NBT_I8:  __attribute__((fallthrough));
+	case NBT_I16: __attribute__((fallthrough));
+	case NBT_I32: __attribute__((fallthrough));
+	case NBT_F32: __attribute__((fallthrough));
+	case NBT_I64: __attribute__((fallthrough));
 	case NBT_F64:
 		return 1;
 	default:
