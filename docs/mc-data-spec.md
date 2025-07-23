@@ -22,7 +22,7 @@ note: UUID are stored as an integer array.
 | `0xA` | `compound`   | list of tags delimited with end tag |
 | `0xB` | `int array`  | `int32_t`     (len) -> `int32_t`    |
 | `0xC` | `long array` | `int32_t`     (len) -> `int64_t`    |
-[^be] [big-endian](https://en.wikipedia.org/wiki/Endianness)
+[^be]: [big-endian](https://en.wikipedia.org/wiki/Endianness)
 
 ## world data
 There is a difference between \*.mca and \*.mcr files.
