@@ -36,5 +36,10 @@ enum nbt_tagid {
 
 int nbt_proc(void **restrict datout, u8 const *restrict buf, size_t len);
 
+/* checks whether the tag is a primitive data tag. (not recommended for filtering tags, use a `switch`)
+ * returns a boolean value. */
+atrb_const int nbt_isprim(u8 tag);
+
+
 /* gets the tag size of primitive types, returns `>0` on success, `<0` on failure */
 atrb_const int nbt_prim_tagsize(u8 tag);
