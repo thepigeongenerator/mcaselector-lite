@@ -15,7 +15,7 @@ DEBUG   ?= 0
 CC      ?= cc
 LD      ?= ld
 CFLAGS  += -c -std=gnu99 -Wall -Wextra -Wpedantic -Ilib -MMD -MP
-LDFLAGS += -lm
+LDFLAGS += -flto -lm
 MARCH   ?= $(shell uname -m)
 KERNEL  ?= $(shell uname -s | tr '[:upper:]' '[:lower:]')
 
