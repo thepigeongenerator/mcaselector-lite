@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include "../util/atrb.h"
 #include "../util/types.h"
 
 /* NBT (named binary tag) is a tree data structure. Tags have a numeric type ID, name and a payload.
@@ -34,3 +35,6 @@ enum nbt_tagid {
 };
 
 int nbt_proc(void **restrict datout, u8 const *restrict buf, size_t len);
+
+/* gets the tag size of primitive types, returns `>0` on success, `<0` on failure */
+atrb_const int nbt_prim_tagsize(u8 tag);

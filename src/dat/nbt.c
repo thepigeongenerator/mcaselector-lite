@@ -29,19 +29,6 @@ static int nbt_cmpstr(char const *restrict matstr, u8 const *restrict buf) {
 	return strncmp(str, matstr, len);
 }
 
-/* gets the tag size of primitive types, returns `>0` on success, `<0` on failure */
-int nbt_prim_tagsize(u8 tag) {
-	switch (tag) {
-	case NBT_I8:  return 1;
-	case NBT_I16: return 2;
-	case NBT_I32: return 4;
-	case NBT_I64: return 8;
-	case NBT_F32: return 4;
-	case NBT_F64: return 8;
-	default:      return -1;
-	}
-}
-
 /* returns the (expected) pointer of the tag following this one.
  * `NBT_COMPOUND` and `NBT_END` tags are not valid for this function and should be handled separately.
  * `NULL` is returned if anything went wrong. */
@@ -98,4 +85,16 @@ int nbt_proc(void **restrict datout, u8 const *restrict buf, size_t len) {
 
 	// TODO: finish function
 	return 0;
+}
+
+int nbt_prim_tagsize(u8 tag) {
+	switch (tag) {
+	case NBT_I8:  return 1;
+	case NBT_I16: return 2;
+	case NBT_I32: return 4;
+	case NBT_I64: return 8;
+	case NBT_F32: return 4;
+	case NBT_F64: return 8;
+	default:      return -1;
+	}
 }
