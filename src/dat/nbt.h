@@ -34,7 +34,10 @@ enum nbt_tagid {
 	NBT_ARR_I64 = 0x0C,  // starts with a i32, denoting size, followed by the u32 data
 };
 
-int nbt_proc(void **restrict datout, u8 const *restrict buf, size_t len);
+struct nbt_path {
+	char const **restrict pat; // specifies the NBT path components as separate elements
+	i16 len;                   // specifies the length of the NBT elements
+};
 
 /* checks whether the tag is a primitive data tag. (not recommended for filtering tags, use a `switch`)
  * returns a boolean value. */
@@ -45,3 +48,6 @@ atrb_const size_t nbt_tagdatlen(u8 const *buf);
 
 /* gets the tag size of primitive types, returns `>0` on success, `<0` on failure */
 atrb_const int nbt_primsize(u8 tag);
+
+/* processes the uncompressed `NBT` data in `buf`, with a size of `len`. */
+atrb_nonnull(1, 3) int nbt_proc(struct nbt_path const *restrict paths, uint npaths, u8 const *restrict buf, size_t len);

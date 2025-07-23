@@ -1,5 +1,6 @@
 #include "nbt.h"
 
+#include <assert.h>
 #include <stddef.h>
 #include <string.h>
 
@@ -68,14 +69,56 @@ static u8 const *nbt_proctag(u8 const *restrict buf, u16 slen) {
 	return ptr + nbt_primsize(*buf);
 }
 
-int nbt_proc(void **restrict datout, u8 const *restrict buf, size_t len) {
-	// ignore the first tag + its name, so we start with the juicy data
-	uint tmp = nbt_strlen(buf + 1) + 3;
-	buf += tmp;
-	len -= tmp;
+/* finds which of `pats` is equivalent to `cmp`, assumes `cmp` is `≥len` bytes long */
+static char const *getpat(struct nbt_path const *restrict pats, uint npats, i16 dpt, char const *restrict cmp, u16 len) {
+	for (uint i = 0; i < npats; i++) {
+		if (strncmp(pats[i].pat[dpt], cmp, len) == 0)
+			return pats[i].pat[dpt];
+	}
+	return NULL;
+}
+
+// TODO: make the user do the looping
+int nbt_proc(struct nbt_path const *restrict pats, uint npats, u8 const *restrict buf, size_t len) {
+	// ensure first and last tag(s) are valid
+	if (buf[0] != NBT_COMPOUND || buf[len - 1] != NBT_END)
+		return 1;
+
+	i16 dpt = 0;
+	i16 mdpt = 0;
+
+	// acquire the maximum depth that we'll need to go (exclusive)
+	for (uint i = 0; i < npats; i++) {
+		int tmp = pats[i].len - mdpt;
+		mdpt += -(tmp > 0) & tmp;
+	}
+	assert(mdpt > 0);
+
+	// storing the segments of the current path
+	char const *cpat[mdpt - 1];
+	memset((void *)cpat, 0, mdpt - 1);
+
+	// looping through the different tags
+	u8 const *ptr = buf + nbt_strlen(buf + 1) + 3;
+	while (ptr < (buf + len) && dpt >= 0) {
+		u16 naml = nbt_strlen(ptr + 1);
+		char const *mat = getpat(pats, npats, dpt, (char *)(ptr + 3), naml);
+		cpat[dpt] = mat;
+
+		if (mat) {
+			switch (*ptr) {
+			case NBT_END:      dpt--; break;
+			case NBT_COMPOUND: dpt++; break;
+			default:           ptr = nbt_proctag(ptr, naml); break;
+			}
+		} else {
+			ptr = nbt_nexttag(ptr, naml);
+			if (!ptr) return 1;
+		}
+	}
 
 	// TODO: finish function
-	return 0;
+	return !dpt;
 }
 
 int nbt_primsize(u8 tag) {
