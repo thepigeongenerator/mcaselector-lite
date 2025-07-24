@@ -35,7 +35,7 @@ static const u8 *nbt_proctag(const u8 *restrict buf, u16 slen) {
 	case NBT_STR:     __attribute__((fallthrough));
 	case NBT_ARR_I32: __attribute__((fallthrough));
 	case NBT_ARR_I64:
-		// arrlen = nbt_arrbsize(ptr);
+		// TODO: arrlen = nbt_arrbsize(ptr);
 		break;
 
 	default: return NULL;
