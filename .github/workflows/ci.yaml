@@ -43,11 +43,7 @@ jobs:
           git clone https://github.com/microsoft/vcpkg.git "$VCPKG_ROOT"
           "$VCPKG_ROOT/bootstrap-vcpkg.sh"
           "$VCPKG_ROOT/vcpkg" install $DEPS_VCPKG
-      # compilation (using bulk compilation)
-      - run: make all CALL=compile -j || echo "JOB_FAILED=1" >>"$GITHUB_ENV"
-      # executing unit tests (using bulk flags)
-      - run: make all CALL=run DEBUG=test -j || echo "JOB_FAILED=1" >>"$GITHUB_ENV"
-      # exit if any errors occurred
-      - name: exit on errors
-        run: |
-          [ "$JOB_FAILED" != "1" ]
+      - name: compilation (using bulk compilation)
+        run: make all CALL=compile -j
+      - name: unit tests (using bulk flags)
+        run: make all CALL=run DEBUG=test -j
