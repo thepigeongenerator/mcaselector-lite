@@ -17,5 +17,5 @@
 #define fatal(s, ...)                                                                                           \
 	do {                                                                                                    \
 		printf("\033[101m" __FILE__ ":" MACRO_STR2(__LINE__) ": [FAT]: " s "\033[0m\n", ##__VA_ARGS__); \
-		exit(1);                                                                                        \
+		exit(EXIT_FAILURE);                                                                                        \
 	} while (0)
