@@ -24,16 +24,16 @@ static const u8 *nbt_proctag(const u8 *restrict buf, u16 slen) {
 	// integral types
 	case NBT_I8:  *dat = *ptr; return ptr;
 	case NBT_I16: *(u16 *)dat = be16toh(*(u16 *)ptr); return ptr + 2;
-	case NBT_I32: __attribute__((fallthrough));
+	case NBT_I32: // fall through
 	case NBT_F32: *(u32 *)dat = be16toh(*(u32 *)ptr); return ptr + 4;
-	case NBT_I64: __attribute__((fallthrough));
+	case NBT_I64: // fall through
 	case NBT_F64: *(u64 *)dat = be16toh(*(u64 *)ptr); return ptr + 8;
 
 	// arrays, handled differently
-	case NBT_LIST:    __attribute__((fallthrough));
-	case NBT_ARR_I8:  __attribute__((fallthrough));
-	case NBT_STR:     __attribute__((fallthrough));
-	case NBT_ARR_I32: __attribute__((fallthrough));
+	case NBT_LIST:
+	case NBT_ARR_I8:
+	case NBT_STR:
+	case NBT_ARR_I32:
 	case NBT_ARR_I64:
 		// TODO: arrlen = nbt_arrbsize(ptr);
 		break;
@@ -100,9 +100,9 @@ int nbt_primsize(u8 tag) {
 	switch (tag) {
 	case NBT_I8:  return 1;
 	case NBT_I16: return 2;
-	case NBT_I32: __attribute__((fallthrough));
+	case NBT_I32: // fall through
 	case NBT_F32: return 4;
-	case NBT_I64: __attribute__((fallthrough));
+	case NBT_I64: // fall through
 	case NBT_F64: return 8;
 	default:      return -1;
 	}
@@ -112,11 +112,11 @@ size_t nbt_tagdatlen(const u8 *restrict buf) {
 	size_t mems = 0;
 
 	switch (*buf) {
-	case NBT_I8:  __attribute__((fallthrough));
-	case NBT_I16: __attribute__((fallthrough));
-	case NBT_I32: __attribute__((fallthrough));
-	case NBT_F32: __attribute__((fallthrough));
-	case NBT_I64: __attribute__((fallthrough));
+	case NBT_I8:
+	case NBT_I16:
+	case NBT_I32:
+	case NBT_F32:
+	case NBT_I64:
 	case NBT_F64:
 		mems = nbt_primsize(*buf);
 		return -(mems >= 0) & mems;
@@ -137,11 +137,11 @@ size_t nbt_tagdatlen(const u8 *restrict buf) {
 
 int nbt_isprim(u8 tag) {
 	switch (tag) {
-	case NBT_I8:  __attribute__((fallthrough));
-	case NBT_I16: __attribute__((fallthrough));
-	case NBT_I32: __attribute__((fallthrough));
-	case NBT_F32: __attribute__((fallthrough));
-	case NBT_I64: __attribute__((fallthrough));
+	case NBT_I8:
+	case NBT_I16:
+	case NBT_I32:
+	case NBT_F32:
+	case NBT_I64:
 	case NBT_F64:
 		return 1;
 	default:
