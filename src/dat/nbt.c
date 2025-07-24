@@ -7,20 +7,21 @@
 #include "../util/compat/endian.h"
 #include "../util/types.h"
 
-/* returns the string length from a specific location in the buffer */
-static inline u16 nbt_strlen(const u8 *restrict buf) {
-	return be16toh(*(u16 *)(buf));
-}
-
 /* returns the length of an array from a specific location in the buffer */
 static inline i32 nbt_arrlen(const u8 *restrict buf) {
 	return be32toh(*(i32 *)(buf));
 }
 
+const u8 *nbt_nexttag(const u8 *restrict buf, u16 naml) {
+	size_t len = nbt_tagdatlen(buf);
+	if (!len) return NULL; // TODO: compound tags should be handled here
+	return buf + naml + len + 3;
+}
+
 /* compares the string in `buf` to `matstr`.
  * returns `=0` if equal, `>0` if buf is greater, `<0` if matstr is greater. */
 static int nbt_cmpstr(const char *restrict matstr, const u8 *restrict buf) {
-	u16 len = nbt_strlen(buf);
+	u16 len = be16toh(*(u16 *)buf);
 
 	// allocate and copy bytes
 	char str[len + 1];
@@ -28,14 +29,6 @@ static int nbt_cmpstr(const char *restrict matstr, const u8 *restrict buf) {
 	str[len] = '\0';
 
 	return strncmp(str, matstr, len);
-}
-
-/* returns the (expected) pointer of the tag following this one.
- * `NULL` is returned if anything went wrong. */
-static const u8 *nbt_nexttag(const u8 *restrict buf, u16 naml) {
-	size_t len = nbt_tagdatlen(buf);
-	if (!len) return NULL; // TODO: compound tags should be handled here
-	return buf + naml + len + 3;
 }
 
 // TODO: not actually doing anything
@@ -99,9 +92,9 @@ int nbt_proc(struct nbt_path const *restrict pats, uint npats, const u8 *restric
 	memset((void *)cpat, 0, mdpt - 1);
 
 	// looping through the different tags
-	const u8 *ptr = buf + nbt_strlen(buf + 1) + 3;
+	const u8 *ptr = buf + nbt_namelen(buf) + 3;
 	while (ptr < (buf + len) && dpt >= 0) {
-		u16 naml = nbt_strlen(ptr + 1);
+		u16 naml = nbt_namelen(ptr);
 		const char *mat = getpat(pats, npats, dpt, (char *)(ptr + 3), naml);
 		cpat[dpt] = mat;
 
@@ -150,7 +143,7 @@ size_t nbt_tagdatlen(const u8 *restrict buf) {
 	case NBT_ARR_I32: mems += sizeof(i32) - sizeof(i8); __attribute__((fallthrough));
 	case NBT_ARR_I8:  return +mems * nbt_arrlen(buf) + 4;
 
-	case NBT_STR: return nbt_strlen(buf) + 2;
+	case NBT_STR: return be16toh(*(u16 *)buf) + 2;
 
 	case NBT_LIST:
 		mems = nbt_primsize(*buf);

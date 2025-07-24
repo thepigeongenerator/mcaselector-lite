@@ -2,6 +2,7 @@
 // Licensed under the MIT Licence. See LICENSE for details
 #pragma once
 
+#include <assert.h>
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -38,6 +39,16 @@ struct nbt_path {
 	const char **restrict pat; // specifies the NBT path components as separate elements
 	i16 len;                   // specifies the length of the NBT elements
 };
+
+/* returns the name length of a specific tag. `buf` is the pointer to start of the tag */
+atrb_pure atrb_nonnull(1) static inline u16 nbt_namelen(const u8 *restrict buf) {
+	assert(*buf != NBT_END);
+	return be16toh(*(u16 *)(buf + 1));
+}
+
+/* returns the (expected) pointer of the tag following this one.
+ * `NULL` is returned if anything went wrong. */
+atrb_pure atrb_nonnull(1) const u8 *nbt_nexttag(const u8 *restrict buf, u16 naml);
 
 /* checks whether the tag is a primitive data tag. (not recommended for filtering tags, use a `switch`)
  * returns a boolean value. */
