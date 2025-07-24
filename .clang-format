@@ -87,7 +87,7 @@ BinPackArguments:  true
 DerivePointerAlignment: false
 PointerAlignment:   Right
 ReferenceAlignment: Pointer
-QualifierAlignment: Right
+QualifierAlignment: Left
 
 # ---------------------------
 # include settings and sorting
