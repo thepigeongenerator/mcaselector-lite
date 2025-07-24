@@ -8,18 +8,18 @@
 #include "../util/types.h"
 
 /* returns the string length from a specific location in the buffer */
-static inline u16 nbt_strlen(u8 const *restrict buf) {
+static inline u16 nbt_strlen(const u8 *restrict buf) {
 	return be16toh(*(u16 *)(buf));
 }
 
 /* returns the length of an array from a specific location in the buffer */
-static inline i32 nbt_arrlen(u8 const *restrict buf) {
+static inline i32 nbt_arrlen(const u8 *restrict buf) {
 	return be32toh(*(i32 *)(buf));
 }
 
 /* compares the string in `buf` to `matstr`.
  * returns `=0` if equal, `>0` if buf is greater, `<0` if matstr is greater. */
-static int nbt_cmpstr(char const *restrict matstr, u8 const *restrict buf) {
+static int nbt_cmpstr(const char *restrict matstr, const u8 *restrict buf) {
 	u16 len = nbt_strlen(buf);
 
 	// allocate and copy bytes
@@ -32,7 +32,7 @@ static int nbt_cmpstr(char const *restrict matstr, u8 const *restrict buf) {
 
 /* returns the (expected) pointer of the tag following this one.
  * `NULL` is returned if anything went wrong. */
-static u8 const *nbt_nexttag(u8 const *restrict buf, u16 naml) {
+static const u8 *nbt_nexttag(const u8 *restrict buf, u16 naml) {
 	size_t len = nbt_tagdatlen(buf);
 	if (!len) return NULL; // TODO: compound tags should be handled here
 	return buf + naml + len + 3;
@@ -40,8 +40,8 @@ static u8 const *nbt_nexttag(u8 const *restrict buf, u16 naml) {
 
 // TODO: not actually doing anything
 /* readies the output data for export, returns the new buffer position, or `NULL` upon an error (may be out of bounds) */
-static u8 const *nbt_proctag(u8 const *restrict buf, u16 slen) {
-	u8 const *ptr = buf + 3 + slen;
+static const u8 *nbt_proctag(const u8 *restrict buf, u16 slen) {
+	const u8 *ptr = buf + 3 + slen;
 	u8 dat[8];
 	size_t arrlen = 0;
 
@@ -70,7 +70,7 @@ static u8 const *nbt_proctag(u8 const *restrict buf, u16 slen) {
 }
 
 /* finds which of `pats` is equivalent to `cmp`, assumes `cmp` is `≥len` bytes long */
-static char const *getpat(struct nbt_path const *restrict pats, uint npats, i16 dpt, char const *restrict cmp, u16 len) {
+static const char *getpat(struct nbt_path const *restrict pats, uint npats, i16 dpt, const char *restrict cmp, u16 len) {
 	for (uint i = 0; i < npats; i++) {
 		if (strncmp(pats[i].pat[dpt], cmp, len) == 0)
 			return pats[i].pat[dpt];
@@ -79,7 +79,7 @@ static char const *getpat(struct nbt_path const *restrict pats, uint npats, i16 
 }
 
 // TODO: make the user do the looping
-int nbt_proc(struct nbt_path const *restrict pats, uint npats, u8 const *restrict buf, size_t len) {
+int nbt_proc(struct nbt_path const *restrict pats, uint npats, const u8 *restrict buf, size_t len) {
 	// ensure first and last tag(s) are valid
 	if (buf[0] != NBT_COMPOUND || buf[len - 1] != NBT_END)
 		return 1;
@@ -95,14 +95,14 @@ int nbt_proc(struct nbt_path const *restrict pats, uint npats, u8 const *restric
 	assert(mdpt > 0);
 
 	// storing the segments of the current path
-	char const *cpat[mdpt - 1];
+	const char *cpat[mdpt - 1];
 	memset((void *)cpat, 0, mdpt - 1);
 
 	// looping through the different tags
-	u8 const *ptr = buf + nbt_strlen(buf + 1) + 3;
+	const u8 *ptr = buf + nbt_strlen(buf + 1) + 3;
 	while (ptr < (buf + len) && dpt >= 0) {
 		u16 naml = nbt_strlen(ptr + 1);
-		char const *mat = getpat(pats, npats, dpt, (char *)(ptr + 3), naml);
+		const char *mat = getpat(pats, npats, dpt, (char *)(ptr + 3), naml);
 		cpat[dpt] = mat;
 
 		if (mat) {
@@ -133,7 +133,7 @@ int nbt_primsize(u8 tag) {
 	}
 }
 
-size_t nbt_tagdatlen(u8 const *restrict buf) {
+size_t nbt_tagdatlen(const u8 *restrict buf) {
 	size_t mems = 0;
 
 	switch (*buf) {

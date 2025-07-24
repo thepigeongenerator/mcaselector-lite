@@ -17,7 +17,7 @@
 #define WIN_DEFAULT_HEIGHT 480
 
 // callback for GLFW errors
-static void error_callback(int err, char const *const msg) {
+static void error_callback(int err, const char *const msg) {
 	fprintf(stderr, "\033[91mE: glfw returned (%i); \"%s\"\033[0m\n", err, msg);
 }
 

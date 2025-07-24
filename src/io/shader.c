@@ -12,7 +12,7 @@
 #define NAM_E(name) _binary_res_##name##_end   // name of an end variable
 
 // macro for generating the variable declarations
-#define DEF_GLSL(name)               \
+#define DEF_GLSL(name)                   \
 	extern char const NAM_S(name)[]; \
 	extern char const NAM_E(name)[]
 
@@ -24,7 +24,7 @@ DEF_GLSL(sh_geom_glsl);
 // NOLINTEND
 
 /* compile a shader */
-static GLuint shader_compile(GLenum type, char const* src, size_t len) {
+static GLuint shader_compile(GLenum type, const char *src, size_t len) {
 	int ilen = len;
 	GLuint shader = glCreateShader(type);
 	glShaderSource(shader, 1, &src, &ilen);

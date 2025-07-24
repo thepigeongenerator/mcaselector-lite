@@ -4,4 +4,4 @@
 
 #include <GLFW/glfw3.h>
 
-void key_callback(GLFWwindow* win, int key, int scancode, int action, int mods);
+void key_callback(GLFWwindow *win, int key, int scancode, int action, int mods);

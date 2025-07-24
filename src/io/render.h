@@ -7,4 +7,4 @@
 #include <GLFW/glfw3.h>
 
 int render_init(void);
-void render_update(GLFWwindow* win);
+void render_update(GLFWwindow *win);

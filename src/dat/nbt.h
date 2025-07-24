@@ -35,7 +35,7 @@ enum nbt_tagid {
 };
 
 struct nbt_path {
-	char const **restrict pat; // specifies the NBT path components as separate elements
+	const char **restrict pat; // specifies the NBT path components as separate elements
 	i16 len;                   // specifies the length of the NBT elements
 };
 
@@ -44,10 +44,10 @@ struct nbt_path {
 atrb_const int nbt_isprim(u8 tag);
 
 /* gets the byte size of an NBT tag's data (excluding id and name), returns `0` upon error. */
-atrb_const size_t nbt_tagdatlen(u8 const *buf);
+atrb_const size_t nbt_tagdatlen(const u8 *buf);
 
 /* gets the tag size of primitive types, returns `>0` on success, `<0` on failure */
 atrb_const int nbt_primsize(u8 tag);
 
 /* processes the uncompressed `NBT` data in `buf`, with a size of `len`. */
-atrb_nonnull(1, 3) int nbt_proc(struct nbt_path const *restrict paths, uint npaths, u8 const *restrict buf, size_t len);
+atrb_nonnull(1, 3) int nbt_proc(struct nbt_path const *restrict paths, uint npaths, const u8 *restrict buf, size_t len);

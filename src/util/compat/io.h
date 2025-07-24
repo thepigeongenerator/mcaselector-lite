@@ -13,7 +13,7 @@
 
 /* tests a files access with F_OK, X_OK, R_OK, W_OK OR'd together
    returns 0 upon success. -1 when errno is set and anything else when one or more of the permissions isn't set */
-static inline int faccess(char const *restrict fname, int perms);
+static inline int faccess(const char *restrict fname, int perms);
 
 // define the constants if they haven't been
 #ifndef F_OK

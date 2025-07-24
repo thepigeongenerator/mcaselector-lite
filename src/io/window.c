@@ -16,7 +16,7 @@
 #define WIN_DEFAULT_WIDTH  640
 #define WIN_DEFAULT_HEIGHT 480
 
-static GLFWwindow* win = NULL;
+static GLFWwindow *win = NULL;
 
 int window_init(void) {
 #ifndef NDEBUG

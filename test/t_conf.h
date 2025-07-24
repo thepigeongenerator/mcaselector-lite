@@ -19,7 +19,7 @@ struct test_getpat_envdat {
 
 /* save the current environment variables */
 static void env_save(struct test_getpat_envdat *s) {
-	char const *tmp;
+	const char *tmp;
 
 	tmp = getenv("XDG_CONFIG_HOME");
 	s->xdg_config_home = tmp ? strdup(tmp) : NULL;
@@ -64,9 +64,9 @@ static void env_restore(struct test_getpat_envdat *s) {
 
 /* check procbuf's functionality */
 struct test_procbuf {
-	char const *in;   // data in
-	char const *xkey; // expected key
-	char const *xval; // expected value
+	const char *in;   // data in
+	const char *xkey; // expected key
+	const char *xval; // expected value
 	int xret;         // expected return type
 };
 int test_procbuf(void *arg) {
@@ -81,7 +81,7 @@ int test_procbuf(void *arg) {
 
 /* check matchopt functionality */
 struct test_matchopt {
-	char const *key; // key to search for (key1, key2, key3)
+	const char *key; // key to search for (key1, key2, key3)
 	int xidx;        // expect index (<0 is NULL, may not be more than 2)
 };
 int test_matchopt(void *arg) {
@@ -96,7 +96,7 @@ int test_matchopt(void *arg) {
 }
 
 struct test_procval_int {
-	char const *val;
+	const char *val;
 	u64 xres;
 	u8 type;
 };
