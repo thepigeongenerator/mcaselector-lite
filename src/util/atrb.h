@@ -14,11 +14,11 @@
 #define atrb_format(...)  __attribute__((format(__VA_ARGS__)))
 #define atrb_nonnull(...) __attribute__((nonnull(__VA_ARGS__)))
 #elif defined(_MSC_VER)
-#define atrb            __declspec
+#define atrb(...)       __declspec(__VA_ARGS__)
 #define atrb_deprecated __declspec(deprecated)
 #define atrb_noreturn   __declspec(noreturn)
 #else
-#define atrb
+#define atrb()
 #define atrb_deprecated
 #define atrb_unused
 #define atrb_pure
