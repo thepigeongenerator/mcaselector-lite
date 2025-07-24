@@ -7,11 +7,6 @@
 #include "../util/compat/endian.h"
 #include "../util/types.h"
 
-/* returns the length of an array from a specific location in the buffer */
-static inline i32 nbt_arrlen(const u8 *restrict buf) {
-	return be32toh(*(i32 *)(buf));
-}
-
 const u8 *nbt_nexttag(const u8 *restrict buf, u16 naml) {
 	size_t len = nbt_tagdatlen(buf);
 	if (!len) return NULL; // TODO: compound tags should be handled here
@@ -141,13 +136,13 @@ size_t nbt_tagdatlen(const u8 *restrict buf) {
 
 	case NBT_ARR_I64: mems += sizeof(i64) - sizeof(i32); __attribute__((fallthrough));
 	case NBT_ARR_I32: mems += sizeof(i32) - sizeof(i8); __attribute__((fallthrough));
-	case NBT_ARR_I8:  return +mems * nbt_arrlen(buf) + 4;
+	case NBT_ARR_I8:  return +mems * (i32)be32toh(*(u32 *)(buf)) + 4;
 
 	case NBT_STR: return be16toh(*(u16 *)buf) + 2;
 
 	case NBT_LIST:
 		mems = nbt_primsize(*buf);
-		if (mems > 0) return mems * nbt_arrlen(buf + 1) + 5;
+		if (mems > 0) return mems * (i32)be32toh(*(u32 *)(buf + 1)) + 5;
 		return 0;
 	default: return 0;
 	}
