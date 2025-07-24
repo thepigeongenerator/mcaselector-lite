@@ -13,19 +13,6 @@ const u8 *nbt_nexttag(const u8 *restrict buf, u16 naml) {
 	return buf + naml + len + 3;
 }
 
-/* compares the string in `buf` to `matstr`.
- * returns `=0` if equal, `>0` if buf is greater, `<0` if matstr is greater. */
-static int nbt_cmpstr(const char *restrict matstr, const u8 *restrict buf) {
-	u16 len = be16toh(*(u16 *)buf);
-
-	// allocate and copy bytes
-	char str[len + 1];
-	memcpy(str, buf + 2, len);
-	str[len] = '\0';
-
-	return strncmp(str, matstr, len);
-}
-
 // TODO: not actually doing anything
 /* readies the output data for export, returns the new buffer position, or `NULL` upon an error (may be out of bounds) */
 static const u8 *nbt_proctag(const u8 *restrict buf, u16 slen) {
