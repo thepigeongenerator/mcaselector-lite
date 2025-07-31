@@ -2,29 +2,68 @@
 // Licensed under the MIT Licence. See LICENSE for details
 #pragma once
 
-// define the attributes where possible
-#if defined(__GNUC__) || defined(__clang__)
-#define atrb(...)         __attribute__(__VA_ARGS__)
-#define atrb_deprecated   __attribute__((depricated))
-#define atrb_unused       __attribute__((unused))
-#define atrb_pure         __attribute__((pure))
-#define atrb_const        __attribute__((const))
-#define atrb_noreturn     __attribute__((noreturn))
-#define atrb_malloc       __attribute__((malloc))
-#define atrb_format(...)  __attribute__((format(__VA_ARGS__)))
-#define atrb_nonnull(...) __attribute__((nonnull(__VA_ARGS__)))
-#elif defined(_MSC_VER)
-#define atrb(...)       __declspec(__VA_ARGS__)
-#define atrb_deprecated __declspec(deprecated)
-#define atrb_noreturn   __declspec(noreturn)
+#if defined(__GNUC__)
+#if __has_attribute(__pure__)
+#define PURE __attribute__((__pure__))
 #else
-#define atrb()
-#define atrb_deprecated
-#define atrb_unused
-#define atrb_pure
-#define atrb_const
-#define atrb_noreturn
-#define atrb_malloc
-#define atrb_format()
-#define atrb_nonnull()
+#define PURE
 #endif
+
+#if __has_attribute(__const__)
+#define CONST __attribute__((__const__))
+#else
+#define CONST
+#endif
+
+#if __has_attribute(__noreturn__)
+#define NORET __attribute__((__noreturn__))
+#else
+#define NORET
+#endif
+
+#if __has_attribute(__malloc__)
+#define MALLOC __attribute__((__malloc__))
+#else
+#define MALLOC
+#endif
+
+#if __has_attribute(__used__)
+#define USED __attribute__((__used__))
+#else
+#define USED
+#endif
+
+#if __has_attribute(__unused__)
+#define UNUSED __attribute__((__unused__))
+#else
+#define UNUSED
+#endif
+
+#if __has_attribute(__deprecated__)
+#define DEPRECATED __attribute__((__deprecated__))
+#else
+#define DEPRECATED
+#endif
+
+#if __has_attribute(__format__)
+#define FORMAT(...) __attribute__((format(__VA_ARGS__)))
+#else
+#define FORMAT(...)
+#endif
+
+#if __has_attribute(__nonnull__)
+#define NONNULL(...) __attribute__((nonnull(__VA_ARGS__)))
+#else
+#define NONNULL(...)
+#endif
+#endif
+
+#define atrb_deprecated DEPRECATED
+#define atrb_used       USED
+#define atrb_unused     UNUSED
+#define atrb_pure       PURE
+#define atrb_const      CONST
+#define atrb_noreturn   NORET
+#define atrb_malloc     MALLOC
+#define atrb_format     FORMAT
+#define atrb_nonnull    NONNULL
