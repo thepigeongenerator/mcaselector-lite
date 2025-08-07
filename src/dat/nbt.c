@@ -48,7 +48,7 @@ size_t nbt_tagdatlen(const u8 *restrict buf) {
 
 	case NBT_ARR_I64: mems += sizeof(i64) - sizeof(i32); __attribute__((fallthrough));
 	case NBT_ARR_I32: mems += sizeof(i32) - sizeof(i8); __attribute__((fallthrough));
-	case NBT_ARR_I8:  return +mems * (i32)be32toh(*(u32 *)(buf)) + 4;
+	case NBT_ARR_I8:  return ++mems * (i32)be32toh(*(u32 *)(buf)) + 4;
 
 	case NBT_STR: return be16toh(*(u16 *)buf) + 2;
 
