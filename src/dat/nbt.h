@@ -44,10 +44,6 @@ struct nbt_path {
 /* gets the tag size of primitive types, returns `>0` on success, `<0` on failure */
 CONST int nbt_primsize(u8 tag);
 
-/* checks whether the tag is a primitive data tag. (not recommended for filtering tags, use a `switch`)
- * returns a boolean value. */
-CONST int nbt_isprim(u8 tag);
-
 /* searches for the end of a compound tag without processing data, the final pointer is returned.
  * `NULL` is returned upon failure, the otherwise returned pointer is not guaranteed to be valid.
  * `cdat` is assumed to be the start of the **compound tag's data**. */

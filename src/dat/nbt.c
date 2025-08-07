@@ -7,20 +7,6 @@
 #include "../util/compat/endian.h"
 #include "../util/types.h"
 
-int nbt_isprim(u8 tag) {
-	switch (tag) {
-	case NBT_I8:
-	case NBT_I16:
-	case NBT_I32:
-	case NBT_F32:
-	case NBT_I64:
-	case NBT_F64:
-		return 1;
-	default:
-		return 0;
-	}
-}
-
 int nbt_primsize(u8 tag) {
 	switch (tag) {
 	case NBT_I8:  return 1;
