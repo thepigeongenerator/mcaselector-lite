@@ -41,6 +41,13 @@ struct nbt_path {
 	i16 len;                   // specifies the length of the NBT elements
 };
 
+/* gets the tag size of primitive types, returns `>0` on success, `<0` on failure */
+CONST int nbt_primsize(u8 tag);
+
+/* checks whether the tag is a primitive data tag. (not recommended for filtering tags, use a `switch`)
+ * returns a boolean value. */
+CONST int nbt_isprim(u8 tag);
+
 /* returns the name length of a specific tag. `buf` is the pointer to start of the tag */
 atrb_pure atrb_nonnull(1) static inline u16 nbt_namelen(const u8 *restrict buf) {
 	assert(*buf != NBT_END);
@@ -51,15 +58,8 @@ atrb_pure atrb_nonnull(1) static inline u16 nbt_namelen(const u8 *restrict buf) 
  * `NULL` is returned if anything went wrong. */
 atrb_pure atrb_nonnull(1) const u8 *nbt_nexttag(const u8 *restrict buf, u16 naml);
 
-/* checks whether the tag is a primitive data tag. (not recommended for filtering tags, use a `switch`)
- * returns a boolean value. */
-atrb_const int nbt_isprim(u8 tag);
-
 /* gets the byte size of an NBT tag's data (excluding id and name), returns `0` upon error. */
 atrb_pure size_t nbt_tagdatlen(const u8 *buf);
-
-/* gets the tag size of primitive types, returns `>0` on success, `<0` on failure */
-atrb_const int nbt_primsize(u8 tag);
 
 /* processes the uncompressed `NBT` data in `buf`, with a size of `len`. */
 atrb_nonnull(1, 3) int nbt_proc(struct nbt_path const *restrict paths, uint npaths, const u8 *restrict buf, size_t len);
