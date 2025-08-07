@@ -48,18 +48,25 @@ CONST int nbt_primsize(u8 tag);
  * returns a boolean value. */
 CONST int nbt_isprim(u8 tag);
 
+/* searches for the end of a compound tag without processing data, the final pointer is returned.
+ * `NULL` is returned upon failure, the otherwise returned pointer is not guaranteed to be valid.
+ * `cdat` is assumed to be the start of the **compound tag's data**. */
+PURE NONNULL((1)) const u8 *nbt_nextcompound(const u8 *restrict cdat);
+
+/* searches for the end of a list tag without processing data, the final pointer is returned.
+ * `NULL` is returned upon failure, the otherwise returned pointer is not guaranteed to be valid.
+ * `ldat` is assumed to be the start of the **list tag's data.** */
+PURE NONNULL((1)) const u8 *nbt_nextlist(const u8 *restrict ldat);
+
+/* searches for the end of a named tag without processing data, the final pointer is returned.
+ * `NULL` is returned upon failure, the otherwise returned pointer is not guaranteed to be valid. */
+PURE NONNULL((1)) const u8 *nbt_nexttag(const u8 *restrict buf, u16 naml);
+
 /* returns the name length of a specific tag. `buf` is the pointer to start of the tag */
 atrb_pure atrb_nonnull(1) static inline u16 nbt_namelen(const u8 *restrict buf) {
 	assert(*buf != NBT_END);
 	return be16toh(*(u16 *)(buf + 1));
 }
-
-/* returns the (expected) pointer of the tag following this one.
- * `NULL` is returned if anything went wrong. */
-atrb_pure atrb_nonnull(1) const u8 *nbt_nexttag(const u8 *restrict buf, u16 naml);
-
-/* gets the byte size of an NBT tag's data (excluding id and name), returns `0` upon error. */
-atrb_pure size_t nbt_tagdatlen(const u8 *buf);
 
 /* processes the uncompressed `NBT` data in `buf`, with a size of `len`. */
 atrb_nonnull(1, 3) int nbt_proc(struct nbt_path const *restrict paths, uint npaths, const u8 *restrict buf, size_t len);

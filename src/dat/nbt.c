@@ -33,7 +33,44 @@ int nbt_primsize(u8 tag) {
 	}
 }
 
-size_t nbt_tagdatlen(const u8 *restrict buf) {
+const u8 *nbt_nextcompound(const u8 *restrict cdat) {
+	return NULL;
+}
+
+const u8 *nbt_nextlist(const u8 *restrict ldat) {
+	const u8 *ptr = ldat + 5;
+	i32 len = be32toh(*(u32 *)(ldat + 1));
+
+	switch (*ldat) {
+	case NBT_I8:
+	case NBT_I16:
+	case NBT_I32:
+	case NBT_I64:
+	case NBT_F32:
+	case NBT_F64:
+		return ptr + nbt_primsize(*ldat) * len;
+
+	// loop for each compound, whilst `ptr` isn't `NULL`
+	case NBT_COMPOUND: {
+		for (u32 i = 0; i < (u32)len && ptr; i++) {
+			ptr = nbt_nextcompound(ptr);
+		}
+		return ptr;
+	}
+
+	// TODO: implement list/array/string handling
+	case NBT_STR:
+	case NBT_ARR_I8:
+	case NBT_ARR_I32:
+	case NBT_ARR_I64:
+	case NBT_LIST:
+	default:
+		return NULL;
+	}
+}
+
+const u8 *nbt_nexttag(const u8 *restrict buf, u16 naml) {
+	const u8 *ptr = buf + naml + 3;
 	size_t mems = 0;
 
 	switch (*buf) {
@@ -43,27 +80,17 @@ size_t nbt_tagdatlen(const u8 *restrict buf) {
 	case NBT_F32:
 	case NBT_I64:
 	case NBT_F64:
-		mems = nbt_primsize(*buf);
-		return -(mems >= 0) & mems;
+		return ptr + nbt_primsize(*buf);
 
 	case NBT_ARR_I64: mems += sizeof(i64) - sizeof(i32); __attribute__((fallthrough));
 	case NBT_ARR_I32: mems += sizeof(i32) - sizeof(i8); __attribute__((fallthrough));
-	case NBT_ARR_I8:  return ++mems * (i32)be32toh(*(u32 *)(buf)) + 4;
+	case NBT_ARR_I8:  return ptr + ++mems * (i32)be32toh(*(u32 *)(ptr)) + 4;
 
-	case NBT_STR: return be16toh(*(u16 *)buf) + 2;
+	case NBT_STR:  return ptr + be16toh(*(u16 *)(ptr)) + 2;
+	case NBT_LIST: return nbt_nextlist(ptr);
 
-	case NBT_LIST:
-		mems = nbt_primsize(*buf);
-		if (mems > 0) return mems * (i32)be32toh(*(u32 *)(buf + 1)) + 5;
-		return 0;
-	default: return 0;
+	default: return NULL;
 	}
-}
-
-const u8 *nbt_nexttag(const u8 *restrict buf, u16 naml) {
-	size_t len = nbt_tagdatlen(buf);
-	if (!len) return NULL; // TODO: compound tags should be handled here
-	return buf + naml + len + 3;
 }
 
 // TODO: not actually doing anything
