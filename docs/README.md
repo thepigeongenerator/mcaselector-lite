@@ -18,3 +18,7 @@ MCA selector is a tool written in Java. Where it depends upon JRE21 and JavaFX. 
 The goal of this project is to create a version of the original MCA selector, but written in C, leveraging the improved performance due to native execution and more low-level control.
 I have picked C as the language for the core portions of the application, where I prefer fine-grained control with little abstractions.
 This version is not intended to serve to entirely replace MCA selector, just to offer an alternative. Both tools will have their strengths and weaknesses.
+
+# planned features
+- [ ] CLI-only version
+- [ ] filtering chunks based on time spent in them
