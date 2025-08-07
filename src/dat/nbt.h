@@ -36,13 +36,19 @@ enum nbt_tagid {
 	NBT_ARR_I64 = 0x0C,  // starts with a i32, denoting size, followed by the u32 data
 };
 
+/* TODO: write doc */
 struct nbt_path {
 	const char **restrict pat; // specifies the NBT path components as separate elements
 	i16 len;                   // specifies the length of the NBT elements
 };
 
-/* gets the tag size of primitive types, returns `>0` on success, `<0` on failure */
-CONST int nbt_primsize(u8 tag);
+/* TODO: write doc */
+struct nbt_procdat {
+	const struct nbt_path *pats;
+	const char *restrict *cpat;
+	u32 npats;
+	i16 dpt, mdpt;
+};
 
 /* searches for the end of a compound tag without processing data, the final pointer is returned.
  * `NULL` is returned upon failure, the otherwise returned pointer is not guaranteed to be valid.
@@ -64,5 +70,5 @@ atrb_pure atrb_nonnull(1) static inline u16 nbt_namelen(const u8 *restrict buf) 
 	return be16toh(*(u16 *)(buf + 1));
 }
 
-/* processes the uncompressed `NBT` data in `buf`, with a size of `len`. */
-atrb_nonnull(1, 3) int nbt_proc(struct nbt_path const *restrict paths, uint npaths, const u8 *restrict buf, size_t len);
+/* initialises a data structure used whilst processing the tags */
+PURE NONNULL((1)) struct nbt_procdat nbt_initproc(struct nbt_path const *restrict pats, uint npats);
