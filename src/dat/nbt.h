@@ -64,11 +64,5 @@ PURE NONNULL((1)) const u8 *nbt_nextlist(const u8 *restrict ldat);
  * `NULL` is returned upon failure, the otherwise returned pointer is not guaranteed to be valid. */
 PURE NONNULL((1)) const u8 *nbt_nexttag(const u8 *restrict buf, u16 naml);
 
-/* returns the name length of a specific tag. `buf` is the pointer to start of the tag */
-atrb_pure atrb_nonnull(1) static inline u16 nbt_namelen(const u8 *restrict buf) {
-	assert(*buf != NBT_END);
-	return be16toh(*(u16 *)(buf + 1));
-}
-
 /* initialises a data structure used whilst processing the tags */
 PURE NONNULL((1)) struct nbt_procdat nbt_initproc(struct nbt_path const *restrict pats, uint npats);
