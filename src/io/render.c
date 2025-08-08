@@ -8,7 +8,7 @@
 #include <stdint.h>
 
 #include "../error.h"
-#include "../util/types.h"
+#include "../util/intdef.h"
 #include "shader.h"
 
 #define VERTC 3

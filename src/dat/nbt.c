@@ -7,7 +7,7 @@
 #include <string.h>
 
 #include "../util/compat/endian.h"
-#include "../util/types.h"
+#include "../util/intdef.h"
 
 int nbt_primsize(u8 tag) {
 	switch (tag) {

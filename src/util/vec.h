@@ -1,6 +1,6 @@
 #pragma once
 
-#include "types.h"
+#include "intdef.h"
 
 #if defined(__has_attribute) && __has_attribute(vector_size)
 typedef float fvec2 __attribute__((vector_size(sizeof(float) * 2))); // SMID vector for 2 `float`

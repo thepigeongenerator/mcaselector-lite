@@ -12,9 +12,9 @@
 
 #include "../error.h"
 #include "atrb.h"
-#include "types.h"
+#include "intdef.h"
 
-int conf_procbuf(char const *restrict buf, char *restrict kout, char *restrict vout, size_t len) {
+int conf_procbuf(const char *restrict buf, char *restrict kout, char *restrict vout, size_t len) {
 	bool feq = false; // whether we've found the equal sign
 
 	// data traversal
@@ -53,7 +53,7 @@ int conf_procbuf(char const *restrict buf, char *restrict kout, char *restrict v
 	return (pos == kout) ? CONF_ENODAT : (!feq ? CONF_ESYNTAX : 0);
 }
 
-struct conf_entry const *conf_matchopt(struct conf_entry const *opts, size_t optc, char const *restrict key) {
+struct conf_entry const *conf_matchopt(struct conf_entry const *opts, size_t optc, const char *restrict key) {
 	// find a match for the current key
 	size_t i = 0;
 	for (; i < optc; i++) {
@@ -63,7 +63,7 @@ struct conf_entry const *conf_matchopt(struct conf_entry const *opts, size_t opt
 	return NULL;
 }
 
-int conf_procval(struct conf_entry const *opt, char const *restrict val) {
+int conf_procval(struct conf_entry const *opt, const char *restrict val) {
 	// parse the data
 	errno = 0;
 	char *end;
@@ -127,7 +127,8 @@ int conf_procval(struct conf_entry const *opt, char const *restrict val) {
 }
 
 /* utility function for conf_getpat to concatenate 3 strings, where we already know the size */
-NONNULL(1, 3) static char *conf_getpat_concat(char const *restrict s1, char const *restrict s2, char const *restrict s3, size_t s1len, size_t s2len, size_t s3len) {
+NONNULL(1, 3)
+static char *conf_getpat_concat(const char *restrict s1, const char *restrict s2, const char *restrict s3, size_t s1len, size_t s2len, size_t s3len) {
 	assert(s2 || (!s2 && !s2len)); // ensuring the programmer passes both s2 and s2len as 0, if they intend to
 	char *buf, *ptr;
 
@@ -146,7 +147,7 @@ NONNULL(1, 3) static char *conf_getpat_concat(char const *restrict s1, char cons
 }
 
 /* appends str to the config directory string we acquire from environment variables. */
-char *conf_getpat(char const *restrict str) {
+char *conf_getpat(const char *restrict str) {
 	char *buf = NULL;
 	size_t len;
 	size_t str_len = strlen(str);

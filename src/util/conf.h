@@ -3,10 +3,10 @@
 #pragma once
 
 #include <stddef.h>
-#include <stdint.h>
 #include <stdlib.h>
 
 #include "atrb.h"
+#include "intdef.h"
 
 /* error codes */
 enum conf_err {
@@ -43,7 +43,7 @@ struct conf_fstr {
 struct conf_entry {
 	const char *key; // the key of this entry
 	void *out;       // the pointer to which the data is written value is read if the given option is incorrect or missing
-	uint8_t type;    // the primitive type which we are querying for
+	u8 type;         // the primitive type which we are querying for
 };
 
 /* processes an incoming buffer.
