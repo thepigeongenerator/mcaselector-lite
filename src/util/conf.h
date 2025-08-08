@@ -67,4 +67,4 @@ int conf_procval(struct conf_entry const *opts, const char *restrict val);
  * - windows: reads %APPDATA%, if empty %USERPROFILE%\AppData\Roaming is used, if both are empty NULL is returned.
  * - osx:     reads $HOME, uses $HOME/Library/Application Support, if $HOME is empty NULL is returned.
  * !! A malloc'd null-terminated string is returned !! */
-atrb_malloc atrb_nonnull(1) char *conf_getpat(const char *);
+MALLOC NONNULL((1)) char *conf_getpat(const char *);

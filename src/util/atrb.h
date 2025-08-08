@@ -57,13 +57,3 @@
 #define NONNULL(...)
 #endif
 #endif
-
-#define atrb_deprecated DEPRECATED
-#define atrb_used       USED
-#define atrb_unused     UNUSED
-#define atrb_pure       PURE
-#define atrb_const      CONST
-#define atrb_noreturn   NORET
-#define atrb_malloc     MALLOC
-#define atrb_format     FORMAT
-#define atrb_nonnull    NONNULL

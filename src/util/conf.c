@@ -127,7 +127,7 @@ int conf_procval(struct conf_entry const *opt, char const *restrict val) {
 }
 
 /* utility function for conf_getpat to concatenate 3 strings, where we already know the size */
-atrb_nonnull(1, 3) static char *conf_getpat_concat(char const *restrict s1, char const *restrict s2, char const *restrict s3, size_t s1len, size_t s2len, size_t s3len) {
+NONNULL(1, 3) static char *conf_getpat_concat(char const *restrict s1, char const *restrict s2, char const *restrict s3, size_t s1len, size_t s2len, size_t s3len) {
 	assert(s2 || (!s2 && !s2len)); // ensuring the programmer passes both s2 and s2len as 0, if they intend to
 	char *buf, *ptr;
 
