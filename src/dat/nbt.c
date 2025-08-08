@@ -21,8 +21,33 @@ int nbt_primsize(u8 tag) {
 	}
 }
 
+// BUG: recursive, been figuring out how to not have it recursive
 const u8 *nbt_nextcompound(const u8 *restrict cdat) {
-	return NULL;
+	const u8 *ptr = cdat;
+	do {
+		u16 slen = be16toh(*(u16 *)(ptr + 1));
+		uint mems = 0;
+
+		switch (*ptr) {
+		case NBT_I8:
+		case NBT_I16:
+		case NBT_I32:
+		case NBT_F32:
+		case NBT_I64:
+		case NBT_F64:
+			ptr += 3 + slen + nbt_primsize(*ptr);
+			continue; // continue the while loop; no more to be done
+
+		case NBT_ARR_I64: mems += sizeof(i64) - sizeof(i32); __attribute__((fallthrough));
+		case NBT_ARR_I32: mems += sizeof(i32) - sizeof(i8); __attribute__((fallthrough));
+		case NBT_ARR_I8:  ptr += 3 + slen + ++mems * (i32)be32toh(*(u32 *)(ptr)) + 4; continue;
+		case NBT_STR:     ptr += 3 + slen + be16toh(*(u16 *)(ptr)) + 2; continue;
+
+		case NBT_LIST: ptr = nbt_nextlist(3 + slen + ptr); continue;
+		}
+
+	} while (ptr && *ptr != NBT_END);
+	return ptr + 1;
 }
 
 const u8 *nbt_nextlist(const u8 *restrict ldat) {
