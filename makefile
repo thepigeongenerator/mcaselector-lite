@@ -63,8 +63,8 @@ $(error neither VCPKG_ROOT nor pkg-config were available!)
 endif
 
 # use pkg-config to set the include and linker information
-CFLAGS  += $(shell pkg-config --cflags glfw3)
-LDFLAGS += $(shell pkg-config --libs   glfw3)
+CFLAGS  += $(shell pkg-config --cflags glfw3 libarchive)
+LDFLAGS += $(shell pkg-config --libs   glfw3 libarchive)
 
 # windows specific handling
 ifeq ($(ISWIN),1)

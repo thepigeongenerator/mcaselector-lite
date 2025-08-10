@@ -11,7 +11,7 @@ on:
 env:
   VCPKG_DISABLE_METRICS: 1
   VCPKG_ROOT: ${{github.workspace}}/.vcpkg
-  DEPS_VCPKG: glfw3:x64-linux-dynamic glfw3:x64-mingw-static
+  DEPS_VCPKG: glfw3:x64-linux-dynamic glfw3:x64-mingw-static libarchive:x64-linux-dynamic libarchive:x64-mingw-static
   WINEPREFIX: /tmp/wineprefix
 jobs:
   #
@@ -40,7 +40,13 @@ jobs:
       # setup vcpkg if the cache didn't hit
       - if: steps.vcpkg-cache.outputs.cache-hit != 'true'
         run: |
-          git clone https://github.com/microsoft/vcpkg.git "$VCPKG_ROOT"
+          if [ -d "$VCPKG_ROOT" ]; then
+              cd "$VCPKG_ROOT"
+              git pull -f
+              cd -
+          else
+              git clone https://github.com/microsoft/vcpkg.git "$VCPKG_ROOT"
+          fi
           "$VCPKG_ROOT/bootstrap-vcpkg.sh"
           "$VCPKG_ROOT/vcpkg" install $DEPS_VCPKG
       - name: compilation (using bulk compilation)
