@@ -16,5 +16,5 @@
 - typedefs are discouraged
 - snake_case is used for all user-defined symbols. Macros are often all-uppercase, same goes for enums and other types of compile-time constants.
 - tabs are used for indentation, spaces are used for alignment.
-- British spelling is preferred, but not enforced. What is enforced is that British variants of the symbols are available.
+- British spelling is (generally) preferred, but not enforced.
 - commits should attempt to convey clearly what is being changed, for the sanity of the maintainer(s).
