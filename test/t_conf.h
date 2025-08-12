@@ -5,7 +5,7 @@
 #include <string.h>
 
 #include "../src/util/conf.h"
-#include "../src/util/types.h"
+#include "../src/util/intdef.h"
 #include "test.h"
 
 // Environment saver structure for conf_getpat tests

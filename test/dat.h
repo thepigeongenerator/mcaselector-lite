@@ -1,7 +1,7 @@
 #include <stdint.h>
 
 #include "../src/util/conf.h"
-#include "../src/util/types.h"
+#include "../src/util/intdef.h"
 #include "t_arith.h"
 #include "t_conf.h"
 #include "test.h"
