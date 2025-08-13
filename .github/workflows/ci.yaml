@@ -11,7 +11,6 @@ on:
 env:
   VCPKG_DISABLE_METRICS: 1
   VCPKG_ROOT: ${{github.workspace}}/.vcpkg
-  DEPS_VCPKG: glfw3:x64-linux-dynamic glfw3:x64-mingw-static libarchive:x64-linux-dynamic libarchive:x64-mingw-static
   WINEPREFIX: /tmp/wineprefix
 jobs:
   #
@@ -19,37 +18,40 @@ jobs:
   #
   exec-ci-tasks:
     runs-on: ubuntu-latest
-    container: ghcr.io/thepigeongenerator/mcaselector-lite:latest
     steps:
-      #
       # general setup
-      #
-      - uses: actions/checkout@v4
-      #
-      # VCPKG setup
-      #
-      - id: gen-keys
-        run: echo "HASH_VCPKG=vcpkg-$(echo "$DEPS_VCPKG" | sha256sum | cut -d ' ' -f1)" >>"$GITHUB_OUTPUT"
-      # load the vcpkg cache
+      - name: checkout main branch
+        uses: actions/checkout@v4
+      - name: checkout vcpkg
+        uses: actions/checkout@v4
+        with:
+            repository: microsoft/vcpkg
+            path: ${{env.VCPKG_ROOT}}
+      - run: . "$VCPKG_ROOT/bootstrap-vcpkg.sh"
+
+      - name: get library data
+        id: libdat
+        run: echo "LIBS_HASH=vcpkg_installed-$(cat vcpkg.json | sha256sum | cut -d ' ' -f1)" >>"$GITHUB_OUTPUT"
+
+      # restore the cache
       - uses: actions/cache@v4
         id: vcpkg-cache
         with:
-          path: ${{env.VCPKG_ROOT}}
-          key: ${{steps.gen-keys.outputs.HASH_VCPKG}}
-          restore-keys: vcpkg-
+          path: vcpkg_installed
+          key: ${{steps.libdat.outputs.LIBS_HASH}}
+          restore-keys: vcpkg_installed-
+
       # setup vcpkg if the cache didn't hit
-      - if: steps.vcpkg-cache.outputs.cache-hit != 'true'
+      - name: install vcpkg dependencies
+        if: steps.vcpkg-cache.outputs.cache-hit != 'true'
         run: |
-          if [ -d "$VCPKG_ROOT" ]; then
-              cd "$VCPKG_ROOT"
-              git pull -f
-              cd -
-          else
-              git clone https://github.com/microsoft/vcpkg.git "$VCPKG_ROOT"
-          fi
-          "$VCPKG_ROOT/bootstrap-vcpkg.sh"
-          "$VCPKG_ROOT/vcpkg" install $DEPS_VCPKG
-      - name: compilation (using bulk compilation)
-        run: make all CALL=compile -j
-      - name: unit tests (using bulk flags)
-        run: make all CALL=run DEBUG=test -j
+          "$VCPKG_ROOT/vcpkg" install --triplet=x64-linux-dynamic
+          "$VCPKG_ROOT/vcpkg" install --triplet=x64-mingw-static
+
+      # perform continuous integration actions
+      - run: make x86_64-linux-gnu-gcc   CALL=compile -j
+      - run: make x86_64-w64-mingw32-gcc CALL=compile -j
+      - run: make x86_64-linux-gnu-gcc   CALL=run DEBUG=test -j
+      - run: make x86_64-w64-mingw32-gcc CALL=run DEBUG=test -j
+
+
