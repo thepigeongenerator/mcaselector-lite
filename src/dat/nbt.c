@@ -9,6 +9,7 @@
 #include "../util/compat/endian.h"
 #include "../util/intdef.h"
 
+// WARN: does not have public-facing definition
 int nbt_primsize(u8 tag) {
 	switch (tag) {
 	case NBT_I8:  return 1;
