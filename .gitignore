@@ -6,6 +6,7 @@
 
 # unhide dotfiles we want to keep
 !.gitignore
+!.gitmodules
 !.editorconfig
 !.clang-format
 !/.github/
@@ -14,10 +15,8 @@
 *.o
 *.d
 *.out
+*.lock
 /bin/
 /obj/
-/test/bin/
-/test/obj/
-*.lock
 /vcpkg_installed/
 compile_commands.json
