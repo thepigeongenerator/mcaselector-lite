@@ -17,7 +17,10 @@ jobs:
   # the mega job containing all things we need to do, since setting up a single system is more efficient than installing the same stuff on multiple ones
   #
   exec-ci-tasks:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     steps:
       # general setup
       - name: checkout main branch
@@ -27,7 +30,6 @@ jobs:
         with:
             repository: microsoft/vcpkg
             path: ${{env.VCPKG_ROOT}}
-      - run: . "$VCPKG_ROOT/bootstrap-vcpkg.sh"
 
       - name: get library data
         id: libdat
@@ -38,20 +40,16 @@ jobs:
         id: vcpkg-cache
         with:
           path: vcpkg_installed
-          key: ${{steps.libdat.outputs.LIBS_HASH}}
-          restore-keys: vcpkg_installed-
+          key: ${{matrix.os}}-${{steps.libdat.outputs.LIBS_HASH}}
+          restore-keys: ${{matrix.os}}-vcpkg_installed-
 
       # setup vcpkg if the cache didn't hit
       - name: install vcpkg dependencies
         if: steps.vcpkg-cache.outputs.cache-hit != 'true'
         run: |
-          "$VCPKG_ROOT/vcpkg" install --triplet=x64-linux-dynamic
-          "$VCPKG_ROOT/vcpkg" install --triplet=x64-mingw-static
+          "$VCPKG_ROOT/bootstrap-vcpkg.sh"
+          "$VCPKG_ROOT/vcpkg" install
 
       # perform continuous integration actions
-      - run: make x86_64-linux-gnu-gcc   CALL=compile -j
-      - run: make x86_64-w64-mingw32-gcc CALL=compile -j
-      - run: make x86_64-linux-gnu-gcc   CALL=run DEBUG=test -j
-      - run: make x86_64-w64-mingw32-gcc CALL=run DEBUG=test -j
-
-
+      - run: make compile -j
+      - run: make run DEBUG=test -j
