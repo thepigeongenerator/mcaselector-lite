@@ -149,7 +149,7 @@ struct nbt_procdat nbt_initproc(struct nbt_path const *restrict pats, uint npats
 	assert(mdpt > 0);
 
 	// storing the segments of the current path
-	const char **cpat = (const char **)calloc(sizeof(void *), mdpt - 1);
+	const char **cpat = (const char **)calloc(mdpt - 1, sizeof(void *));
 
 	// return the initialised structure.
 	return (struct nbt_procdat){
