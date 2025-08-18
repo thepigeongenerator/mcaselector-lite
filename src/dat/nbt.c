@@ -22,89 +22,43 @@ int nbt_primsize(u8 tag) {
 	}
 }
 
-// BUG: recursive, been figuring out how to not have it recursive
-const u8 *nbt_nextcompound(const u8 *restrict cdat) {
-	const u8 *ptr = cdat;
-	do {
-		u16 slen = be16toh(*(u16 *)(ptr + 1));
-		uint mems = 0;
+const u8 *nbt_nexttag(const u8 *restrict buf) {
+	const u8 *tag, *ptr, *tmp;
+	tag = buf;
+	uint dpt = 0;
+	size_t mems = 0;
 
-		switch (*ptr) {
+	// looping through the named tags
+	do {
+		ptr = tag + be16toh(*(u16 *)(tag + 1)) + 3; // set `ptr` to start of data
+		mems = 0;
+
+		switch (*tag) {
 		case NBT_I8:
 		case NBT_I16:
 		case NBT_I32:
 		case NBT_F32:
 		case NBT_I64:
 		case NBT_F64:
-			ptr += 3 + slen + nbt_primsize(*ptr);
-			continue; // continue the while loop; no more to be done
+			ptr += nbt_primsize(*buf);
+			break;
 
 		case NBT_ARR_I64: mems += sizeof(i64) - sizeof(i32); __attribute__((fallthrough));
 		case NBT_ARR_I32: mems += sizeof(i32) - sizeof(i8); __attribute__((fallthrough));
-		case NBT_ARR_I8:  ptr += 3 + slen + ++mems * (i32)be32toh(*(u32 *)(ptr)) + 4; continue;
-		case NBT_STR:     ptr += 3 + slen + be16toh(*(u16 *)(ptr)) + 2; continue;
+		case NBT_ARR_I8:  ptr += (mems + 1) * (i32)be32toh(*(u32 *)(ptr)) + 4; break;
+		case NBT_STR:     ptr += be16toh(*(u16 *)(ptr)) + 2; break;
 
-		case NBT_LIST: ptr = nbt_nextlist(3 + slen + ptr); continue;
+		case NBT_END:      dpt--; break;
+		case NBT_COMPOUND: dpt++; break;
+
+		// TODO: handle (compound) lists somehow
+
+		default: return NULL; // unexpected value; buffer is likely corrupt
 		}
 
-	} while (ptr && *ptr != NBT_END);
-	return ptr + 1;
-}
-
-const u8 *nbt_nextlist(const u8 *restrict ldat) {
-	const u8 *ptr = ldat + 5;
-	i32 len = be32toh(*(u32 *)(ldat + 1));
-
-	switch (*ldat) {
-	case NBT_I8:
-	case NBT_I16:
-	case NBT_I32:
-	case NBT_I64:
-	case NBT_F32:
-	case NBT_F64:
-		return ptr + nbt_primsize(*ldat) * len;
-
-	// loop for each compound, whilst `ptr` isn't `NULL`
-	case NBT_COMPOUND: {
-		for (u32 i = 0; i < (u32)len && ptr; i++) {
-			ptr = nbt_nextcompound(ptr);
-		}
-		return ptr;
-	}
-
-	// TODO: implement list/array/string handling
-	case NBT_STR:
-	case NBT_ARR_I8:
-	case NBT_ARR_I32:
-	case NBT_ARR_I64:
-	case NBT_LIST:
-	default:
-		return NULL;
-	}
-}
-
-const u8 *nbt_nexttag(const u8 *restrict buf, u16 naml) {
-	const u8 *ptr = buf + naml + 3;
-	size_t mems = 0;
-
-	switch (*buf) {
-	case NBT_I8:
-	case NBT_I16:
-	case NBT_I32:
-	case NBT_F32:
-	case NBT_I64:
-	case NBT_F64:
-		return ptr + nbt_primsize(*buf);
-
-	case NBT_ARR_I64: mems += sizeof(i64) - sizeof(i32); __attribute__((fallthrough));
-	case NBT_ARR_I32: mems += sizeof(i32) - sizeof(i8); __attribute__((fallthrough));
-	case NBT_ARR_I8:  return ptr + ++mems * (i32)be32toh(*(u32 *)(ptr)) + 4;
-
-	case NBT_STR:  return ptr + be16toh(*(u16 *)(ptr)) + 2;
-	case NBT_LIST: return nbt_nextlist(ptr);
-
-	default: return NULL;
-	}
+		tag = ptr;
+	} while (dpt > 0);
+	return tag;
 }
 
 // TODO: not actually doing anything

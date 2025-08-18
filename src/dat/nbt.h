@@ -50,19 +50,9 @@ struct nbt_procdat {
 	i16 dpt, mdpt;
 };
 
-/* searches for the end of a compound tag without processing data, the final pointer is returned.
- * `NULL` is returned upon failure, the otherwise returned pointer is not guaranteed to be valid.
- * `cdat` is assumed to be the start of the **compound tag's data**. */
-PURE NONNULL((1)) const u8 *nbt_nextcompound(const u8 *restrict cdat);
-
-/* searches for the end of a list tag without processing data, the final pointer is returned.
- * `NULL` is returned upon failure, the otherwise returned pointer is not guaranteed to be valid.
- * `ldat` is assumed to be the start of the **list tag's data.** */
-PURE NONNULL((1)) const u8 *nbt_nextlist(const u8 *restrict ldat);
-
 /* searches for the end of a named tag without processing data, the final pointer is returned.
  * `NULL` is returned upon failure, the otherwise returned pointer is not guaranteed to be valid. */
-PURE NONNULL((1)) const u8 *nbt_nexttag(const u8 *restrict buf, u16 naml);
+PURE NONNULL((1)) const u8 *nbt_nexttag(const u8 *restrict buf);
 
 /* initialises a data structure used whilst processing the tags */
 PURE NONNULL((1)) struct nbt_procdat nbt_initproc(struct nbt_path const *restrict pats, uint npats);
