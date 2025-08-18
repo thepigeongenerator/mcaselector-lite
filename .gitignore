@@ -18,5 +18,4 @@
 *.lock
 /bin/
 /obj/
-/vcpkg_installed/
 compile_commands.json

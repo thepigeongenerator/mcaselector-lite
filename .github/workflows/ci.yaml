@@ -17,10 +17,7 @@ jobs:
   # the mega job containing all things we need to do, since setting up a single system is more efficient than installing the same stuff on multiple ones
   #
   exec-ci-tasks:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
+    runs-on: ubuntu-latest
     steps:
       # general setup
       - name: checkout main branch
