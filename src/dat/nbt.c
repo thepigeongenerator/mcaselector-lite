@@ -68,7 +68,7 @@ static const u8 *nbt_proctag(const u8 *restrict buf, u16 slen) {
 
 	switch (*buf) {
 	// integral types
-	case NBT_I8:  *dat = *ptr; return ptr;
+	case NBT_I8:  *dat = *ptr; return ptr + 1;
 	case NBT_I16: *(u16 *)dat = be16toh(*(u16 *)ptr); return ptr + 2;
 	case NBT_I32: // fall through
 	case NBT_F32: *(u32 *)dat = be16toh(*(u32 *)ptr); return ptr + 4;
@@ -87,7 +87,7 @@ static const u8 *nbt_proctag(const u8 *restrict buf, u16 slen) {
 	default: return NULL;
 	}
 	if (!arrlen) return NULL;
-	return ptr + nbt_primsize(*buf);
+	return ptr; // TODO: return end of array
 }
 
 struct nbt_procdat nbt_initproc(struct nbt_path const *restrict pats, uint npats) {
