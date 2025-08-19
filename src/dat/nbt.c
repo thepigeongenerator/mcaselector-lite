@@ -9,19 +9,6 @@
 #include "../util/compat/endian.h"
 #include "../util/intdef.h"
 
-// WARN: does not have public-facing definition
-int nbt_primsize(u8 tag) {
-	switch (tag) {
-	case NBT_I8:  return 1;
-	case NBT_I16: return 2;
-	case NBT_I32: // fall through
-	case NBT_F32: return 4;
-	case NBT_I64: // fall through
-	case NBT_F64: return 8;
-	default:      return -1;
-	}
-}
-
 const u8 *nbt_nexttag(const u8 *restrict buf) {
 	const u8 *tag, *ptr, *tmp;
 	tag = buf;
