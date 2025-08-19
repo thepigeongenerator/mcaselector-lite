@@ -34,14 +34,12 @@ const u8 *nbt_nexttag(const u8 *restrict buf) {
 		mems = 0;
 
 		switch (*tag) {
-		case NBT_I8:
-		case NBT_I16:
-		case NBT_I32:
-		case NBT_F32:
-		case NBT_I64:
-		case NBT_F64:
-			ptr += nbt_primsize(*buf);
-			break;
+		case NBT_I8:  ptr += 1; break;
+		case NBT_I16: ptr += 2; break;
+		case NBT_I32: // fall through
+		case NBT_F32: ptr += 4; break;
+		case NBT_I64: // fall through
+		case NBT_F64: ptr += 8; break;
 
 		case NBT_ARR_I64: mems += sizeof(i64) - sizeof(i32); __attribute__((fallthrough));
 		case NBT_ARR_I32: mems += sizeof(i32) - sizeof(i8); __attribute__((fallthrough));
