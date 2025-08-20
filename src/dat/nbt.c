@@ -52,17 +52,17 @@ const u8 *nbt_nexttag(const u8 *restrict buf) {
 		case NBT_END:      dpt--; break;
 		case NBT_COMPOUND: dpt++; break;
 
-
+		// TODO: move this into it's own function for readability.
 		case NBT_LIST: {
 			tag = ptr; // temporarily store the tag to cache later
 			switch (*(ptr++)) {
 			case NBT_END: break;
-			case NBT_I8:  ptr += 1 * (i32)be32toh(*(u32 *)ptr); break;
-			case NBT_I16: ptr += 2 * (i32)be32toh(*(u32 *)ptr); break;
+			case NBT_I8:  ptr += (i32)be32toh(*(u32 *)ptr) * 1; break;
+			case NBT_I16: ptr += (i32)be32toh(*(u32 *)ptr) * 2; break;
 			case NBT_I32: // fall through
-			case NBT_F32: ptr += 4 * (i32)be32toh(*(u32 *)ptr); break;
+			case NBT_F32: ptr += (i32)be32toh(*(u32 *)ptr) * 4; break;
 			case NBT_I64: // fall through
-			case NBT_F64: ptr += 8 * (i32)be32toh(*(u32 *)ptr); break;
+			case NBT_F64: ptr += (i32)be32toh(*(u32 *)ptr) * 8; break;
 			default:
 				// TODO: handle out of bounds... Might not be required if we use flexible array member
 				dpt++;
