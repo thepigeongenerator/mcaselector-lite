@@ -9,17 +9,34 @@
 #include "../util/compat/endian.h"
 #include "../util/intdef.h"
 
+#define MAX_DEPTH 512
+
+/* TODO: write test cases for this function:
+ * - list:compound...
+ * - non-existent type
+ * - compound:list:int32
+ * - string
+ */
 const u8 *nbt_nexttag(const u8 *restrict buf) {
 	const u8 *tag, *ptr;
+	u8 tags[MAX_DEPTH] = {0};
+	i32 lens[MAX_DEPTH] = {0};
 	uint dpt = 0;
+	u8 type;
 
 	tag = buf;
-
 	do {
-		ptr = tag + be16toh(*(u16 *)(tag + 1)) + 3; // set `ptr` to start of data
-		mems = 0;
+		ptr = tag;
+		if (lens[dpt]) {
+			type = lens[dpt];
+			lens[dpt]--;
+			dpt -= !lens[dpt];
+		} else {
+			type = *tag;
+			ptr += be16toh(*(u16 *)(tag + 1)) + 3;
+		}
 
-		switch (*tag) {
+		switch (type) {
 		case NBT_I8:  ptr += 1; break;
 		case NBT_I16: ptr += 2; break;
 		case NBT_I32: // fall through
@@ -33,9 +50,28 @@ const u8 *nbt_nexttag(const u8 *restrict buf) {
 		case NBT_STR:     ptr += 2 + (u16)be16toh(*(u16 *)ptr) * 1; break;
 
 		case NBT_END:      dpt--; break;
-		case NBT_COMPOUND: dpt++; break;
+		case NBT_COMPOUND: dpt += (tags[dpt] && *tag) ? 1 : -1; break;
 
-		// TODO: handle (compound) lists somehow
+
+		case NBT_LIST: {
+			tag = ptr; // temporarily store the tag to cache later
+			switch (*(ptr++)) {
+			case NBT_I8:  ptr += 1 * (i32)be32toh(*(u32 *)ptr); break;
+			case NBT_I16: ptr += 2 * (i32)be32toh(*(u32 *)ptr); break;
+			case NBT_I32: // fall through
+			case NBT_F32: ptr += 4 * (i32)be32toh(*(u32 *)ptr); break;
+			case NBT_I64: // fall through
+			case NBT_F64: ptr += 8 * (i32)be32toh(*(u32 *)ptr); break;
+			default:
+				// TODO: handle out of bounds... Might not be required if we use flexible array member
+				dpt++;
+				tags[dpt] = *tag;
+				lens[dpt] = (i32)be32toh(*(u32 *)ptr);
+				break;
+			}
+			ptr += 4;
+			break;
+		}
 
 		default: return NULL; // unexpected value; buffer is likely corrupt
 		}
