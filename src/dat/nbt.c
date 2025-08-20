@@ -13,7 +13,6 @@ const u8 *nbt_nexttag(const u8 *restrict buf) {
 	const u8 *tag, *ptr, *tmp;
 	tag = buf;
 	uint dpt = 0;
-	size_t mems = 0;
 
 	// looping through the named tags
 	do {
@@ -28,10 +27,10 @@ const u8 *nbt_nexttag(const u8 *restrict buf) {
 		case NBT_I64: // fall through
 		case NBT_F64: ptr += 8; break;
 
-		case NBT_ARR_I64: mems += sizeof(i64) - sizeof(i32); __attribute__((fallthrough));
-		case NBT_ARR_I32: mems += sizeof(i32) - sizeof(i8); __attribute__((fallthrough));
-		case NBT_ARR_I8:  ptr += (mems + 1) * (i32)be32toh(*(u32 *)(ptr)) + 4; break;
-		case NBT_STR:     ptr += be16toh(*(u16 *)(ptr)) + 2; break;
+		case NBT_ARR_I8:  ptr += 4 + (i32)be32toh(*(u32 *)ptr) * 1; break;
+		case NBT_ARR_I32: ptr += 4 + (i32)be32toh(*(u32 *)ptr) * 4; break;
+		case NBT_ARR_I64: ptr += 4 + (i32)be32toh(*(u32 *)ptr) * 8; break;
+		case NBT_STR:     ptr += 2 + (u16)be16toh(*(u16 *)ptr) * 1; break;
 
 		case NBT_END:      dpt--; break;
 		case NBT_COMPOUND: dpt++; break;
