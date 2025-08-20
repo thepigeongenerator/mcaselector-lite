@@ -50,7 +50,7 @@ const u8 *nbt_nexttag(const u8 *restrict buf) {
 		case NBT_STR:     ptr += 2 + (u16)be16toh(*(u16 *)ptr) * 1; break;
 
 		case NBT_END:      dpt--; break;
-		case NBT_COMPOUND: dpt += (tags[dpt] && *tag) ? 1 : -1; break;
+		case NBT_COMPOUND: dpt++; break;
 
 
 		case NBT_LIST: {
