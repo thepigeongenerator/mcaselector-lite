@@ -56,6 +56,7 @@ const u8 *nbt_nexttag(const u8 *restrict buf) {
 		case NBT_LIST: {
 			tag = ptr; // temporarily store the tag to cache later
 			switch (*(ptr++)) {
+			case NBT_END: break;
 			case NBT_I8:  ptr += 1 * (i32)be32toh(*(u32 *)ptr); break;
 			case NBT_I16: ptr += 2 * (i32)be32toh(*(u32 *)ptr); break;
 			case NBT_I32: // fall through
