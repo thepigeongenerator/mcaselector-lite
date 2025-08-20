@@ -28,7 +28,7 @@ const u8 *nbt_nexttag(const u8 *restrict buf) {
 	do {
 		ptr = tag;
 		if (lens[dpt]) {
-			type = lens[dpt];
+			type = tags[dpt];
 			lens[dpt]--;
 			dpt -= !lens[dpt];
 		} else {
