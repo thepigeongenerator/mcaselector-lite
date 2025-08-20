@@ -10,11 +10,11 @@
 #include "../util/intdef.h"
 
 const u8 *nbt_nexttag(const u8 *restrict buf) {
-	const u8 *tag, *ptr, *tmp;
-	tag = buf;
+	const u8 *tag, *ptr;
 	uint dpt = 0;
 
-	// looping through the named tags
+	tag = buf;
+
 	do {
 		ptr = tag + be16toh(*(u16 *)(tag + 1)) + 3; // set `ptr` to start of data
 		mems = 0;
