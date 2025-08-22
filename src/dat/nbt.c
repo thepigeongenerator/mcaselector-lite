@@ -11,6 +11,32 @@
 
 #define MAX_DEPTH 512
 
+/* handles incrementing to the next tag in the case of `NBT_LIST`. This function shan't return `NULL`.
+ * `ptr` is assumed to be the start of the `NBT_LIST` data, e.i. The list's ID, followed by the list's length.
+ * If `ID` is `NBT_I8`, `NBT_I16`, `NBT_I32`, `NBT_I64`, `NBT_F32`, or `NBT_F64`, the entire list length is computed and returned.
+ * For other types this won't be possible, and thus will add `1` to `dpt`, and write the list data to `lens` and `tags` at this new `dpt`. */
+static const u8 *nexttag_list(const u8 *restrict ptr, uint *restrict const dpt, i32 *restrict const lens, u8 *restrict const tags) {
+	const u8 *tag = ptr;
+	ptr++;
+	switch (*tag) {
+	case NBT_END: break;
+	case NBT_I8:  ptr += (i32)be32toh(*(u32 *)ptr) * 1; break;
+	case NBT_I16: ptr += (i32)be32toh(*(u32 *)ptr) * 2; break;
+	case NBT_I32: // fall through
+	case NBT_F32: ptr += (i32)be32toh(*(u32 *)ptr) * 4; break;
+	case NBT_I64: // fall through
+	case NBT_F64: ptr += (i32)be32toh(*(u32 *)ptr) * 8; break;
+	default:
+		// TODO: handle out of bounds... Might not be required if we use flexible array member
+		(*dpt)++;
+		tags[*dpt] = *tag;
+		lens[*dpt] = (i32)be32toh(*(u32 *)ptr);
+		break;
+	}
+	ptr += 4;
+	return ptr;
+}
+
 /* TODO: write test cases for this function:
  * - list:compound...
  * - non-existent type
@@ -52,28 +78,7 @@ const u8 *nbt_nexttag(const u8 *restrict buf) {
 		case NBT_END:      dpt--; break;
 		case NBT_COMPOUND: dpt++; break;
 
-		// TODO: move this into it's own function for readability.
-		case NBT_LIST: {
-			tag = ptr;
-			ptr++;
-			switch (*tag) {
-			case NBT_END: break;
-			case NBT_I8:  ptr += (i32)be32toh(*(u32 *)ptr) * 1; break;
-			case NBT_I16: ptr += (i32)be32toh(*(u32 *)ptr) * 2; break;
-			case NBT_I32: // fall through
-			case NBT_F32: ptr += (i32)be32toh(*(u32 *)ptr) * 4; break;
-			case NBT_I64: // fall through
-			case NBT_F64: ptr += (i32)be32toh(*(u32 *)ptr) * 8; break;
-			default:
-				// TODO: handle out of bounds... Might not be required if we use flexible array member
-				dpt++;
-				tags[dpt] = *tag;
-				lens[dpt] = (i32)be32toh(*(u32 *)ptr);
-				break;
-			}
-			ptr += 4;
-			break;
-		}
+		case NBT_LIST: ptr = nexttag_list(ptr, &dpt, lens, tags); break;
 
 		default: return NULL; // unexpected value; buffer is likely corrupt
 		}
