@@ -37,6 +37,48 @@ static const u8 *nexttag_list(const u8 *restrict ptr, uint *restrict const dpt, 
 	return ptr;
 }
 
+/* increments to the next tag and returns it (or `NULL`)
+ * - `tag` represents the start of the tag, e.i. The tag ID, or in the case of `NBT_LIST` data, the start of this data.
+ * - `dpt` shall point to the "depth" we're at, this is used as index for `lens` and `tags`
+ * - `lens` shall contain `MAX_DEPTH` of items representing the list length, if the current item is non-zero we shall assume we're in a list.
+ *     Where the value is decremented until we reach `0`.
+ * - `tags` shall contain `MAX_DEPTH` of items representing the list's stored type. */
+static const u8 *nexttag(const u8 *restrict tag, uint *restrict const dpt, i32 *restrict const lens, u8 *restrict const tags) {
+	u8 type;
+	const u8 *ptr = tag;
+	if (lens[*dpt]) {
+		type = tags[*dpt];
+		lens[*dpt]--;
+		*dpt -= !lens[*dpt];
+	} else {
+		type = *tag;
+		ptr += be16toh(*(u16 *)(tag + 1)) + 3;
+	}
+
+	switch (type) {
+	case NBT_I8:  ptr += 1; break;
+	case NBT_I16: ptr += 2; break;
+	case NBT_I32: // fall through
+	case NBT_F32: ptr += 4; break;
+	case NBT_I64: // fall through
+	case NBT_F64: ptr += 8; break;
+
+	case NBT_ARR_I8:  ptr += 4 + (i32)be32toh(*(u32 *)ptr) * 1; break;
+	case NBT_ARR_I32: ptr += 4 + (i32)be32toh(*(u32 *)ptr) * 4; break;
+	case NBT_ARR_I64: ptr += 4 + (i32)be32toh(*(u32 *)ptr) * 8; break;
+	case NBT_STR:     ptr += 2 + (u16)be16toh(*(u16 *)ptr) * 1; break;
+
+	case NBT_END:      (*dpt)--; break;
+	case NBT_COMPOUND: (*dpt)++; break;
+
+	case NBT_LIST: ptr = nexttag_list(ptr, dpt, lens, tags); break;
+
+	default: return NULL; // unexpected value; buffer is likely corrupt
+	}
+
+	return ptr;
+}
+
 /* TODO: write test cases for this function:
  * - list:compound...
  * - non-existent type
@@ -44,46 +86,14 @@ static const u8 *nexttag_list(const u8 *restrict ptr, uint *restrict const dpt, 
  * - string
  */
 const u8 *nbt_nexttag(const u8 *restrict buf) {
-	const u8 *tag, *ptr;
+	const u8 *tag;
 	u8 tags[MAX_DEPTH] = {0};
 	i32 lens[MAX_DEPTH] = {0};
 	uint dpt = 0;
-	u8 type;
 
 	tag = buf;
 	do {
-		ptr = tag;
-		if (lens[dpt]) {
-			type = tags[dpt];
-			lens[dpt]--;
-			dpt -= !lens[dpt];
-		} else {
-			type = *tag;
-			ptr += be16toh(*(u16 *)(tag + 1)) + 3;
-		}
-
-		switch (type) {
-		case NBT_I8:  ptr += 1; break;
-		case NBT_I16: ptr += 2; break;
-		case NBT_I32: // fall through
-		case NBT_F32: ptr += 4; break;
-		case NBT_I64: // fall through
-		case NBT_F64: ptr += 8; break;
-
-		case NBT_ARR_I8:  ptr += 4 + (i32)be32toh(*(u32 *)ptr) * 1; break;
-		case NBT_ARR_I32: ptr += 4 + (i32)be32toh(*(u32 *)ptr) * 4; break;
-		case NBT_ARR_I64: ptr += 4 + (i32)be32toh(*(u32 *)ptr) * 8; break;
-		case NBT_STR:     ptr += 2 + (u16)be16toh(*(u16 *)ptr) * 1; break;
-
-		case NBT_END:      dpt--; break;
-		case NBT_COMPOUND: dpt++; break;
-
-		case NBT_LIST: ptr = nexttag_list(ptr, &dpt, lens, tags); break;
-
-		default: return NULL; // unexpected value; buffer is likely corrupt
-		}
-
-		tag = ptr;
+		tag = nexttag(tag, &dpt, lens, tags);
 	} while (dpt > 0);
 	return tag;
 }
