@@ -100,7 +100,7 @@ const u8 *nbt_nexttag(const u8 *restrict buf) {
 
 MALLOC static void *nbt_procarr(const u8 *restrict buf, i32 nmem, uint size) {
 	u8 *ptr = malloc(nmem * size);
-	if (!ptr) NULL;
+	if (!ptr) return NULL;
 	memcpy(ptr, buf, nmem * size);
 
 	/* Only include this code for little-endian systems. Since only they require this logic.
