@@ -54,7 +54,12 @@ struct nbt_procdat {
  * `NULL` is returned upon failure, the otherwise returned pointer is not guaranteed to be valid. */
 const u8 *nbt_nexttag(const u8 *restrict buf) NONNULL((1)) PURE;
 
-/* Processes the tag entered in `buf`, `buf` is assumed */
+/* Processes the tag entered in `buf`, `buf` is assumed to be the start of a named tag. Where `slen` shall be the string length.
+ * The data in `buf` is processed and outputted to `out`. A pointer to the next tag is returned.
+ * - In the case for all basic types, `out` will require to be the width of said type.
+ * - In the case of arrays, a pointer shall be returned pointing to the data. TODO: it'd be nice to know how large this array is.
+ * - In the case of `NBT_LIST`, if it is of the type `NBT_Ixx` and `NBT_Fxx`, then it's handled. Otherwise the funcion shall fail.
+ * Upon failure, `NULL` is returned. */
 const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) NONNULL((1, 3));
 
 /* initialises a data structure used whilst processing the tags */
