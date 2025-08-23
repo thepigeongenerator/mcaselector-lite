@@ -54,5 +54,8 @@ struct nbt_procdat {
  * `NULL` is returned upon failure, the otherwise returned pointer is not guaranteed to be valid. */
 const u8 *nbt_nexttag(const u8 *restrict buf) NONNULL((1)) PURE;
 
+/* Processes the tag entered in `buf`, `buf` is assumed */
+const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) NONNULL((1, 3));
+
 /* initialises a data structure used whilst processing the tags */
 struct nbt_procdat nbt_initproc(struct nbt_path const *restrict pats, uint npats) NONNULL((1)) PURE;

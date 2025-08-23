@@ -131,12 +131,12 @@ MALLOC static void *nbt_procarr(const u8 *restrict buf, i32 nmem, uint size) {
 
 // TODO: not actually doing anything
 /* readies the output data for export, returns the new buffer position, or `NULL` upon an error (may be out of bounds) */
-static const u8 *nbt_proctag(const u8 *restrict buf, u8 *restrict out, u16 slen) {
+const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) {
 	const u8 *ptr = buf + 3 + slen;
 
 	switch (*buf) {
 	// integral types
-	case NBT_I8:  *out = *ptr; return ptr + 1;
+	case NBT_I8:  *(u8 *)out = *ptr; return ptr + 1;
 	case NBT_I16: *(u16 *)out = be16toh(*(u16 *)ptr); return ptr + 2;
 	case NBT_I32: // fall through
 	case NBT_F32: *(u32 *)out = be16toh(*(u32 *)ptr); return ptr + 4;
