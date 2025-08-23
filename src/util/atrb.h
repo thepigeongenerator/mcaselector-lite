@@ -46,14 +46,14 @@
 #endif
 
 #if __has_attribute(__format__)
-#define FORMAT(...) __attribute__((format(__VA_ARGS__)))
+#define FORMAT(args) __attribute__((format args))
 #else
-#define FORMAT(...)
+#define FORMAT(args)
 #endif
 
 #if __has_attribute(__nonnull__)
-#define NONNULL(...) __attribute__((nonnull(__VA_ARGS__)))
+#define NONNULL(args) __attribute__((__nonnull__ args))
 #else
-#define NONNULL(...)
+#define NONNULL(args)
 #endif
 #endif
