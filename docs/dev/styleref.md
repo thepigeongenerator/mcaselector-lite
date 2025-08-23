@@ -1,6 +1,7 @@
 # mcaselector-lite style reference
 ## contents
-- [recommended tool chains](#recommended-tool-chains)
+- [recommended tools](#recommended-tools)
+- [code information](#code-information)
 - [style guide](#style-guide)
 
 ### recommended tools
