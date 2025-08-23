@@ -129,7 +129,6 @@ MALLOC static void *nbt_procarr(const u8 *restrict buf, i32 nmem, uint size) {
 	return ptr;
 }
 
-// TODO: not actually doing anything
 /* readies the output data for export, returns the new buffer position, or `NULL` upon an error (may be out of bounds) */
 const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) {
 	const u8 *ptr = buf + 3 + slen;
@@ -154,7 +153,7 @@ const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) {
 		return NULL;
 	}
 
-	return ptr; // TODO: return end of array
+	return ptr;
 }
 
 struct nbt_procdat nbt_initproc(struct nbt_path const *restrict pats, uint npats) {
