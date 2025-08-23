@@ -52,7 +52,7 @@ struct nbt_procdat {
 
 /* searches for the end of a named tag without processing data, the final pointer is returned.
  * `NULL` is returned upon failure, the otherwise returned pointer is not guaranteed to be valid. */
-PURE NONNULL((1)) const u8 *nbt_nexttag(const u8 *restrict buf);
+const u8 *nbt_nexttag(const u8 *restrict buf) NONNULL((1)) PURE;
 
 /* initialises a data structure used whilst processing the tags */
-PURE NONNULL((1)) struct nbt_procdat nbt_initproc(struct nbt_path const *restrict pats, uint npats);
+struct nbt_procdat nbt_initproc(struct nbt_path const *restrict pats, uint npats) NONNULL((1)) PURE;
