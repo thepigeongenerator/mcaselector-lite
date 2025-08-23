@@ -20,5 +20,7 @@ I have picked C as the language for the core portions of the application, where 
 This version is not intended to serve to entirely replace MCA selector, just to offer an alternative. Both tools will have their strengths and weaknesses.
 
 # planned features
-- [ ] CLI-only version
+- [ ] (very basic) world map viewing
 - [ ] filtering chunks based on time spent in them
+- [ ] chunk-level removal of data.
+- [ ] CLI-only version
