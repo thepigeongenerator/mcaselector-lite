@@ -129,7 +129,6 @@ const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) {
 	const u8 *ptr = buf + 3 + slen;
 
 	switch (*buf) {
-	// integral types
 	case NBT_I8:  *(u8 *)out = *ptr; return ptr + 1;
 	case NBT_I16: *(u16 *)out = be16toh(*(u16 *)ptr); return ptr + 2;
 	case NBT_I32: // fall through
@@ -137,7 +136,6 @@ const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) {
 	case NBT_I64: // fall through
 	case NBT_F64: *(u64 *)out = be16toh(*(u64 *)ptr); return ptr + 8;
 
-	// arrays, handled differently
 	case NBT_STR:     *(void **)out = nbt_procarr(ptr += 2, be16toh(*(u16 *)buf), 1); break;
 	case NBT_ARR_I8:  *(void **)out = nbt_procarr(ptr += 4, be32toh(*(u32 *)buf), 1); break;
 	case NBT_ARR_I32: *(void **)out = nbt_procarr(ptr += 4, be32toh(*(u32 *)buf), 4); break;
