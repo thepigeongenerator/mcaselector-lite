@@ -50,16 +50,23 @@ struct nbt_procdat {
 	i16 dpt, mdpt;
 };
 
+struct nbt_array {
+	i32 len;
+	u8 dat[];
+};
+
 /* searches for the end of a named tag without processing data, the final pointer is returned.
  * `NULL` is returned upon failure, the otherwise returned pointer is not guaranteed to be valid. */
 const u8 *nbt_nexttag(const u8 *restrict buf) NONNULL((1)) PURE;
 
 /* Processes the tag entered in `buf`, `buf` is assumed to be the start of a named tag. Where `slen` shall be the string length.
- * The data in `buf` is processed and outputted to `out`. A pointer to the next tag is returned.
+ * The data in `buf` is processed and outputted to `out`. A pointer to the next tag, or `NULL` is returned.
+ * On little-endian systems, the data is processed from big-endian to little-endian. So it can be used like normal.
  * - In the case for all basic types, `out` will require to be the width of said type.
- * - In the case of arrays, a pointer shall be returned pointing to the data. TODO: it'd be nice to know how large this array is.
- * - In the case of `NBT_LIST`, if it is of the type `NBT_Ixx` and `NBT_Fxx`, then it's handled. Otherwise the funcion shall fail.
- * Upon failure, `NULL` is returned. */
+ * - In the case of arrays (and lists), a malloc'd pointer shall be written to `out`, pointing to `struct nbt_array`. This might be `NULL`
+ * - In the case of lists, the above is valid, as long as the list contains any of the following types:
+ *   `NBT_I8`, `NBT_I16`, `NBT_I32`, `NBT_I64`, `NBT_F32` or `NBT_F64`. Anything else will result in a `NULL` pointer.
+ * Upon failure, like the tag not being able to be processed, `NULL` is returned. */
 const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) NONNULL((1, 3));
 
 /* initialises a data structure used whilst processing the tags */

@@ -102,9 +102,9 @@ const u8 *nbt_nexttag(const u8 *restrict buf) {
  * returns a malloc'd pointer (which may be `NULL`) to the data.
  * the data is converted from big endian to little endian on little endian systems. */
 MALLOC static void *nbt_procarr(const u8 *restrict buf, i32 nmem, uint size) {
-	u8 *ptr = malloc(nmem * size);
+	struct nbt_array *ptr = malloc(sizeof(struct nbt_array) + nmem * size);
 	if (!ptr) return NULL;
-	memcpy(ptr, buf, nmem * size);
+	memcpy(ptr->dat, buf, nmem * size);
 
 	/* Only include this code for little-endian systems. Since only they require this logic.
 	 * Producing optimised code for other platforms. */
@@ -113,9 +113,9 @@ MALLOC static void *nbt_procarr(const u8 *restrict buf, i32 nmem, uint size) {
 	ssize_t i = 0;
 	while (i < nmem) {
 		switch (size) {
-		case 2:  *(u16 *)(ptr + i) = be16toh(*(u16 *)(ptr + i)); break;
-		case 4:  *(u32 *)(ptr + i) = be32toh(*(u32 *)(ptr + i)); break;
-		case 8:  *(u64 *)(ptr + i) = be64toh(*(u64 *)(ptr + i)); break;
+		case 2:  *(u16 *)(ptr->dat + i) = be16toh(*(u16 *)(ptr->dat + i)); break;
+		case 4:  *(u32 *)(ptr->dat + i) = be32toh(*(u32 *)(ptr->dat + i)); break;
+		case 8:  *(u64 *)(ptr->dat + i) = be64toh(*(u64 *)(ptr->dat + i)); break;
 		default: __builtin_unreachable(); // this should be impossible
 		}
 		i += size;
@@ -153,8 +153,8 @@ const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) {
 	case NBT_ARR_I8:  *(void **)out = nbt_procarr(ptr += 4, be32toh(*(u32 *)buf), 1); break;
 	case NBT_ARR_I32: *(void **)out = nbt_procarr(ptr += 4, be32toh(*(u32 *)buf), 4); break;
 	case NBT_ARR_I64: *(void **)out = nbt_procarr(ptr += 8, be32toh(*(u64 *)buf), 8); break;
+	case NBT_LIST:    *(void **)out = nbt_proclist(ptr);
 
-	case NBT_LIST: return nbt_proclist(ptr);
 	default:
 		return NULL;
 	}
