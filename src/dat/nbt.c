@@ -110,20 +110,12 @@ MALLOC static void *nbt_procarr(const u8 *restrict buf, i32 nmem, uint size) {
 	ssize_t i = 0;
 	while (i < nmem) {
 		switch (size) {
-		case 2:
-			*(u16 *)(ptr + i) = be16toh(*(u16 *)(ptr + i));
-			i += 2;
-			break;
-		case 4:
-			*(u32 *)(ptr + i) = be32toh(*(u32 *)(ptr + i));
-			i += 4;
-			break;
-		case 8:
-			*(u64 *)(ptr + i) = be64toh(*(u64 *)(ptr + i));
-			i += 8;
-			break;
+		case 2:  *(u16 *)(ptr + i) = be16toh(*(u16 *)(ptr + i)); break;
+		case 4:  *(u32 *)(ptr + i) = be32toh(*(u32 *)(ptr + i)); break;
+		case 8:  *(u64 *)(ptr + i) = be64toh(*(u64 *)(ptr + i)); break;
 		default: __builtin_unreachable(); // this should be impossible
 		}
+		i += size;
 	}
 #endif
 	return ptr;
