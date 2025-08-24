@@ -98,6 +98,9 @@ const u8 *nbt_nexttag(const u8 *restrict buf) {
 	return tag;
 }
 
+/* processes an array at `buf`, of `nmem` items with a size of `size`
+ * returns a malloc'd pointer (which may be `NULL`) to the data.
+ * the data is converted from big endian to little endian on little endian systems. */
 MALLOC static void *nbt_procarr(const u8 *restrict buf, i32 nmem, uint size) {
 	u8 *ptr = malloc(nmem * size);
 	if (!ptr) return NULL;
