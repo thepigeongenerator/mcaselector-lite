@@ -2,6 +2,21 @@
 // Licensed under the MIT Licence. See LICENSE for details
 #pragma once
 
+#include <stdlib.h>
+
+#include "../util/atrb.h"
+#include "../util/intdef.h"
+
+/* contains chunk metadata */
+struct mcx_chunk {
+	size_t idx; // byte offset for start of chunk data
+	u32 len;    // byte length of chunk (+ padding)
+	u32 time;      // modification time in epoch seconds
+};
+
+/* indexes the chunks in an `*.mcX` file, writing `0x400` of entries to `chunks` */
+void mcx_index(const u8 *restrict buf, struct mcx_chunk *restrict chunks) NONNULL((1, 2));
+
 /* the MCR (Minecraft region) and MCA (Minecraft anvil) files are similar
  * MCA is the newer variant, where it includes:
  *  - a world height of 256, rather than 128.
