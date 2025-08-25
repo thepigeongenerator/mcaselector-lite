@@ -98,8 +98,8 @@ The offset of a chunk (x,z) (in chunk coordinates) in the first table can be fou
 | data  | locations (4B)     | timestamps (4B)     | chunks and unused space |
 
 ##### chunk location
-Location info for a chunk is stored as a 32 bit big-endian integer, where the first three bytes are an offset in 4KiB sectors from the start of the file.
-The last byte gives the length of the chunk in 4KiB sectors. (rounded up, of course). Where chunks are always less than 1MiB in size.
+Location info for a chunk is stored as a 32 bit big-endian integer, where the first three bytes (0xFFFFFF00) are an offset in 4KiB sectors from the start of the file.
+The last byte (0x000000FF) gives the length of the chunk in 4KiB sectors. (rounded up, of course). Where chunks are always less than 1MiB in size.
 If a chunk isn't present in the region file (e.g. because it hasn't been generated or migrated yet), both fields are zero.
 
 ##### timestamps
