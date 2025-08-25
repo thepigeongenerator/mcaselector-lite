@@ -179,26 +179,3 @@ const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) {
 
 	return procarr(ptr, nmem, size, (struct nbt_array **)out);
 }
-
-struct nbt_procdat nbt_initproc(struct nbt_path const *restrict pats, uint npats) {
-	i16 mdpt = 0;
-
-	// acquire the maximum depth that we'll need to go (exclusive)
-	for (uint i = 0; i < npats; i++) {
-		int tmp = pats[i].len - mdpt;
-		mdpt += -(tmp > 0) & tmp;
-	}
-	assert(mdpt > 0);
-
-	// storing the segments of the current path
-	const char **cpat = (const char **)calloc(mdpt - 1, sizeof(void *));
-
-	// return the initialised structure.
-	return (struct nbt_procdat){
-		pats,
-		cpat,
-		npats,
-		0,
-		mdpt,
-	};
-}

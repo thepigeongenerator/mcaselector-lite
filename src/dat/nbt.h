@@ -36,20 +36,6 @@ enum nbt_tagid {
 	NBT_ARR_I64 = 0x0C,  // starts with a i32, denoting size, followed by the u32 data
 };
 
-/* TODO: write doc */
-struct nbt_path {
-	const char **restrict pat; // specifies the NBT path components as separate elements
-	i16 len;                   // specifies the length of the NBT elements
-};
-
-/* TODO: write doc */
-struct nbt_procdat {
-	const struct nbt_path *pats;
-	const char *restrict *cpat;
-	u32 npats;
-	i16 dpt, mdpt;
-};
-
 struct nbt_array {
 	i32 len;
 	u8 dat[];
@@ -67,6 +53,3 @@ const u8 *nbt_nexttag(const u8 *restrict buf) NONNULL((1)) PURE;
  * to have the available byte width for one of these types. In the case of `NBT_ARR*` and `NBT_LIST`
  * it must point to a `struct nbt_array*`. Where in the case of `NBT_LIST`, it must be one of the previous static-width types. */
 const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) NONNULL((1, 3));
-
-/* initialises a data structure used whilst processing the tags */
-struct nbt_procdat nbt_initproc(struct nbt_path const *restrict pats, uint npats) NONNULL((1)) PURE;
