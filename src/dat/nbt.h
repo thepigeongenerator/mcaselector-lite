@@ -59,14 +59,13 @@ struct nbt_array {
  * `NULL` is returned upon failure, the otherwise returned pointer is not guaranteed to be valid. */
 const u8 *nbt_nexttag(const u8 *restrict buf) NONNULL((1)) PURE;
 
-/* Processes the tag entered in `buf`, `buf` is assumed to be the start of a named tag. Where `slen` shall be the string length.
- * The data in `buf` is processed and outputted to `out`. A pointer to the next tag, or `NULL` is returned.
- * On little-endian systems, the data is processed from big-endian to little-endian. So it can be used like normal.
- * - In the case for all basic types, `out` will require to be the width of said type.
- * - In the case of arrays (and lists), a malloc'd pointer shall be written to `out`, pointing to `struct nbt_array`. This might be `NULL`
- * - In the case of lists, the above is valid, as long as the list contains any of the following types:
- *   `NBT_I8`, `NBT_I16`, `NBT_I32`, `NBT_I64`, `NBT_F32` or `NBT_F64`. Anything else will result in a `NULL` pointer.
- * Upon failure, like the tag not being able to be processed, `NULL` is returned. */
+/* Acquires the data contained by the named tag.
+ * - `buf` points to the start of the tag.
+ * - `slen` contains the string length of the name.
+ * - `out` points to where the data should be written.
+ * if `buf` points to `NBT_I8`, `NBT_I16`, `NBT_I32`, `NBT_I64`, `NBT_F32`, or `NBT_F64`, `*out` is assumed
+ * to have the available byte width for one of these types. In the case of `NBT_ARR*` and `NBT_LIST`
+ * it must point to a `struct nbt_array*`. Where in the case of `NBT_LIST`, it must be one of the previous static-width types. */
 const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) NONNULL((1, 3));
 
 /* initialises a data structure used whilst processing the tags */

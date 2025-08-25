@@ -125,21 +125,34 @@ MALLOC static void *nbt_procarr(const u8 *restrict buf, i32 nmem, uint size) {
 }
 
 /* processes a `NBT_LIST` tag, and returns a pointer to malloc'd data, or `NULL`, depending on its success */
-MALLOC static void *nbt_proclist(const u8 *restrict buf) {
+MALLOC static void *nbt_proclist(const u8 *restrict buf, const u8 *restrict *restrict out) {
+	uint size;
+
+	*out = NULL;
+
 	switch (*buf) {
-	case NBT_I8:  return nbt_procarr(buf + 5, (i32)be32toh(*(u32 *)buf + 1), 1);
-	case NBT_I16: return nbt_procarr(buf + 5, (i32)be32toh(*(u32 *)buf + 1), 2);
+	case NBT_I8:  size = 1; break;
+	case NBT_I16: size = 2; break;
 	case NBT_I32: // fall through
-	case NBT_F32: return nbt_procarr(buf + 5, (i32)be32toh(*(u32 *)buf + 1), 4);
+	case NBT_F32: size = 4; break;
 	case NBT_I64: // fall though
-	case NBT_F64: return nbt_procarr(buf + 5, (i32)be32toh(*(u32 *)buf + 1), 8);
+	case NBT_F64: size = 8; break;
 	default:      return NULL;
 	}
+
+	buf++;
+	i32 len = (i32)be32toh(*(u32 *)buf);
+	buf += 4;
+	*out = buf + (len * size);
+	return nbt_procarr(buf, len, size);
 }
 
-/* readies the output data for export, returns the new buffer position, or `NULL` upon an error (may be out of bounds) */
 const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) {
-	const u8 *ptr = buf + 3 + slen;
+	const u8 *ptr, *tmp;
+	ptr = buf + 3 + slen;
+
+	i32 nmem;
+	uint size;
 
 	switch (*buf) {
 	case NBT_I8:  *(u8 *)out = *ptr; return ptr + 1;
@@ -149,17 +162,20 @@ const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) {
 	case NBT_I64: // fall through
 	case NBT_F64: *(u64 *)out = be16toh(*(u64 *)ptr); return ptr + 8;
 
-	case NBT_STR:     *(void **)out = nbt_procarr(ptr += 2, be16toh(*(u16 *)buf), 1); break;
-	case NBT_ARR_I8:  *(void **)out = nbt_procarr(ptr += 4, be32toh(*(u32 *)buf), 1); break;
-	case NBT_ARR_I32: *(void **)out = nbt_procarr(ptr += 4, be32toh(*(u32 *)buf), 4); break;
-	case NBT_ARR_I64: *(void **)out = nbt_procarr(ptr += 8, be32toh(*(u64 *)buf), 8); break;
-	case NBT_LIST:    *(void **)out = nbt_proclist(ptr);
+	case NBT_STR:     nmem = be16toh(*(u16 *)ptr), size = 1, ptr += 2; break;
+	case NBT_ARR_I8:  nmem = be32toh(*(u32 *)ptr), size = 1, ptr += 4; break;
+	case NBT_ARR_I32: nmem = be32toh(*(u32 *)ptr), size = 4, ptr += 4; break;
+	case NBT_ARR_I64: nmem = be32toh(*(u32 *)ptr), size = 8, ptr += 4; break;
 
-	default:
-		return NULL;
+	case NBT_LIST:
+		*(void **)out = nbt_proclist(ptr, &tmp);
+		return tmp;
+
+	default: return NULL;
 	}
 
-	return ptr;
+	*(void **)out = nbt_procarr(ptr, nmem, size);
+	return ptr + (size * nmem);
 }
 
 struct nbt_procdat nbt_initproc(struct nbt_path const *restrict pats, uint npats) {
