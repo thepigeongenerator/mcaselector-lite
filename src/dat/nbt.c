@@ -98,34 +98,38 @@ const u8 *nbt_nexttag(const u8 *restrict buf) {
 	return tag;
 }
 
-/* processes an array at `buf`, of `nmem` items with a size of `size`
- * returns a malloc'd pointer (which may be `NULL`) to the data.
- * the data is converted from big endian to little endian on little endian systems. */
-MALLOC static void *nbt_procarr(const u8 *restrict buf, i32 nmem, uint size) {
-	struct nbt_array *ptr = malloc(sizeof(struct nbt_array) + nmem * size);
-	if (!ptr) return NULL;
-	memcpy(ptr->dat, buf, nmem * size);
+/* Processes the incoming array data in `buf`. Which contains `nmem` items of `size`.
+ * The data shall be converted to little-endian on little-endian systems
+ * Outputs the allocated data to `out`, returns where the next pointer would be. */
+static const u8 *procarr(const u8 *restrict buf, i32 nmem, uint size, struct nbt_array *restrict *restrict out) {
+	size_t len = nmem * size;
+	*out = malloc(sizeof(struct nbt_array) + len);
+	if (!*out) return buf + len;
+
+	memcpy((*out)->dat, buf, len);
+	(*out)->len = nmem;
+	buf += len;
 
 	/* Only include this code for little-endian systems. Since only they require this logic.
 	 * Producing optimised code for other platforms. */
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-	if (size == 1) return ptr;
-	ssize_t i = 0;
-	while (i < nmem) {
+	if (size == 1) return buf;
+	size_t i = 0;
+	while (i < len) {
 		switch (size) {
-		case 2:  *(u16 *)(ptr->dat + i) = be16toh(*(u16 *)(ptr->dat + i)); break;
-		case 4:  *(u32 *)(ptr->dat + i) = be32toh(*(u32 *)(ptr->dat + i)); break;
-		case 8:  *(u64 *)(ptr->dat + i) = be64toh(*(u64 *)(ptr->dat + i)); break;
+		case 2:  *(u16 *)((*out)->dat + i) = be16toh(*(u16 *)((*out)->dat + i)); break;
+		case 4:  *(u32 *)((*out)->dat + i) = be32toh(*(u32 *)((*out)->dat + i)); break;
+		case 8:  *(u64 *)((*out)->dat + i) = be64toh(*(u64 *)((*out)->dat + i)); break;
 		default: __builtin_unreachable(); // this should be impossible
 		}
 		i += size;
 	}
 #endif
-	return ptr;
+	return buf;
 }
 
-/* processes a `NBT_LIST` tag, and returns a pointer to malloc'd data, or `NULL`, depending on its success */
-MALLOC static void *nbt_proclist(const u8 *restrict buf, const u8 *restrict *restrict out) {
+/* calls `procarr` for the simple types available. */
+static const u8 *proclist(const u8 *restrict buf, struct nbt_array *restrict *restrict out) {
 	uint size;
 
 	*out = NULL;
@@ -143,8 +147,7 @@ MALLOC static void *nbt_proclist(const u8 *restrict buf, const u8 *restrict *res
 	buf++;
 	i32 len = (i32)be32toh(*(u32 *)buf);
 	buf += 4;
-	*out = buf + (len * size);
-	return nbt_procarr(buf, len, size);
+	return procarr(buf, len, size, out);
 }
 
 const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) {
@@ -168,14 +171,13 @@ const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) {
 	case NBT_ARR_I64: nmem = be32toh(*(u32 *)ptr), size = 8, ptr += 4; break;
 
 	case NBT_LIST:
-		*(void **)out = nbt_proclist(ptr, &tmp);
+		return proclist(ptr, (struct nbt_array **)out);
 		return tmp;
 
 	default: return NULL;
 	}
 
-	*(void **)out = nbt_procarr(ptr, nmem, size);
-	return ptr + (size * nmem);
+	return procarr(ptr, nmem, size, (struct nbt_array **)out);
 }
 
 struct nbt_procdat nbt_initproc(struct nbt_path const *restrict pats, uint npats) {
