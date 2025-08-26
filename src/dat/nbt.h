@@ -41,9 +41,6 @@ struct nbt_array {
 	u8 dat[];
 };
 
-/* searches for the end of a named tag without processing data, the final pointer is returned.
- * `NULL` is returned upon failure, the otherwise returned pointer is not guaranteed to be valid. */
-const u8 *nbt_nexttag(const u8 *restrict buf) NONNULL((1)) PURE;
 
 /* Acquires the data contained by the named tag.
  * - `buf` points to the start of the tag.
@@ -53,3 +50,7 @@ const u8 *nbt_nexttag(const u8 *restrict buf) NONNULL((1)) PURE;
  * to have the available byte width for one of these types. In the case of `NBT_ARR*` and `NBT_LIST`
  * it must point to a `struct nbt_array*`. Where in the case of `NBT_LIST`, it must be one of the previous static-width types. */
 const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) NONNULL((1, 3));
+
+/* searches for the end of a named tag without processing data, the final pointer is returned.
+ * `NULL` is returned upon failure, the otherwise returned pointer is not guaranteed to be valid. */
+const u8 *nbt_nexttag(const u8 *restrict buf) NONNULL((1)) PURE;

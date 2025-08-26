@@ -4,12 +4,96 @@
 
 #include <assert.h>
 #include <stddef.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "../util/compat/endian.h"
 #include "../util/intdef.h"
 
 #define MAX_DEPTH 512
+
+/* Processes the incoming array data in `buf`. Which contains `nmem` items of `size`.
+ * The data shall be converted to little-endian on little-endian systems
+ * Outputs the allocated data to `out`, returns where the next pointer would be. */
+static const u8 *procarr(const u8 *restrict buf, i32 nmem, uint size, struct nbt_array *restrict *restrict out) {
+	size_t len = nmem * size;
+	*out = malloc(sizeof(struct nbt_array) + len);
+	if (!*out) return buf + len;
+
+	memcpy((*out)->dat, buf, len);
+	(*out)->len = nmem;
+	buf += len;
+
+	/* Only include this code for little-endian systems. Since only they require this logic.
+	 * Producing optimised code for other platforms. */
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+	if (size == 1) return buf;
+	size_t i = 0;
+	while (i < len) {
+		switch (size) {
+		case 2:  *(u16 *)((*out)->dat + i) = be16toh(*(u16 *)((*out)->dat + i)); break;
+		case 4:  *(u32 *)((*out)->dat + i) = be32toh(*(u32 *)((*out)->dat + i)); break;
+		case 8:  *(u64 *)((*out)->dat + i) = be64toh(*(u64 *)((*out)->dat + i)); break;
+		default: __builtin_unreachable(); // this should be impossible
+		}
+		i += size;
+	}
+#endif
+	return buf;
+}
+
+/* calls `procarr` for the simple types available. */
+static const u8 *proclist(const u8 *restrict buf, struct nbt_array *restrict *restrict out) {
+	uint size;
+
+	*out = NULL;
+
+	switch (*buf) {
+	case NBT_I8:  size = 1; break;
+	case NBT_I16: size = 2; break;
+	case NBT_I32: // fall through
+	case NBT_F32: size = 4; break;
+	case NBT_I64: // fall though
+	case NBT_F64: size = 8; break;
+	default:      return NULL;
+	}
+
+	buf++;
+	i32 len = (i32)be32toh(*(u32 *)buf);
+	buf += 4;
+	return procarr(buf, len, size, out);
+}
+
+const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) {
+	const u8 *ptr, *tmp;
+	ptr = buf + 3 + slen;
+
+	i32 nmem;
+	uint size;
+
+	switch (*buf) {
+	case NBT_I8:  *(u8 *)out = *ptr; return ptr + 1;
+	case NBT_I16: *(u16 *)out = be16toh(*(u16 *)ptr); return ptr + 2;
+	case NBT_I32: // fall through
+	case NBT_F32: *(u32 *)out = be16toh(*(u32 *)ptr); return ptr + 4;
+	case NBT_I64: // fall through
+	case NBT_F64: *(u64 *)out = be16toh(*(u64 *)ptr); return ptr + 8;
+
+	case NBT_STR:     nmem = be16toh(*(u16 *)ptr), size = 1, ptr += 2; break;
+	case NBT_ARR_I8:  nmem = be32toh(*(u32 *)ptr), size = 1, ptr += 4; break;
+	case NBT_ARR_I32: nmem = be32toh(*(u32 *)ptr), size = 4, ptr += 4; break;
+	case NBT_ARR_I64: nmem = be32toh(*(u32 *)ptr), size = 8, ptr += 4; break;
+
+	case NBT_LIST:
+		return proclist(ptr, (struct nbt_array **)out);
+		return tmp;
+
+	default: return NULL;
+	}
+
+	return procarr(ptr, nmem, size, (struct nbt_array **)out);
+}
+
 
 /* handles incrementing to the next tag in the case of `NBT_LIST`. This function shan't return `NULL`.
  * `ptr` is assumed to be the start of the `NBT_LIST` data, e.i. The list's ID, followed by the list's length.
@@ -96,86 +180,4 @@ const u8 *nbt_nexttag(const u8 *restrict buf) {
 		tag = nexttag(tag, &dpt, lens, tags);
 	} while (dpt > 0);
 	return tag;
-}
-
-/* Processes the incoming array data in `buf`. Which contains `nmem` items of `size`.
- * The data shall be converted to little-endian on little-endian systems
- * Outputs the allocated data to `out`, returns where the next pointer would be. */
-static const u8 *procarr(const u8 *restrict buf, i32 nmem, uint size, struct nbt_array *restrict *restrict out) {
-	size_t len = nmem * size;
-	*out = malloc(sizeof(struct nbt_array) + len);
-	if (!*out) return buf + len;
-
-	memcpy((*out)->dat, buf, len);
-	(*out)->len = nmem;
-	buf += len;
-
-	/* Only include this code for little-endian systems. Since only they require this logic.
-	 * Producing optimised code for other platforms. */
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-	if (size == 1) return buf;
-	size_t i = 0;
-	while (i < len) {
-		switch (size) {
-		case 2:  *(u16 *)((*out)->dat + i) = be16toh(*(u16 *)((*out)->dat + i)); break;
-		case 4:  *(u32 *)((*out)->dat + i) = be32toh(*(u32 *)((*out)->dat + i)); break;
-		case 8:  *(u64 *)((*out)->dat + i) = be64toh(*(u64 *)((*out)->dat + i)); break;
-		default: __builtin_unreachable(); // this should be impossible
-		}
-		i += size;
-	}
-#endif
-	return buf;
-}
-
-/* calls `procarr` for the simple types available. */
-static const u8 *proclist(const u8 *restrict buf, struct nbt_array *restrict *restrict out) {
-	uint size;
-
-	*out = NULL;
-
-	switch (*buf) {
-	case NBT_I8:  size = 1; break;
-	case NBT_I16: size = 2; break;
-	case NBT_I32: // fall through
-	case NBT_F32: size = 4; break;
-	case NBT_I64: // fall though
-	case NBT_F64: size = 8; break;
-	default:      return NULL;
-	}
-
-	buf++;
-	i32 len = (i32)be32toh(*(u32 *)buf);
-	buf += 4;
-	return procarr(buf, len, size, out);
-}
-
-const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) {
-	const u8 *ptr, *tmp;
-	ptr = buf + 3 + slen;
-
-	i32 nmem;
-	uint size;
-
-	switch (*buf) {
-	case NBT_I8:  *(u8 *)out = *ptr; return ptr + 1;
-	case NBT_I16: *(u16 *)out = be16toh(*(u16 *)ptr); return ptr + 2;
-	case NBT_I32: // fall through
-	case NBT_F32: *(u32 *)out = be16toh(*(u32 *)ptr); return ptr + 4;
-	case NBT_I64: // fall through
-	case NBT_F64: *(u64 *)out = be16toh(*(u64 *)ptr); return ptr + 8;
-
-	case NBT_STR:     nmem = be16toh(*(u16 *)ptr), size = 1, ptr += 2; break;
-	case NBT_ARR_I8:  nmem = be32toh(*(u32 *)ptr), size = 1, ptr += 4; break;
-	case NBT_ARR_I32: nmem = be32toh(*(u32 *)ptr), size = 4, ptr += 4; break;
-	case NBT_ARR_I64: nmem = be32toh(*(u32 *)ptr), size = 8, ptr += 4; break;
-
-	case NBT_LIST:
-		return proclist(ptr, (struct nbt_array **)out);
-		return tmp;
-
-	default: return NULL;
-	}
-
-	return procarr(ptr, nmem, size, (struct nbt_array **)out);
 }
