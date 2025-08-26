@@ -11,8 +11,12 @@
 struct mcx_chunk {
 	size_t idx; // byte offset for start of chunk data
 	u32 len;    // byte length of chunk (+ padding)
-	u32 time;      // modification time in epoch seconds
+	u32 time;   // modification time in epoch seconds
 };
+
+// TODO: should return some form of feedback about its success
+/* Deletes chunk `idx` from `buf`, moving all chunks downwards in the process. */
+void mcx_delchunk(u8 *restrict buf, int idx);
 
 /* indexes the chunks in an `*.mcX` file, writing `0x400` of entries to `chunks` */
 void mcx_index(const u8 *restrict buf, struct mcx_chunk *restrict chunks) NONNULL((1, 2));

@@ -3,9 +3,30 @@
 #include <endian.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
 #include "../util/compat/endian.h"
 #include "../util/intdef.h"
+
+void mcx_delchunk(u8 *restrict buf, int chunk) {
+	// load the table data, and clear it
+	u32 *table = (u32 *)buf;
+	size_t bidx = (table[chunk] >> 8) * 0x1000;   // compute the byte offset the chunk starts at
+	size_t blen = (table[chunk] & 0xFF) * 0x1000; // compute the byte length of the chunk
+	table[chunk] = 0;
+	table[chunk + 0x400] = time(NULL); // assign the current time to the timestamp, for correctness  NOTE: might need to zero-out instead
+
+	// store the head and tail end of the current chunk
+	u8 *head = buf + bidx;
+	u8 *tail = buf + bidx + blen;
+
+	// count the amount of bytes that we must move
+	blen = 0;
+	for (chunk++; chunk < 0x400; chunk++)
+		blen += table[chunk] & 0xFF * 0x1000;
+	memmove(head, tail, blen);
+}
 
 /* an `*.mcX` contains a `0x2000` byte long table, the first `0x1000` containing
  * `0x400` entries of chunk data.
