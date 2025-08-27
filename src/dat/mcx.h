@@ -18,6 +18,9 @@ struct mcx_chunk {
 /* Deletes chunk `idx` from `buf`, moving all chunks downwards in the process. */
 void mcx_delchunk(u8 *restrict buf, int idx);
 
+/* Computes the byte size of the `*.mcX` file in `buf` and returns it. */
+size_t mcx_calcsize(const u8 *restrict buf) NONNULL((1)) PURE;
+
 /* indexes the chunks in an `*.mcX` file, writing `0x400` of entries to `chunks` */
 void mcx_index(const u8 *restrict buf, struct mcx_chunk *restrict chunks) NONNULL((1, 2));
 

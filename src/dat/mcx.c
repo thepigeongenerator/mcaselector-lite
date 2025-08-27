@@ -28,6 +28,15 @@ void mcx_delchunk(u8 *restrict buf, int chunk) {
 	memmove(head, tail, blen);
 }
 
+/* Sum together the 4th byte in each location integer to compute the sector size of all chunks.
+ * Multiplying by `0x1000`, and adding the size of the table itself. */
+size_t mcx_calcsize(const u8 *restrict buf) {
+	size_t size = 0;
+	for (uint i = 0; i < 0x400; i++)
+		size += *(buf + (i * 4) + 3);
+	return (size * 0x1000) + 0x2000;
+}
+
 /* an `*.mcX` contains a `0x2000` byte long table, the first `0x1000` containing
  * `0x400` entries of chunk data.
  * This chunk data is big-endian, where bytes `0xFFFFFF00` represent the `0x1000` sector offset.
