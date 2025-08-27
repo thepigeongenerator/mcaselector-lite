@@ -13,12 +13,14 @@
  * `rmb` is an optional additional offset that can be applied, and signifies bytes already removed.
  * Returns the bytes removed by this function. */
 static size_t delchunk(u8 *restrict buf, size_t rmb, int sidx, int eidx) {
-	// load the table data, and clear it
+	// load the table data
 	u32 *table = (u32 *)buf;
 	size_t slen, bidx, blen;
 	slen = be32toh(table[sidx] & 0xFF);        // acquire the sector length of the chunk
 	bidx = be32toh(table[sidx] >> 8) * 0x1000; // acquire and compute the byte offset the chunk starts at
 	blen = slen * 0x1000;                      // compute the byte length of the chunk
+
+	// reset the table data
 	table[sidx] = 0;
 	table[sidx + 0x400] = time(NULL); // assign the current time to the timestamp, for correctness  NOTE: might need to zero-out instead
 
@@ -34,6 +36,9 @@ static size_t delchunk(u8 *restrict buf, size_t rmb, int sidx, int eidx) {
 	return rmb;
 }
 
+/* Just call `delchunk` with the parameters and some defaults.
+ * This is done instead of `delchunk` being globally linked, because
+ * `delchunk` requests more specific parameters, which is confusing outside this module. */
 size_t mcx_delchunk(u8 *restrict buf, int chunk) {
 	return delchunk(buf, 0, chunk, 0x400);
 }
@@ -45,6 +50,8 @@ static int cmp_chunkids(const void *restrict x, const void *restrict y) {
 	return (x2 > y2) - (x2 < y2);
 }
 
+/* Sorts the chunks marked for deletion from smallest to greatest index.
+ * Then performs the deletion in this order. Making sure to only update the chunks up to the next. */
 size_t mcx_delchunk_bulk(u8 *restrict buf, const u16 *restrict chunks, int chunkc) {
 	// ensure the chunks ids we're working on are sorted from least to greatest
 	u16 chunkids[chunkc + 1];
