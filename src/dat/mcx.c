@@ -68,7 +68,7 @@ size_t mcx_delchunk_bulk(u8 *restrict buf, const u16 *restrict chunks, int chunk
 	u16 chunkids[chunkc + 1];
 	memcpy(chunkids, chunks, chunkc);
 	qsort(chunkids, chunkc, sizeof(int), cmp_chunkids);
-	chunkids[chunkc] = 0; // set the spare chunk to zero, to prevent out-of-bounds access
+	chunkids[chunkc] = 0x400; // set the spare chunk to the max chunks, so the rest of the chunks are moved
 
 	size_t rmb = 0;
 	for (int i = 0; i < chunkc; i++)
