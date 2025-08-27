@@ -16,13 +16,13 @@ static size_t delchunk(u8 *restrict buf, size_t rmb, int sidx, int eidx) {
 	// load the table data
 	u32 *table = (u32 *)buf;
 	size_t slen, bidx, blen;
-	slen = be32toh(table[sidx] & 0xFF);        // acquire the sector length of the chunk
-	bidx = be32toh(table[sidx] >> 8) * 0x1000; // acquire and compute the byte offset the chunk starts at
-	blen = slen * 0x1000;                      // compute the byte length of the chunk
+	slen = be32toh(table[sidx]) & 0xFF;          // acquire the sector length of the chunk
+	bidx = (be32toh(table[sidx]) >> 8) * 0x1000; // acquire and compute the byte offset the chunk starts at
+	blen = slen * 0x1000;                        // compute the byte length of the chunk
 
 	// reset the table data
 	table[sidx] = 0;
-	table[sidx + 0x400] = time(NULL); // assign the current time to the timestamp, for correctness  NOTE: might need to zero-out instead
+	table[sidx + 0x400] = htobe32(time(NULL)); // assign the current time to the timestamp, for correctness  NOTE: might need to zero-out instead
 
 	u8 *dst = buf + bidx - rmb;
 	u8 *src = buf + bidx + blen;
@@ -30,7 +30,7 @@ static size_t delchunk(u8 *restrict buf, size_t rmb, int sidx, int eidx) {
 	blen = 0;
 	for (sidx++; sidx < eidx; sidx++) {
 		blen += be32toh(table[sidx] & 0xFF) * 0x1000;
-		table[sidx] -= htobe32(slen << 8);
+		table[sidx] -= htobe32((rmb / 0x1000) << 8);
 	}
 	memmove(dst, src, blen);
 	return rmb;
