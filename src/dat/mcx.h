@@ -14,14 +14,23 @@ struct mcx_chunk {
 	u32 time;   // modification time in epoch seconds
 };
 
-/* Deletes chunk `idx` from `buf`, moving all chunks downwards in the process. */
-size_t mcx_delchunk(u8 *restrict buf, int idx) NONNULL((1));
+/* Deletes a single chunk (`chunk`) out of `buf`.
+ * The chunk's location data shall become `0`, and timestamp data the current time.
+ * All succeeding chunks shall be moved back, freeing space.
+ * Returns the amount of bytes removed. */
+size_t mcx_delchunk(u8 *restrict buf, int chunk) NONNULL((1));
 
-/* Deletes a range of chunks from index `start` to `end`. */
+/* Deletes the range defined by `start`—`end` (inclusive) of chunks out of `buf`.
+ * The chunk's location data shall become `0`, and timestamp data the current time.
+ * All succeeding chunks shall be moved back, freeing space.
+ * Returns the amount of bytes removed */
 size_t mcx_delchunk_range(u8 *restrict buf, int start, int end) NONNULL((1));
 
-/* Deletes `chunkc` chunks specified in `chunks` from the `*.mcX` file.
- * This is done in a way to perform minimal memmove operations. */
+/* Deletes a `chunkc` chunks from `chunks` out of `buf`.
+ * If the `chunks` indices are known to be sequential, i.e. have a constant difference of `1`, `mcx_delchunk_range` should be preferred.
+ * The chunk's location data shall become `0`, and timestamp data the current time.
+ * All succeeding chunks shall be moved back, freeing space.
+ * Returns the amount of bytes removed */
 size_t mcx_delchunk_bulk(u8 *restrict buf, const u16 *restrict chunks, int chunkc) NONNULL((1, 2));
 
 /* Computes the byte size of the `*.mcX` file in `buf` and returns it. */
