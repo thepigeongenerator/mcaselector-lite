@@ -54,6 +54,25 @@ size_t mcx_delchunk(u8 *restrict buf, int chunk) {
 	return delchunk(buf, 0, chunk, 0x400);
 }
 
+size_t mcx_delchunk_range(u8 *restrict buf, int start, int end) {
+	assert(start < end && end < 0x400);
+	u32 *table = (u32 *)buf;
+	u8 *dst = buf + (be32toh(table[start]) >> 8) * 0x1000;
+	u8 *src = buf + (be32toh(table[end]) >> 8) * 0x1000;
+	src += (be32toh(table[end]) & 0xFF) * 0x1000;
+
+	// zeroes-out the chunk data within this range. (and set the timestamp)
+	u32 ts = htobe32(time(NULL));
+	for (int i = start; i <= end; i++) {
+		table[i] = 0;
+		table[i + 0x400] = ts;
+	}
+
+	// move the remaining chunks down
+	mvchunks(buf, src, dst, start, end);
+	return src - dst;
+}
+
 /* comparer function for to be inputted into `qsort` to compare two */
 static int cmp_chunkids(const void *restrict x, const void *restrict y) {
 	u16 x2 = *(u16 *)x;

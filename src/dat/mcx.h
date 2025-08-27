@@ -17,6 +17,9 @@ struct mcx_chunk {
 /* Deletes chunk `idx` from `buf`, moving all chunks downwards in the process. */
 size_t mcx_delchunk(u8 *restrict buf, int idx) NONNULL((1));
 
+/* Deletes a range of chunks from index `start` to `end`. */
+size_t mcx_delchunk_range(u8 *restrict buf, int start, int end) NONNULL((1));
+
 /* Deletes `chunkc` chunks specified in `chunks` from the `*.mcX` file.
  * This is done in a way to perform minimal memmove operations. */
 size_t mcx_delchunk_bulk(u8 *restrict buf, const u16 *restrict chunks, int chunkc) NONNULL((1, 2));
