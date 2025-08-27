@@ -12,9 +12,9 @@
 void mcx_delchunk(u8 *restrict buf, int chunk) {
 	// load the table data, and clear it
 	u32 *table = (u32 *)buf;
-	size_t bidx = (table[chunk] >> 8) * 0x1000;   // compute the byte offset the chunk starts at
-	size_t blen = (table[chunk] & 0xFF) * 0x1000; // compute the byte length of the chunk
-	size_t slen = (table[chunk] & 0xFF);          // acquire the sector length of the chunk
+	size_t bidx = be32toh(table[chunk] >> 8) * 0x1000;   // compute the byte offset the chunk starts at
+	size_t blen = be32toh(table[chunk] & 0xFF) * 0x1000; // compute the byte length of the chunk
+	size_t slen = be32toh(table[chunk] & 0xFF);          // acquire the sector length of the chunk
 	table[chunk] = 0;
 	table[chunk + 0x400] = time(NULL); // assign the current time to the timestamp, for correctness  NOTE: might need to zero-out instead
 
