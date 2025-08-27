@@ -19,7 +19,12 @@ I have picked C as the language for the core portions of the application, where 
 This version is not intended to serve to entirely replace MCA selector, just to offer an alternative. Both tools will have their strengths and weaknesses.
 
 # planned features
-- [ ] (very basic) world map viewing
+- [ ] (very basic) world map viewing (Y level + surface)
 - [ ] filtering chunks based on time spent in them
 - [ ] chunk-level removal of data.
 - [ ] CLI-only version
+- [ ] (idea) change chunk compression
+- [ ] (idea) view chunk metadata
+- [ ] (idea) change chunk sNBT (this'll be tricky to add)
+*note that entries marked with `(idea)` aren't guaranteed to be implemented.
+Due to their viability and usefulness is still to be measured.*
