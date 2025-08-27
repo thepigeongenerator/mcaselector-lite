@@ -9,26 +9,33 @@
 #include "../util/compat/endian.h"
 #include "../util/intdef.h"
 
-void mcx_delchunk(u8 *restrict buf, int chunk) {
+/* Deletes chunk `sidx`, by moving chunks up to `eidx` back over `sidx` in `buf`.
+ * `rmb` is an optional additional offset that can be applied, and signifies bytes already removed.
+ * Returns the bytes removed by this function. */
+static size_t delchunk(u8 *restrict buf, size_t rmb, int sidx, int eidx) {
 	// load the table data, and clear it
 	u32 *table = (u32 *)buf;
-	size_t bidx = be32toh(table[chunk] >> 8) * 0x1000;   // compute the byte offset the chunk starts at
-	size_t blen = be32toh(table[chunk] & 0xFF) * 0x1000; // compute the byte length of the chunk
-	size_t slen = be32toh(table[chunk] & 0xFF);          // acquire the sector length of the chunk
-	table[chunk] = 0;
-	table[chunk + 0x400] = time(NULL); // assign the current time to the timestamp, for correctness  NOTE: might need to zero-out instead
+	size_t slen, bidx, blen;
+	slen = be32toh(table[sidx] & 0xFF);        // acquire the sector length of the chunk
+	bidx = be32toh(table[sidx] >> 8) * 0x1000; // acquire and compute the byte offset the chunk starts at
+	blen = slen * 0x1000;                      // compute the byte length of the chunk
+	table[sidx] = 0;
+	table[sidx + 0x400] = time(NULL); // assign the current time to the timestamp, for correctness  NOTE: might need to zero-out instead
 
-	// store the head and tail end of the current chunk
-	u8 *head = buf + bidx;
-	u8 *tail = buf + bidx + blen;
-
-	// count the amount of bytes that we must move
+	u8 *dst = buf + bidx - rmb;
+	u8 *src = buf + bidx + blen;
+	rmb = blen;
 	blen = 0;
-	for (chunk++; chunk < 0x400; chunk++) {
-		blen += table[chunk] & 0xFF * 0x1000;
-		table[chunk] -= htobe32(slen << 8);
+	for (sidx++; sidx < eidx; sidx++) {
+		blen += be32toh(table[sidx] & 0xFF) * 0x1000;
+		table[sidx] -= htobe32(slen << 8);
 	}
-	memmove(head, tail, blen);
+	memmove(dst, src, blen);
+	return rmb;
+}
+
+size_t mcx_delchunk(u8 *restrict buf, int chunk) {
+	return delchunk(buf, 0, chunk, 0x400);
 }
 
 /* Sum together the 4th byte in each location integer to compute the sector size of all chunks.

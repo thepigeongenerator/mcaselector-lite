@@ -14,9 +14,8 @@ struct mcx_chunk {
 	u32 time;   // modification time in epoch seconds
 };
 
-// TODO: should return some form of feedback about its success
 /* Deletes chunk `idx` from `buf`, moving all chunks downwards in the process. */
-void mcx_delchunk(u8 *restrict buf, int idx);
+size_t mcx_delchunk(u8 *restrict buf, int idx);
 
 /* Computes the byte size of the `*.mcX` file in `buf` and returns it. */
 size_t mcx_calcsize(const u8 *restrict buf) NONNULL((1)) PURE;
