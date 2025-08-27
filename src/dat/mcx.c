@@ -38,6 +38,26 @@ size_t mcx_delchunk(u8 *restrict buf, int chunk) {
 	return delchunk(buf, 0, chunk, 0x400);
 }
 
+/* comparer function for to be inputted into `qsort` to compare two */
+static int cmp_chunkids(const void *restrict x, const void *restrict y) {
+	u16 x2 = *(u16 *)x;
+	u16 y2 = *(u16 *)y;
+	return (x2 > y2) - (x2 < y2);
+}
+
+size_t mcx_delchunk_bulk(u8 *restrict buf, const u16 *restrict chunks, int chunkc) {
+	// ensure the chunks ids we're working on are sorted from least to greatest
+	u16 chunkids[chunkc + 1];
+	memcpy(chunkids, chunks, chunkc);
+	qsort(chunkids, chunkc, sizeof(int), cmp_chunkids);
+	chunkids[chunkc] = 0; // set the spare chunk to zero, to prevent out-of-bounds access
+
+	size_t rmb = 0;
+	for (int i = 0; i < chunkc; i++)
+		rmb += delchunk(buf, rmb, chunkids[i], chunkids[i + 1]);
+	return rmb;
+}
+
 /* Sum together the 4th byte in each location integer to compute the sector size of all chunks.
  * Multiplying by `0x1000`, and adding the size of the table itself. */
 size_t mcx_calcsize(const u8 *restrict buf) {
