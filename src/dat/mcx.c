@@ -1,6 +1,6 @@
 #include "mcx.h"
 
-#include <endian.h>
+#include <assert.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,7 +9,23 @@
 #include "../util/compat/endian.h"
 #include "../util/intdef.h"
 
-/* Deletes chunk `sidx`, by moving chunks up to `eidx` back over `sidx` in `buf`.
+/* Moves chunks `src_s` to `src_e` (inclusive) from `src`, back onto `dst`. */
+static void mvchunks(u8 *restrict buf, u8 *src, u8 *dst, int src_s, int src_e) {
+	assert(src > dst);
+	u32 *table = (u32 *)buf;
+	size_t len = src - dst; // acquire the amount of bytes that we shall move
+	assert(len % 0x1000);
+
+	// count how many bytes we need to move, whilst updating location data
+	size_t blen = 0;
+	for (src_s++; src_s <= src_e; src_s++) {
+		blen += (be32toh(table[src_s]) & 0xFF) * 0x1000;
+		table[src_s] -= htobe32((len / 0x1000) << 8);
+	}
+	memmove(dst, src, blen);
+}
+
+/* Deletes chunk `sidx` by moving chunks up to `eidx` back over `sidx` in `buf`.
  * `rmb` is an optional additional offset that can be applied, and signifies bytes already removed.
  * Returns the bytes removed by this function. */
 static size_t delchunk(u8 *restrict buf, size_t rmb, int sidx, int eidx) {
@@ -24,16 +40,11 @@ static size_t delchunk(u8 *restrict buf, size_t rmb, int sidx, int eidx) {
 	table[sidx] = 0;
 	table[sidx + 0x400] = htobe32(time(NULL)); // assign the current time to the timestamp, for correctness  NOTE: might need to zero-out instead
 
+	// move the succeeding chunks over the deleted chunk
 	u8 *dst = buf + bidx - rmb;
 	u8 *src = buf + bidx + blen;
-	rmb = blen;
-	blen = 0;
-	for (sidx++; sidx < eidx; sidx++) {
-		blen += be32toh(table[sidx] & 0xFF) * 0x1000;
-		table[sidx] -= htobe32((rmb / 0x1000) << 8);
-	}
-	memmove(dst, src, blen);
-	return rmb;
+	mvchunks(buf, src, dst, sidx, eidx - 1);
+	return blen;
 }
 
 /* Just call `delchunk` with the parameters and some defaults.
