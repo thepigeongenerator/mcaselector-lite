@@ -14,7 +14,7 @@ static void mvchunks(u8 *restrict buf, u8 *src, u8 *dst, int src_s, int src_e) {
 	assert(src > dst);
 	u32 *table = (u32 *)buf;
 	size_t len = src - dst; // acquire the amount of bytes that we shall move
-	assert(len % 0x1000);
+	assert(!(len % 0x1000));
 
 	// count how many bytes we need to move, whilst updating location data
 	size_t blen = 0;
