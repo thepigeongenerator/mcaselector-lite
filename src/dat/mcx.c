@@ -69,7 +69,8 @@ size_t mcx_delchunk_range(u8 *restrict buf, int start, int end) {
 	}
 
 	// move the remaining chunks down
-	mvchunks(buf, src, dst, start, end);
+	if (end < 0x3FF)
+		mvchunks(buf, src, dst, end, 0x3FF);
 	return src - dst;
 }
 
