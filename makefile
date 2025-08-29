@@ -9,15 +9,13 @@ VERSION = 0.0.0
 DEBUG   ?= 0
 CC      ?= cc
 LD      ?= ld
-CFLAGS  += -c -std=gnu99 -Wall -MMD -MP
-CFLAGS  += -Ilib/glad/include
 LDFLAGS += -flto -lm
 MARCH   ?= $(shell uname -m)
 KERNEL  ?= $(shell uname -s | tr '[:upper:]' '[:lower:]')
 
 # compilation flags
-CFLAGS  = -c -std=gnu99 -Wall -Wextra -Wpedantic -MMD -MP
-LDFLAGS = -flto
+CFLAGS  += -c -std=gnu99 -Wall -Wextra -Wpedantic -MMD -MP
+LDFLAGS += -flto
 
 # architecture/OS detection
 ifeq ($(KERNEL),)
@@ -81,8 +79,8 @@ compile: $(BIN)
 
 .PHONY .NOTPARALLEL:
 clean:
-	@rm -rv obj/
-	@rm -rv bin/
+	@[ -d obj/ ] && rm -rv obj/ || true
+	@[ -d bin/ ] && rm -rv bin/ || true
 
 $(BIN): $(OBJ)
 	$(info [CC/LD] $@)
