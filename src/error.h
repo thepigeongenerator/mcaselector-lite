@@ -1,5 +1,5 @@
-// Copyright (c) 2025 Quinn
-// Licensed under the MIT Licence. See LICENSE for details
+/* Copyright (c) 2025 Quinn
+ * Licensed under the MIT Licence. See LICENSE for details */
 #pragma once
 
 #if __INCLUDE_LEVEL__ > 0

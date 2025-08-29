@@ -1,3 +1,5 @@
+/* Copyright (c) 2025 Quinn
+ * Licensed under the MIT Licence. See LICENSE for details */
 #pragma once
 
 /* Acquires the next power of two of value `x`.

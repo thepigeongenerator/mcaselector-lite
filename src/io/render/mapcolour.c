@@ -1,3 +1,5 @@
+/* Copyright (c) 2025 Quinn
+ * Licensed under the MIT Licence. See LICENSE for details */
 #include "mapcolour.h"
 
 #include "../../util/vec.h"
