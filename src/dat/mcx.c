@@ -3,12 +3,12 @@
 #include "mcx.h"
 
 #include <assert.h>
+#include <endian.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
-#include "../util/compat/endian.h"
 #include "../util/intdef.h"
 
 #define TABLE  0x2000 // table byte size

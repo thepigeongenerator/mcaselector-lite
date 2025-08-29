@@ -51,7 +51,7 @@ PROF = rel
 CFLAGS += -DNDEBUG -O2
 endif
 
-CFLAGS  += $(shell pkg-config --cflags glfw3 libarchive) -Ilib/glad/include
+CFLAGS  += $(shell pkg-config --cflags glfw3 libarchive) -Iinclude -Ilib/glad/include
 LDFLAGS += $(shell pkg-config --libs glfw3 libarchive) -lm
 
 # get source files

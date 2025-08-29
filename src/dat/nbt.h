@@ -3,11 +3,11 @@
 #pragma once
 
 #include <assert.h>
+#include <endian.h>
 #include <stdbool.h>
 #include <stdlib.h>
 
 #include "../util/atrb.h"
-#include "../util/compat/endian.h"
 #include "../util/intdef.h"
 
 /* NBT (named binary tag) is a tree data structure. Tags have a numeric type ID, name and a payload.

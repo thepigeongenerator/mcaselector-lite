@@ -3,11 +3,11 @@
 #include "nbt.h"
 
 #include <assert.h>
+#include <endian.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "../util/compat/endian.h"
 #include "../util/intdef.h"
 
 #define MAX_DEPTH 512
