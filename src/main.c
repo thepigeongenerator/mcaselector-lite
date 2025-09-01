@@ -31,13 +31,15 @@ static inline int init(void) {
 	return 0;
 }
 
-static inline void quit(void) {
+static void quit(void) {
 	glfwTerminate();
 }
+
 
 int main(int argc, char **argv) {
 	(void)argc, (void)argv;
 	printf("debug: [DBG], info: [INF], warning: [WAR], error: [ERR], fatal: [FAT]\n");
+	atexit(quit);
 	if (init()) fatal("failed to initialize!");
 
 	window_loop();
