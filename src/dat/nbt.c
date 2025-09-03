@@ -30,6 +30,7 @@ static const u8 *procarr(const u8 *restrict buf, i32 nmem, uint size, struct nbt
 	if (size == 1) return buf;
 	size_t i = 0;
 	while (i < len) {
+		// BUG: strict aliasing
 		switch (size) {
 		case 2:  *(u16 *)((*out)->dat + i) = be16toh(*(u16 *)((*out)->dat + i)); break;
 		case 4:  *(u32 *)((*out)->dat + i) = be32toh(*(u32 *)((*out)->dat + i)); break;
@@ -59,7 +60,7 @@ static const u8 *proclist(const u8 *restrict buf, struct nbt_array *restrict *re
 	}
 
 	buf++;
-	i32 len = (i32)be32toh(*(u32 *)buf);
+	i32 len = (i32)be32toh(*(u32 *)buf); // BUG: strict aliasing
 	buf += 4;
 	return procarr(buf, len, size, out);
 }
@@ -71,6 +72,7 @@ const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) {
 	i32 nmem;
 	uint size;
 
+	// BUG: strict aliasing
 	switch (*buf) {
 	case NBT_I8:  *(u8 *)out = *ptr; return ptr + 1;
 	case NBT_I16: *(u16 *)out = be16toh(*(u16 *)ptr); return ptr + 2;
@@ -102,6 +104,7 @@ const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) {
 static const u8 *nexttag_list(const u8 *restrict ptr, uint *restrict const dpt, i32 *restrict const lens, u8 *restrict const tags) {
 	const u8 *tag = ptr;
 	ptr++;
+	// BUG: strict aliasing
 	switch (*tag) {
 	case NBT_END: break;
 	case NBT_I8:  ptr += (i32)be32toh(*(u32 *)ptr) * 1; break;
@@ -114,7 +117,7 @@ static const u8 *nexttag_list(const u8 *restrict ptr, uint *restrict const dpt, 
 		// TODO: handle out of bounds... Might not be required if we use flexible array member
 		(*dpt)++;
 		tags[*dpt] = *tag;
-		lens[*dpt] = (i32)be32toh(*(u32 *)ptr);
+		lens[*dpt] = (i32)be32toh(*(u32 *)ptr); // BUG: strict aliasing
 		break;
 	}
 	ptr += 4;
@@ -136,9 +139,10 @@ static const u8 *nexttag(const u8 *restrict tag, uint *restrict const dpt, i32 *
 		*dpt -= !lens[*dpt];
 	} else {
 		type = *tag;
-		ptr += be16toh(*(u16 *)(tag + 1)) + 3;
+		ptr += be16toh(*(u16 *)(tag + 1)) + 3; // BUG: strict aliasing
 	}
 
+	// BUG: strict aliasing
 	switch (type) {
 	case NBT_I8:  ptr += 1; break;
 	case NBT_I16: ptr += 2; break;

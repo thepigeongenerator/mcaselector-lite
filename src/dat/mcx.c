@@ -18,8 +18,8 @@
 /* Moves chunks `src_s` to `src_e` (inclusive) from `src`, back onto `dst`. */
 static void mvchunks(u8 *restrict buf, u8 *src, u8 *dst, int src_s, int src_e) {
 	assert(src > dst);
-	u32 *table = (u32 *)buf;
-	size_t len = src - dst; // acquire the amount of bytes that we shall move
+	u32 *table = (u32 *)buf; // BUG: strict aliasing
+	size_t len = src - dst;  // acquire the amount of bytes that we shall move
 	assert(!(len % SECTOR));
 
 	// count how many bytes we need to move, whilst updating location data
@@ -36,7 +36,7 @@ static void mvchunks(u8 *restrict buf, u8 *src, u8 *dst, int src_s, int src_e) {
  * Returns the bytes removed by this function. */
 static size_t delchunk(u8 *restrict buf, size_t rmb, int sidx, int eidx) {
 	// load the table data
-	u32 *table = (u32 *)buf;
+	u32 *table = (u32 *)buf; // BUG: strict aliasing
 	size_t slen, bidx, blen;
 	slen = be32toh(table[sidx]) & 0xFF;          // acquire the sector length of the chunk
 	bidx = (be32toh(table[sidx]) >> 8) * SECTOR; // acquire and compute the byte offset the chunk starts at
@@ -62,7 +62,7 @@ size_t mcx_delchunk(u8 *restrict buf, int chunk) {
 
 size_t mcx_delchunk_range(u8 *restrict buf, int start, int end) {
 	assert(start < end && end < CHUNKS);
-	u32 *table = (u32 *)buf;
+	u32 *table = (u32 *)buf; // BUG: strict aliasing
 	u8 *dst = buf + (be32toh(table[start]) >> 8) * SECTOR;
 	u8 *src = buf + (be32toh(table[end]) >> 8) * SECTOR;
 	src += (be32toh(table[end]) & 0xFF) * SECTOR;
@@ -70,8 +70,8 @@ size_t mcx_delchunk_range(u8 *restrict buf, int start, int end) {
 	// zeroes-out the chunk data within this range. (and set the timestamp)
 	u32 ts = htobe32(time(NULL));
 	for (int i = start; i <= end; i++) {
-		table[i] = 0;
-		table[i + CHUNKS] = ts;
+		table[i] = 0;           // BUG: strict aliasing
+		table[i + CHUNKS] = ts; // BUG: strict aliasing
 	}
 
 	// move the remaining chunks down
