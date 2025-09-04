@@ -38,14 +38,14 @@ endif
 ifeq ($(DEBUG),1)
 PROF = dbg
 CFLAGS  += -UNDEBUG -Og -g -Wextra -Wpedantic
-CFLAGS  += $(if $(filter 1,$(ISWIN)),,-fsanitize=address,undefined)
-LDFLAGS += $(if $(filter 1,$(ISWIN)),,-fsanitize=address,undefined)
+CFLAGS  += $(if $(filter 1,$(ISWIN)),,-fsanitize=address,undefined) -ftrapv
+LDFLAGS += $(if $(filter 1,$(ISWIN)),,-fsanitize=address,undefined) -ftrapv
 # |--profile: testing
 else ifeq ($(DEBUG),test)
 PROF = test
 CFLAGS  += -UNDEBUG -O2 -g
-CFLAGS  += $(if $(filter 1,$(ISWIN)),,-fsanitize=address)
-LDFLAGS += $(if $(filter 1,$(ISWIN)),,-fsanitize=address)
+CFLAGS  += $(if $(filter 1,$(ISWIN)),,-fsanitize=address) -ftrapv
+LDFLAGS += $(if $(filter 1,$(ISWIN)),,-fsanitize=address) -ftrapv
 else
 PROF = rel
 CFLAGS += -DNDEBUG -O2
