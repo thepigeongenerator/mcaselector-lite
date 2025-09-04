@@ -12,29 +12,52 @@
 
 #define MAX_DEPTH 512
 
+/* Extracts a big endian 16 bit integer from address `buf`, converts it to host byte size if needed and returns. */
+static inline u16 buftoh16(const void *restrict buf) {
+	u16 i;
+	memcpy(&i, buf, sizeof(i));
+	return be16toh(i);
+}
+
+/* Extracts a big endian 32 bit integer from address `buf`, converts it to host byte size if needed and returns. */
+static inline u32 buftoh32(const void *restrict buf) {
+	u32 i;
+	memcpy(&i, buf, sizeof(i));
+	return be32toh(i);
+}
+
+/* Extracts a big endian 64 bit integer from address `buf`, converts it to host byte size if needed and returns. */
+static inline u64 buftoh64(const void *restrict buf) {
+	u64 i;
+	memcpy(&i, buf, sizeof(i));
+	return be64toh(i);
+}
+
 /* Processes the incoming array data in `buf`. Which contains `nmem` items of `size`.
  * The data shall be converted to little-endian on little-endian systems
  * Outputs the allocated data to `out`, returns where the next pointer would be. */
-static const u8 *procarr(const u8 *restrict buf, i32 nmem, uint size, struct nbt_array *restrict *restrict out) {
-	size_t len = nmem * size;
-	*out = malloc(sizeof(struct nbt_array) + len);
-	if (!*out) return buf + len;
+static const u8 *procarr(const u8 *restrict buf, i32 nmemb, uint size, struct nbt_array *restrict out) {
+	size_t len = nmemb * size;
+	*out = (struct nbt_array){
+		out->nmemb = nmemb,
+		out->dat = malloc(len),
+	};
+	if (!out->dat)
+		return buf + len;
 
-	memcpy((*out)->dat, buf, len);
-	(*out)->len = nmem;
+	memcpy(out->dat, buf, len);
 	buf += len;
 
 	/* Only include this code for little-endian systems. Since only they require this logic.
 	 * Producing optimised code for other platforms. */
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 	if (size == 1) return buf;
-	size_t i = 0;
-	while (i < len) {
-		// BUG: strict aliasing
+	i32 i = 0;
+	while (i < nmemb) {
 		switch (size) {
-		case 2:  *(u16 *)((*out)->dat + i) = be16toh(*(u16 *)((*out)->dat + i)); break;
-		case 4:  *(u32 *)((*out)->dat + i) = be32toh(*(u32 *)((*out)->dat + i)); break;
-		case 8:  *(u64 *)((*out)->dat + i) = be64toh(*(u64 *)((*out)->dat + i)); break;
+		case 2:  ((u16 *)out->dat)[i] = be16toh(((u16 *)out->dat)[i]); break;
+		case 4:  ((u32 *)out->dat)[i] = be16toh(((u32 *)out->dat)[i]); break;
+		case 8:  ((u64 *)out->dat)[i] = be16toh(((u64 *)out->dat)[i]); break;
 		default: __builtin_unreachable(); // this should be impossible
 		}
 		i += size;
@@ -44,12 +67,10 @@ static const u8 *procarr(const u8 *restrict buf, i32 nmem, uint size, struct nbt
 }
 
 /* calls `procarr` for the simple types available. */
-static const u8 *proclist(const u8 *restrict buf, struct nbt_array *restrict *restrict out) {
+static const u8 *proclist(const u8 *restrict buf, struct nbt_array *restrict out) {
 	uint size;
 
-	*out = NULL;
-
-	switch (*buf) {
+	switch (*(u8 *)buf) {
 	case NBT_I8:  size = 1; break;
 	case NBT_I16: size = 2; break;
 	case NBT_I32: // fall through
@@ -60,7 +81,9 @@ static const u8 *proclist(const u8 *restrict buf, struct nbt_array *restrict *re
 	}
 
 	buf++;
-	i32 len = (i32)be32toh(*(u32 *)buf); // BUG: strict aliasing
+	i32 len;
+	memcpy(&len, buf, 4);
+	len = be32toh(len);
 	buf += 4;
 	return procarr(buf, len, size, out);
 }
@@ -72,28 +95,27 @@ const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) {
 	i32 nmem;
 	uint size;
 
-	// BUG: strict aliasing
 	switch (*buf) {
 	case NBT_I8:  *(u8 *)out = *ptr; return ptr + 1;
-	case NBT_I16: *(u16 *)out = be16toh(*(u16 *)ptr); return ptr + 2;
+	case NBT_I16: *(u16 *)out = buftoh16(ptr); return ptr + 2;
 	case NBT_I32: // fall through
-	case NBT_F32: *(u32 *)out = be16toh(*(u32 *)ptr); return ptr + 4;
+	case NBT_F32: *(u32 *)out = buftoh32(ptr); return ptr + 4;
 	case NBT_I64: // fall through
-	case NBT_F64: *(u64 *)out = be16toh(*(u64 *)ptr); return ptr + 8;
+	case NBT_F64: *(u64 *)out = buftoh64(ptr); return ptr + 8;
 
-	case NBT_STR:     nmem = be16toh(*(u16 *)ptr), size = 1, ptr += 2; break;
-	case NBT_ARR_I8:  nmem = be32toh(*(u32 *)ptr), size = 1, ptr += 4; break;
-	case NBT_ARR_I32: nmem = be32toh(*(u32 *)ptr), size = 4, ptr += 4; break;
-	case NBT_ARR_I64: nmem = be32toh(*(u32 *)ptr), size = 8, ptr += 4; break;
+	case NBT_STR:     nmem = buftoh16(ptr), size = 1, ptr += 2; break;
+	case NBT_ARR_I8:  nmem = buftoh32(ptr), size = 1, ptr += 4; break;
+	case NBT_ARR_I32: nmem = buftoh32(ptr), size = 4, ptr += 4; break;
+	case NBT_ARR_I64: nmem = buftoh32(ptr), size = 8, ptr += 4; break;
 
 	case NBT_LIST:
-		return proclist(ptr, (struct nbt_array **)out);
+		return proclist(ptr, (struct nbt_array *)out);
 		return tmp;
 
 	default: return NULL;
 	}
 
-	return procarr(ptr, nmem, size, (struct nbt_array **)out);
+	return procarr(ptr, nmem, size, (struct nbt_array *)out);
 }
 
 
@@ -104,20 +126,19 @@ const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) {
 static const u8 *nexttag_list(const u8 *restrict ptr, uint *restrict const dpt, i32 *restrict const lens, u8 *restrict const tags) {
 	const u8 *tag = ptr;
 	ptr++;
-	// BUG: strict aliasing
 	switch (*tag) {
 	case NBT_END: break;
-	case NBT_I8:  ptr += (i32)be32toh(*(u32 *)ptr) * 1; break;
-	case NBT_I16: ptr += (i32)be32toh(*(u32 *)ptr) * 2; break;
+	case NBT_I8:  ptr += (i32)buftoh32(ptr) * 1; break;
+	case NBT_I16: ptr += (i32)buftoh32(ptr) * 2; break;
 	case NBT_I32: // fall through
-	case NBT_F32: ptr += (i32)be32toh(*(u32 *)ptr) * 4; break;
+	case NBT_F32: ptr += (i32)buftoh32(ptr) * 4; break;
 	case NBT_I64: // fall through
-	case NBT_F64: ptr += (i32)be32toh(*(u32 *)ptr) * 8; break;
+	case NBT_F64: ptr += (i32)buftoh32(ptr) * 8; break;
 	default:
 		// TODO: handle out of bounds... Might not be required if we use flexible array member
 		(*dpt)++;
 		tags[*dpt] = *tag;
-		lens[*dpt] = (i32)be32toh(*(u32 *)ptr); // BUG: strict aliasing
+		lens[*dpt] = (i32)buftoh32(ptr);
 		break;
 	}
 	ptr += 4;
@@ -139,10 +160,9 @@ static const u8 *nexttag(const u8 *restrict tag, uint *restrict const dpt, i32 *
 		*dpt -= !lens[*dpt];
 	} else {
 		type = *tag;
-		ptr += be16toh(*(u16 *)(tag + 1)) + 3; // BUG: strict aliasing
+		ptr += buftoh16(tag + 1) + 3;
 	}
 
-	// BUG: strict aliasing
 	switch (type) {
 	case NBT_I8:  ptr += 1; break;
 	case NBT_I16: ptr += 2; break;
@@ -151,10 +171,10 @@ static const u8 *nexttag(const u8 *restrict tag, uint *restrict const dpt, i32 *
 	case NBT_I64: // fall through
 	case NBT_F64: ptr += 8; break;
 
-	case NBT_ARR_I8:  ptr += 4 + (i32)be32toh(*(u32 *)ptr) * 1; break;
-	case NBT_ARR_I32: ptr += 4 + (i32)be32toh(*(u32 *)ptr) * 4; break;
-	case NBT_ARR_I64: ptr += 4 + (i32)be32toh(*(u32 *)ptr) * 8; break;
-	case NBT_STR:     ptr += 2 + (u16)be16toh(*(u16 *)ptr) * 1; break;
+	case NBT_ARR_I8:  ptr += 4 + (i32)buftoh32(ptr) * 1; break;
+	case NBT_ARR_I32: ptr += 4 + (i32)buftoh32(ptr) * 4; break;
+	case NBT_ARR_I64: ptr += 4 + (i32)buftoh32(ptr) * 8; break;
+	case NBT_STR:     ptr += 2 + (u16)buftoh16(ptr) * 1; break;
 
 	case NBT_END:      (*dpt)--; break;
 	case NBT_COMPOUND: (*dpt)++; break;
