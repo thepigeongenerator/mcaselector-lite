@@ -16,7 +16,7 @@
 #define CHUNKS 0x400  // amount of chunks in a file
 
 /* Moves chunks `src_s` to `src_e` (inclusive) from `src`, back onto `dst`. */
-static void mvchunks(u32 *restrict table, u8 *src, u8 *dst, int src_s, int src_e) {
+static void mvchunks(u8 *dst, u8 *src, u32 *restrict table, int src_s, int src_e) {
 	assert(src > dst);
 	size_t len = src - dst; // acquire the amount of bytes that we shall move
 	assert(!(len % SECTOR));
@@ -47,7 +47,7 @@ static size_t delchunk(u8 *restrict buf, u32 *restrict table, size_t rmb, int si
 	// move the succeeding chunks over the deleted chunk
 	u8 *dst = buf + bidx - rmb;
 	u8 *src = buf + bidx + blen;
-	mvchunks(table, src, dst, sidx, eidx - 1);
+	mvchunks(dst, src, table, sidx, eidx - 1);
 	return blen;
 }
 
@@ -79,7 +79,7 @@ size_t mcx_delchunk_range(u8 *restrict buf, int start, int end) {
 
 	// move the remaining chunks down
 	if (end < (CHUNKS - 1))
-		mvchunks(table, src, dst, end, (CHUNKS - 1));
+		mvchunks(dst, src, table, end, (CHUNKS - 1));
 	memcpy(buf, table, sizeof(table));
 	return src - dst;
 }
