@@ -117,5 +117,5 @@ size_t mcx_calcsize(const u8 *restrict buf) {
 	size_t size = 0;
 	for (uint i = 0; i < CHUNKS; i++)
 		size += *(buf + (i * 4) + 3);
-	return (size * CHUNKS) + (TABLE * 4);
+	return (size * SECTOR) + (TABLE * 4);
 }
