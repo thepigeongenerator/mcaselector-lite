@@ -37,8 +37,8 @@ enum nbt_tagid {
 };
 
 struct nbt_array {
-	i32 len;
-	u8 dat[];
+	i32 nmemb;
+	void *dat;
 };
 
 
