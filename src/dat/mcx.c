@@ -2,6 +2,7 @@
  * Licensed under the MIT Licence. See LICENSE for details */
 #include "mcx.h"
 
+#include <archive.h>
 #include <assert.h>
 #include <endian.h>
 #include <stdint.h>
@@ -9,11 +10,45 @@
 #include <string.h>
 #include <time.h>
 
+#include "../error.h"
 #include "../util/intdef.h"
 
 #define SECTOR 0x1000 // sector size
 #define TABLE  0x800  // table (total) element count
 #define CHUNKS 0x400  // amount of chunks in a file
+
+enum mcx_compression {
+	MCX_COMPRESSION_GZIP = 0x01,
+	MCX_COMPRESSION_ZLIB = 0x02,
+	MCX_COMPRESSION_NONE = 0x03,
+	MCX_COMPRESSION_LZ4 = 0x04,
+	MCX_COMPRESSION_CUSTOM = 0x7F,
+};
+
+/* first 4 bytes is an i32 indicating remaining bytes, the following byte defines the compression scheme */
+static void mcx_loadchunk(const u8 *restrict buf, const i32 *restrict table, int idx) {
+	const u8 *chunk = buf + (be32toh(table[idx]) >> 8) * SECTOR;
+
+	i32 len;
+	memcpy(&len, chunk, 4);
+	len = be32toh(len);
+	chunk += 4;
+
+	if (*chunk != MCX_COMPRESSION_CUSTOM) {
+		struct archive *archive = archive_read_new();
+		archive_read_support_format_raw(archive);
+		switch (*chunk) {
+		case MCX_COMPRESSION_GZIP:   archive_read_support_filter_gzip(archive); break;
+		case MCX_COMPRESSION_ZLIB:   archive_read_support_filter_zlib(archive); break; // BUG: this does not exist, but will have to do for now
+		case MCX_COMPRESSION_LZ4:    archive_read_support_filter_lz4(archive); break;
+		case MCX_COMPRESSION_CUSTOM: // TODO: implement using filtering any format
+		default:                     fatal("compression type of '%ihh' is unsupported!", *chunk);
+		}
+
+		// TODO: implement decompression, somehow.
+		// https://github.com/libarchive/libarchive/wiki/Examples#user-content-A_Universal_Decompressor
+	}
+}
 
 /* Moves chunks `src_s` to `src_e` (inclusive) from `src`, back onto `dst`. */
 static void mvchunks(u8 *dst, u8 *src, u32 *restrict table, int src_s, int src_e) {
