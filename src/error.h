@@ -2,20 +2,21 @@
  * Licensed under the MIT Licence. See LICENSE for details */
 #pragma once
 
-#if __INCLUDE_LEVEL__ > 0
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "util/atrb.h"
+#include "util/intdef.h"
 #include "util/macro.h"
-#endif
 
-#define debug(s, ...) printf("\033[95m" __FILE__ ":" MACRO_STR2(__LINE__) ": [DBG]: " s "\033[0m\n", ##__VA_ARGS__)
-#define info(s, ...)  printf(__FILE__ ":" MACRO_STR2(__LINE__) ": [INF]: " s "\n", ##__VA_ARGS__)
-#define warn(s, ...)  fprintf(stderr, "\033[93m" __FILE__ ":" MACRO_STR2(__LINE__) ": [WAR]: " s "\033[0m\n", ##__VA_ARGS__)
-#define error(s, ...) fprintf(stderr, "\033[91m" __FILE__ ":" MACRO_STR2(__LINE__) ": [ERR]: " s "\033[0m\n", ##__VA_ARGS__)
+void error_dbg(uint ln, const char *restrict file, const char *restrict fmt, ...);
+void error_inf(uint ln, const char *restrict file, const char *restrict fmt, ...);
+void error_war(uint ln, const char *restrict file, const char *restrict fmt, ...);
+void error_err(uint ln, const char *restrict file, const char *restrict fmt, ...);
+void error_fat(uint ln, const char *restrict file, const char *restrict fmt, ...) NORET;
 
-#define fatal(s, ...)                                                                                                    \
-	do {                                                                                                             \
-		fprintf(stderr, "\033[101m" __FILE__ ":" MACRO_STR2(__LINE__) ": [FAT]: " s "\033[0m\n", ##__VA_ARGS__); \
-		exit(EXIT_FAILURE);                                                                                      \
-	} while (0)
+#define debug(s, ...) error_dbg(__LINE__, __FILE__, s, ##__VA_ARGS__)
+#define info(s, ...)  error_inf(__LINE__, __FILE__, s, ##__VA_ARGS__)
+#define warn(s, ...)  error_war(__LINE__, __FILE__, s, ##__VA_ARGS__)
+#define error(s, ...) error_err(__LINE__, __FILE__, s, ##__VA_ARGS__)
+#define fatal(s, ...) error_fat(__LINE__, __FILE__, s, ##__VA_ARGS__)
