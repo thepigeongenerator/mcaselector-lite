@@ -26,7 +26,7 @@ enum mcx_compression {
 };
 
 /* first 4 bytes is an i32 indicating remaining bytes, the following byte defines the compression scheme */
-static void mcx_loadchunk(const u8 *restrict buf, const i32 *restrict table, int idx) {
+static int mcx_loadchunk(const u8 *restrict buf, const i32 *restrict table, int idx) {
 	const u8 *chunk = buf + (be32toh(table[idx]) >> 8) * SECTOR;
 
 	i32 len;
@@ -34,20 +34,41 @@ static void mcx_loadchunk(const u8 *restrict buf, const i32 *restrict table, int
 	len = be32toh(len);
 	chunk += 4;
 
-	if (*chunk != MCX_COMPRESSION_CUSTOM) {
-		struct archive *archive = archive_read_new();
-		archive_read_support_format_raw(archive);
-		switch (*chunk) {
-		case MCX_COMPRESSION_GZIP:   archive_read_support_filter_gzip(archive); break;
-		case MCX_COMPRESSION_ZLIB:   archive_read_support_filter_zlib(archive); break; // BUG: this does not exist, but will have to do for now
-		case MCX_COMPRESSION_LZ4:    archive_read_support_filter_lz4(archive); break;
-		case MCX_COMPRESSION_CUSTOM: // TODO: implement using filtering any format
-		default:                     fatal("compression type of '%ihh' is unsupported!", *chunk);
-		}
-
-		// TODO: implement decompression, somehow.
-		// https://github.com/libarchive/libarchive/wiki/Examples#user-content-A_Universal_Decompressor
+	struct archive *archive = archive_read_new();
+	archive_read_support_format_raw(archive);
+	switch (*chunk) {
+	case MCX_COMPRESSION_GZIP: /* fall-through; ZLIB is handled under the GZIP filter */
+	case MCX_COMPRESSION_ZLIB:   archive_read_support_filter_gzip(archive); break;
+	case MCX_COMPRESSION_NONE:   archive_read_support_filter_none(archive); break;
+	case MCX_COMPRESSION_LZ4:    archive_read_support_filter_lz4(archive); break;
+	case MCX_COMPRESSION_CUSTOM: archive_read_support_filter_all(archive); break;
+	default:                     fatal("compression type of '%i' is unsupported!", *chunk);
 	}
+
+	if (archive_read_open_memory(archive, chunk, len) != ARCHIVE_OK) {
+		error("failed to decompress %i bytes of compression type %i", len, *chunk);
+		return 1;
+	}
+
+	struct archive_entry *entry;
+	if (archive_read_next_header(archive, &entry) != ARCHIVE_OK) {
+		error("failed to decompress %i bytes of compression type %i", len, *chunk);
+		return 1;
+	}
+
+	ssize_t size = -1;
+	for (;;) {
+		// TODO: handle buffer
+		// size = archive_read_data(archive, , );
+		if (size < 0) {
+			error("failed to decompress %i bytes of compression type %i", len, *chunk);
+			return 1;
+		}
+		if (size == 0) break;
+		// TODO: handle data
+	}
+
+	return 0;
 }
 
 /* Moves chunks `src_s` to `src_e` (inclusive) from `src`, back onto `dst`. */
