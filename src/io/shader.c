@@ -13,8 +13,8 @@
 
 // macro for generating the variable declarations
 #define DEF_GLSL(name)                   \
-	extern char const NAM_S(name)[]; \
-	extern char const NAM_E(name)[]
+	extern const char NAM_S(name)[]; \
+	extern const char NAM_E(name)[]
 
 // NOTE: we are currently just sucking up the memory costs for ease. We can either include the source files themselves. Or use compression, where I'd prefer the latter for ease of installation.
 // NOLINTBEGIN (bugprone-reserved-identifier)
