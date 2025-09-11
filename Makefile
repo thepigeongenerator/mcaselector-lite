@@ -9,9 +9,6 @@ VERSION = 0.0.0
 DEBUG   ?= 0
 CC      ?= cc
 LD      ?= ld
-LDFLAGS += -flto -lm
-MARCH   ?= $(shell uname -m)
-KERNEL  ?= $(shell uname -s | tr '[:upper:]' '[:lower:]')
 
 # compilation flags
 CFLAGS  += -c -std=gnu99 -Wall -Wextra -Wpedantic -MMD -MP
