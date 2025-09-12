@@ -19,3 +19,4 @@
 /bin/
 /obj/
 compile_commands.json
+compile_commands.events.json
