@@ -15,8 +15,8 @@ void error_war(uint ln, const char *restrict file, const char *restrict fmt, ...
 void error_err(uint ln, const char *restrict file, const char *restrict fmt, ...);
 void error_fat(uint ln, const char *restrict file, const char *restrict fmt, ...) NORET;
 
-#define debug(s, ...) error_dbg(__LINE__, __FILE__, s, ##__VA_ARGS__)
-#define info(s, ...)  error_inf(__LINE__, __FILE__, s, ##__VA_ARGS__)
-#define warn(s, ...)  error_war(__LINE__, __FILE__, s, ##__VA_ARGS__)
-#define error(s, ...) error_err(__LINE__, __FILE__, s, ##__VA_ARGS__)
-#define fatal(s, ...) error_fat(__LINE__, __FILE__, s, ##__VA_ARGS__)
+#define debug(...) error_dbg(__LINE__, __FILE__ __VA_OPT__(, ) __VA_ARGS__)
+#define info(...)  error_inf(__LINE__, __FILE__ __VA_OPT__(, ) __VA_ARGS__)
+#define warn(...)  error_war(__LINE__, __FILE__ __VA_OPT__(, ) __VA_ARGS__)
+#define error(...) error_err(__LINE__, __FILE__ __VA_OPT__(, ) __VA_ARGS__)
+#define fatal(...) error_fat(__LINE__, __FILE__ __VA_OPT__(, ) __VA_ARGS__)
