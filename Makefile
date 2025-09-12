@@ -23,7 +23,7 @@ CFLAGS   += -fsanitize=address -ftrapv -g
 LDFLAGS  += -fsanitize=address -ftrapv
 endif
 CPPFLAGS += -Iinclude -Ilib/glad/include -Ilib/glfw/include -Ilib/libarchive/libarchive
-LDFLAGS  += -Lobj/lib/glfw/src -Lobj/lib/libarchive/libarchive
+LDFLAGS  += -Llib/obj/glfw/src -Llib/obj/libarchive/libarchive
 LDLIBS   += -lm -lglfw -larchive
 
 # detect if we're compiling on Windows, meaning
@@ -43,21 +43,25 @@ OBJ  := $(SRC:%.c=obj/%.o) $(RES:%=obj/%.o)
 TSRC := $(wildcard test/*.c test/*/*.c test/*/*/*.c test/*/*/*/*.c test/*/*/*/*/*.c test/*/*/*/*/*/*.c test/*/*/*/*/*/*/*.c test/*/*/*/*/*/*/*/*.c)
 TOBJ := $(TSRC:%.c=obj/%.o)
 
-.PHONY: all test clean libs
+# TODO: potentially automatically detect whether we should compile libs, or if we can just go ahead.
+.PHONY: all libs test clean clean-libs
 all: bin/$(NAME)
-libs: obj/lib/glfw/ obj/lib/libarchive/
+libs: lib/obj/glfw/ lib/obj/libarchive/
 test: bin/TEST_$(NAME); bin/TEST_$(NAME)
 clean:
 	@[ -d bin/ ] && rm -vr bin/ || true
 	@[ -d obj/ ] && rm -vr obj/ || true
+clean-libs:
+	@[ -d lib/obj/ ] && rm -vr lib/obj/
+
 
 # compiles the libraries using cmake
-obj/lib/%/: lib/%/
+lib/obj/%/: lib/%/
 	cmake -S $< -B $@
 	$(MAKE) -C $@
 
 # link together a runtime binary
-bin/$(NAME): libs $(OBJ)
+bin/$(NAME): $(OBJ)
 	$(info [CC/LD]	$@)
 	@mkdir -p $(@D)
 	@$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS)
