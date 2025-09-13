@@ -138,8 +138,8 @@ static char *conf_getpat_concat(const char *restrict s1, const char *restrict s2
 	buf = ptr; // store the head pointer into buf
 
 	// copy data to the buffer
-	ptr = mempcpy(ptr, s1, s1len);            // copy s1 data to the buffer
-	if (s2len) ptr = mempcpy(ptr, s2, s2len); // copy s2 data to the buffer (excluding null-terminator)
+	ptr = memcpy(ptr, s1, s1len) + s1len;            // copy s1 data to the buffer
+	if (s2len) ptr = memcpy(ptr, s2, s2len) + s2len; // copy s2 data to the buffer (excluding null-terminator)
 	(void)strcpy(ptr, s3);                    // copy s3 as a string, thus including null-terminator
 
 	// return the buffer
