@@ -24,7 +24,7 @@ LDFLAGS  += -fsanitize=address -ftrapv
 endif
 CPPFLAGS += -Iinclude -Ilib/glad/include -Ilib/glfw/include -Ilib/libarchive/libarchive
 LDFLAGS  += -Llib/obj/glfw/src -Llib/obj/libarchive/libarchive
-LDLIBS   += -lm -lglfw -larchive
+LDLIBS   += -lm -lglfw3 -larchive
 
 # detect if we're compiling on Windows, meaning
 # a lot of things considered "standard" are unavailable.
