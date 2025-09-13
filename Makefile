@@ -38,7 +38,7 @@ endif
 # find all the source files using wildcards
 # NOTE: MS-DOS and MS-Windows uses backslash `\`, this might break.
 RES  := $(wildcard res/*)
-SRC  := $(wildcard src/*.c src/*/*.c src/*/*/*.c src/*/*/*/*.c src/*/*/*/*/*.c src/*/*/*/*/*/*.c src/*/*/*/*/*/*/*.c src/*/*/*/*/*/*/*/*.c) lib/glad/gl.c
+SRC  := $(wildcard src/*.c src/*/*.c src/*/*/*.c src/*/*/*/*.c src/*/*/*/*/*.c src/*/*/*/*/*/*.c src/*/*/*/*/*/*/*.c src/*/*/*/*/*/*/*/*.c) lib/glad/src/gl.c
 OBJ  := $(SRC:%.c=obj/%.o) $(RES:%=obj/%.o)
 TSRC := $(wildcard test/*.c test/*/*.c test/*/*/*.c test/*/*/*/*.c test/*/*/*/*/*.c test/*/*/*/*/*/*.c test/*/*/*/*/*/*/*.c test/*/*/*/*/*/*/*/*.c)
 TOBJ := $(TSRC:%.c=obj/%.o)
