@@ -52,7 +52,7 @@ clean:
 	@[ -d bin/ ] && rm -vr bin/ || true
 	@[ -d obj/ ] && rm -vr obj/ || true
 clean-libs:
-	@[ -d lib/obj/ ] && rm -vr lib/obj/
+	@[ -d lib/obj/ ] && rm -vr lib/obj/ || true
 
 
 # compiles the libraries using cmake
