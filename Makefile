@@ -74,6 +74,7 @@ bin/TEST_$(NAME): $(TOBJ) $(filter-out main.o,$(OBJ))
 
 obj/res/%.o: res/%
 	$(info [LD]	$@)
+	@mkdir -p $(@D)
 	@$(LD) -r -b binary -o $@ $<
 
 obj/%.o: %.c
