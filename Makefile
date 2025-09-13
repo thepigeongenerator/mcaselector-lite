@@ -10,7 +10,7 @@ LD      ?= ld
 # setting default compilation flags
 # some of which are able to be overwritten, others are always appended
 CPPFLAGS ?=
-CFLAGS   ?= -O2 -Wall -Wextra -Wpedantic
+CFLAGS   ?= -O2 -Wall -Wextra -Wpedantic -Wno-pointer-arith
 LDFLAGS  ?= -flto
 CFLAGS   += -std=gnu99
 
