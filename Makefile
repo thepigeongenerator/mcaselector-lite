@@ -62,15 +62,15 @@ lib/obj/%/: lib/%/
 
 # link together a runtime binary
 bin/$(NAME): $(OBJ)
-	$(info [CC/LD]	$@)
+	$(info [LD]	$@)
 	@mkdir -p $(@D)
-	@$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS)
+	@$(LD) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 # link together a testing binary
 bin/TEST_$(NAME): $(TOBJ) $(filter-out obj/src/main.o,$(OBJ))
-	$(info [CC/LD]	$@)
+	$(info [LD]	$@)
 	@mkdir -p $(@D)
-	@$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS)
+	@$(LD) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 obj/res/%.o: res/%
 	$(info [LD]	$@)
