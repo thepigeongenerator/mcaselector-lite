@@ -30,7 +30,7 @@ static GLuint shader_compile(GLenum type, const char *src, size_t len) {
 		char log[ilen];
 		glGetShaderInfoLog(shader, ilen, &ilen, log);
 		log[ilen - 1] = '\0'; // terminate the string one character sooner since the log includes a newline
-		error("error whilst compiling shader type '0X%X': '%s'", type, log);
+		error("error whilst compiling shader type '0x%X': '%s'", type, log);
 	}
 
 	return shader;
