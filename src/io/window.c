@@ -29,6 +29,8 @@ int window_init(void) {
 	glfwWindowHint(GLFW_GREEN_BITS, 8);
 	glfwWindowHint(GLFW_BLUE_BITS, 8);
 	glfwWindowHint(GLFW_ALPHA_BITS, 0);
+	/* NOTE: on my system; x86_64, GTX 1650 580.82.09-2, X11, i3, this causes one direct, 2 indirect memory leaks.
+	 * This is not my fault, and can safely be ignored. */
 	win = glfwCreateWindow(640, 480, "MCA-Selector lite", NULL, NULL);
 	if (!win) return 1;
 
