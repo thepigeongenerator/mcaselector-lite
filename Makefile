@@ -5,6 +5,7 @@
 NAME    = mcaselector-lite
 DEBUG   ?= 0
 CC      ?= cc
+CMAKE   ?= cmake -G 'Unix Makefiles'
 
 # setting default compilation flags
 # some of which are able to be overwritten, others are always appended
@@ -61,7 +62,7 @@ endif
 
 # compiles the libraries using cmake
 lib/obj/%/: lib/%/
-	cmake -S $< -B $@
+	$(CMAKE) -S $< -B $@
 	$(MAKE) -C $@
 
 # link together a runtime binary
