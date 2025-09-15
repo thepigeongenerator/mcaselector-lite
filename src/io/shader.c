@@ -8,20 +8,14 @@
 
 #include "../error.h"
 
-#define NAM_S(name) _binary_res_##name##_start // name of a start variable
-#define NAM_E(name) _binary_res_##name##_end   // name of an end variable
-
-// macro for generating the variable declarations
-#define DEF_GLSL(name)                   \
-	extern const char NAM_S(name)[]; \
-	extern const char NAM_E(name)[]
 
 // NOTE: we are currently just sucking up the memory costs for ease. We can either include the source files themselves. Or use compression, where I'd prefer the latter for ease of installation.
-// NOLINTBEGIN (bugprone-reserved-identifier)
-DEF_GLSL(sh_vert_glsl);
-DEF_GLSL(sh_frag_glsl);
-DEF_GLSL(sh_geom_glsl);
-// NOLINTEND
+extern const char sh_vert_glsl[];
+extern const char sh_frag_glsl[];
+extern const char sh_geom_glsl[];
+extern const uint sh_vert_glsl_len;
+extern const uint sh_frag_glsl_len;
+extern const uint sh_geom_glsl_len;
 
 /* compile a shader */
 static GLuint shader_compile(GLenum type, const char *src, size_t len) {
@@ -42,11 +36,10 @@ static GLuint shader_compile(GLenum type, const char *src, size_t len) {
 	return shader;
 }
 
-#define COMPILE_NAME(_type, _name) shader_compile(_type, NAM_S(_name), (uintptr_t)NAM_E(_name) - (uintptr_t)NAM_S(_name))
 int shader_init(GLuint pipe) {
-	GLuint vs = COMPILE_NAME(GL_VERTEX_SHADER, sh_vert_glsl);
-	GLuint fs = COMPILE_NAME(GL_FRAGMENT_SHADER, sh_frag_glsl);
-	GLuint gs = COMPILE_NAME(GL_GEOMETRY_SHADER, sh_geom_glsl);
+	GLuint vs = shader_compile(GL_VERTEX_SHADER, sh_vert_glsl, sh_vert_glsl_len);
+	GLuint fs = shader_compile(GL_FRAGMENT_SHADER, sh_frag_glsl, sh_frag_glsl_len);
+	GLuint gs = shader_compile(GL_GEOMETRY_SHADER, sh_geom_glsl, sh_geom_glsl_len);
 
 	glAttachShader(pipe, vs);
 	glAttachShader(pipe, fs);

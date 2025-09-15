@@ -25,7 +25,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt update
-          sudo apt install -y libwayland-dev libxkbcommon-dev xorg-dev cmake
+          sudo apt install -y libwayland-dev libxkbcommon-dev xorg-dev cmake xxd
 
       - uses: actions/cache@v4
         with:

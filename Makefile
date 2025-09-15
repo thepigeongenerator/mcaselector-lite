@@ -72,10 +72,15 @@ bin/TEST_$(NAME): $(TOBJ) $(filter-out obj/src/main.o,$(OBJ))
 	@mkdir -p $(@D)
 	@$(LD) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
-obj/res/%.o: res/%
-	$(info [LD]	$@)
+obj/res/%.c: res/%
+	$(info [XXD]	$@)
 	@mkdir -p $(@D)
-	@$(LD) -r -b binary -o $@ $<
+	@xxd -i -n $(patsubst res/%,%,$<) $< $@
+
+obj/res/%.o: obj/res/%.c
+	$(info [CC]	$@)
+	@mkdir -p $(@D)
+	@$(CC) -c $(CPPFLAGS) $(CFLAGS) -o $@ $<
 
 obj/%.o: %.c
 	$(info [CC]	$@)
