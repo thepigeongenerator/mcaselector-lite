@@ -12,6 +12,7 @@ CMAKE   ?= cmake -G 'Unix Makefiles'
 CPPFLAGS ?=
 CFLAGS   ?= -O2 -Wall -Wextra -Wpedantic -Wno-pointer-arith
 LDFLAGS  ?= -flto
+CPPFLAGS += -DGLFW_INCLUDE_NONE
 CFLAGS   += -std=gnu99
 
 # add a few extra flags depending on whether

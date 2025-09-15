@@ -99,10 +99,6 @@ IncludeIsMainSourceRegex: ''
 IncludeIsMainRegex:       '([-_](test|unittest))?$'
 IncludeBlocks:      Regroup
 IncludeCategories:
-  - Regex:         '^<glad/gl\.h>'
-    Priority:      1
-    SortPriority:  0
-    CaseSensitive: true
   - Regex:         '^<.*\.h>'
     Priority:      2
     SortPriority:  0
