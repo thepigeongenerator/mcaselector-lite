@@ -5,7 +5,6 @@
 NAME    = mcaselector-lite
 DEBUG   ?= 0
 CC      ?= cc
-LD      ?= ld
 
 # setting default compilation flags
 # some of which are able to be overwritten, others are always appended
@@ -69,13 +68,13 @@ lib/obj/%/: lib/%/
 bin/$(NAME): $(OBJ)
 	$(info [LD]	$@)
 	@mkdir -p $(@D)
-	@$(LD) -o $@ $^ $(LDFLAGS) $(LDLIBS)
+	@$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 # link together a testing binary
 bin/TEST_$(NAME): $(TOBJ) $(filter-out obj/src/main.o,$(OBJ))
 	$(info [LD]	$@)
 	@mkdir -p $(@D)
-	@$(LD) -o $@ $^ $(LDFLAGS) $(LDLIBS)
+	@$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 obj/res/%.c: res/%
 	$(info [XXD]	$@)
