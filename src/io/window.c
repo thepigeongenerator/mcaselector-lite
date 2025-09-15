@@ -69,5 +69,13 @@ void window_loop(void) {
 		glfwSwapBuffers(win);
 	}
 
+void window_close(void) {
+	assert(win);
+	glfwSetWindowShouldClose(win, 1);
+}
+
+void window_free(void) {
 	glfwDestroyWindow(win);
+	render_free();
+	win = NULL;
 }

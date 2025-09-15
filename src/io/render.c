@@ -2,9 +2,8 @@
  * Licensed under the MIT Licence. See LICENSE for details */
 #include "render.h"
 
-#include <glad/gl.h>
-
 #include <GLFW/glfw3.h>
+#include <glad/gl.h>
 #include <stdint.h>
 
 #include "../error.h"
@@ -79,4 +78,13 @@ void render_update(GLFWwindow *win) {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glBindVertexArray(vao);
 	glDrawArrays(GL_POINTS, 0, VERTC);
+}
+
+void render_free(void) {
+	glDeleteVertexArrays(1, &vao);
+	glDeleteBuffers(1, &vbo);
+	glDeleteProgram(pipe);
+	vbo = 0;
+	vao = 0;
+	pipe = 0;
 }

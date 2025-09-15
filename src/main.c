@@ -14,6 +14,10 @@ static void error_callback(int err, const char *const msg) {
 }
 
 static void quit(void) {
+	window_free();
+
+	/* terminates GLFW; destroying any
+	 * remaining windows, or other resources held by GLFW. */
 	glfwTerminate();
 }
 
@@ -30,7 +34,7 @@ int main(int argc, char **argv) {
 		fatal("failed to initialise!");
 
 	window_loop();
-	quit();
+	window_free();
 
 	// return success, since some architectures do not follow 0=success
 	return EXIT_SUCCESS;
