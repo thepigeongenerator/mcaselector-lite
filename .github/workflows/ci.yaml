@@ -6,6 +6,7 @@ on:
 jobs:
   compile-and-test:
     strategy:
+      fail-fast: false # disable fail fast, so feedback is provided for all matrix combinations
       matrix:
         os:
           - ubuntu-latest
