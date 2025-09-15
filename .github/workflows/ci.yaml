@@ -32,6 +32,6 @@ jobs:
           path: lib/obj/
           key: ${{runner.os}}-lib/obj-${{github.sha}}
           restore-keys: ${{runner.os}}-lib/obj-
-      - run: make -j libs
+      - run: make -Bj libs
       - run: make -j all
       - run: make -j test
