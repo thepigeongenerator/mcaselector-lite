@@ -4,4 +4,6 @@
 
 #include <GLFW/glfw3.h>
 
-void key_callback(GLFWwindow *win, int key, int scancode, int action, int mods);
+/* Handles incoming key inputs for `win`.
+ * Intended to be given as an argument to `glfwSetKeyCallback`. */
+void input_callback(GLFWwindow *win, int key, int scancode, int action, int mods);

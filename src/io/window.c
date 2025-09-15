@@ -41,8 +41,7 @@ int window_init(void) {
 	if (!gladLoadGL(glfwGetProcAddress)) return 1;
 	glfwSwapInterval(1); // wait 1 screen update for a redraw a.k.a. "vsync". (not really applicable in this case but eh)
 
-	// configure callbacks
-	glfwSetKeyCallback(win, key_callback);
+	glfwSetKeyCallback(win, input_callback);
 
 	// print the OpenGL version information
 	debug(
