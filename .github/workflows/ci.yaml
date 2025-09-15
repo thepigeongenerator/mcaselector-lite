@@ -32,12 +32,16 @@ jobs:
         run: echo "HASH=$(git submodule | sha1sum)" >$GITHUB_OUTPUT
 
       - uses: actions/cache@v4
+        id: cache-deps
         with:
           path: lib/obj/
           # I swear to god, if runner.arch displays x64 for x86_64, I will eat a potato.
           # note: it is... fucking shit.
           key: ${{runner.os}}_${{runner.arch}}-lib/obj-${{steps.get-hash.outputs.HASH}}
           restore-keys: ${{runner.os}}_${{runner.arch}}-lib/obj-
+
       - run: make -Bj libs
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+
       - run: make -j all
       - run: make -j test
