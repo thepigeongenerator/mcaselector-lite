@@ -1,20 +1,12 @@
 /* Copyright (c) 2025 Quinn
  * Licensed under the MIT Licence. See LICENSE for details */
-#define GLAD_GL_IMPLEMENTATION
-#include <glad/gl.h>
-#undef GLAD_GL_IMPLEMENTATION
-
 #include <GLFW/glfw3.h>
+#include <glad/gl.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "error.h"
 #include "io/window.h"
-
-
-#define WIN_NAME           "MCA Selector Lite"
-#define WIN_DEFAULT_WIDTH  640
-#define WIN_DEFAULT_HEIGHT 480
 
 /* reroutes GLFW errors to our logging system. */
 static void error_callback(int err, const char *const msg) {
