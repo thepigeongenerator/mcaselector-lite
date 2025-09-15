@@ -17,7 +17,8 @@ extern const uint sh_vert_glsl_len;
 extern const uint sh_frag_glsl_len;
 extern const uint sh_geom_glsl_len;
 
-/* compile a shader */
+/* Compiles a shader of `type` from `src` with `len` bytes.
+ * Returns the integer for the shader. */
 static GLuint shader_compile(GLenum type, const char *src, size_t len) {
 	int ilen = len;
 	GLuint shader = glCreateShader(type);
@@ -45,6 +46,7 @@ int shader_init(GLuint pipe) {
 	glAttachShader(pipe, fs);
 	glAttachShader(pipe, gs);
 
+	// mark shaders off for deletion
 	glDeleteShader(vs);
 	glDeleteShader(fs);
 	glDeleteShader(gs);
