@@ -75,7 +75,7 @@ bin/TEST_$(NAME): $(TOBJ) $(filter-out obj/src/main.o,$(OBJ))
 obj/res/%.c: res/%
 	$(info [XXD]	$@)
 	@mkdir -p $(@D)
-	@xxd -i -n $(patsubst res/%,%,$<) $< $@
+	@cd res/ && xxd -i $(patsubst res/%,%,$<) $(abspath $@)
 
 obj/res/%.o: obj/res/%.c
 	$(info [CC]	$@)
