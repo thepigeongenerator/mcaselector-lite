@@ -34,8 +34,8 @@ int main(int argc, char **argv) {
 		fatal("failed to initialise!");
 
 	window_loop();
-	window_free();
 
-	// return success, since some architectures do not follow 0=success
+	/* return success, since some architectures do not follow 0=success
+	 * This action will call `quit`. */
 	return EXIT_SUCCESS;
 }

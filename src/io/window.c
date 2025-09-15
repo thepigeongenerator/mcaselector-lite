@@ -75,6 +75,11 @@ void window_close(void) {
 }
 
 void window_free(void) {
+	if (!win) {
+		debug("window has already been freed.");
+		return;
+	}
+
 	glfwDestroyWindow(win);
 	render_free();
 	win = NULL;
