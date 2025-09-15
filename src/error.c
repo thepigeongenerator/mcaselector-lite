@@ -14,6 +14,12 @@ static void error_log(FILE *restrict stream, const char *restrict pfx, uint ln, 
 }
 
 void error_debug(uint ln, const char *restrict file, const char *restrict fmt, ...) {
+#ifndef NDEBUG
+#else
+	char *env = getenv("DEBUG");
+	if (env && env[0] != '1')
+		return;
+#endif
 	va_list ap;
 	va_start(ap, fmt);
 	error_log(stdout, "\033[95mDBG\033[0m", ln, file, fmt, ap);
