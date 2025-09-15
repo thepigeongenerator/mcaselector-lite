@@ -67,7 +67,7 @@ bin/$(NAME): $(OBJ)
 	@$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 # link together a testing binary
-bin/TEST_$(NAME): $(TOBJ) $(filter-out main.o,$(OBJ))
+bin/TEST_$(NAME): $(TOBJ) $(filter-out obj/src/main.o,$(OBJ))
 	$(info [CC/LD]	$@)
 	@mkdir -p $(@D)
 	@$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS)
