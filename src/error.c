@@ -23,28 +23,28 @@ void error_dbg(uint ln, const char *restrict file, const char *restrict fmt, ...
 void error_inf(uint ln, const char *restrict file, const char *restrict fmt, ...) {
 	va_list ap;
 	va_start(ap, fmt);
-	error_log(stdout, "\033[93mINF\033[0m", ln, file, fmt, ap);
+	error_log(stdout, "\033[94mINF\033[0m", ln, file, fmt, ap);
 	va_end(ap);
 }
 
 void error_war(uint ln, const char *restrict file, const char *restrict fmt, ...) {
 	va_list ap;
 	va_start(ap, fmt);
-	error_log(stdout, "\033[91mWAR\033[0m", ln, file, fmt, ap);
+	error_log(stdout, "\033[93mWAR\033[0m", ln, file, fmt, ap);
 	va_end(ap);
 }
 
 void error_err(uint ln, const char *restrict file, const char *restrict fmt, ...) {
 	va_list ap;
 	va_start(ap, fmt);
-	error_log(stdout, "\033[mFAT\033[0m", ln, file, fmt, ap);
+	error_log(stdout, "\033[91mERR\033[0m", ln, file, fmt, ap);
 	va_end(ap);
 }
 
 void error_fat(uint ln, const char *restrict file, const char *restrict fmt, ...) {
 	va_list ap;
 	va_start(ap, fmt);
-	error_log(stdout, "\033[mFAT\033[0m", ln, file, fmt, ap);
+	error_log(stdout, "\033[101mFAT\033[0m", ln, file, fmt, ap);
 	va_end(ap);
 
 	exit(EXIT_FAILURE);
