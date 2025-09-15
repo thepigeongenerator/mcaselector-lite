@@ -49,11 +49,16 @@ all: bin/$(NAME)
 libs: lib/obj/glfw/ lib/obj/libarchive/
 test: bin/TEST_$(NAME); bin/TEST_$(NAME)
 clean:
-	@[ -d bin/ ] && rm -vr bin/ || true
-	@[ -d obj/ ] && rm -vr obj/ || true
+ifneq ($(wildcard bin/),)
+	rm -vr bin/
+endif
+ifneq ($(wildcard obj/),)
+	rm -vr obj/
+endif
 clean-libs:
-	@[ -d lib/obj/ ] && rm -vr lib/obj/ || true
-
+ifneq ($(wildcard lib/obj/),)
+	rm -vr lib/obj/
+endif
 
 # compiles the libraries using cmake
 lib/obj/%/: lib/%/
