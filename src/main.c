@@ -16,9 +16,9 @@
 #define WIN_DEFAULT_WIDTH  640
 #define WIN_DEFAULT_HEIGHT 480
 
-// callback for GLFW errors
+/* reroutes GLFW errors to our logging system. */
 static void error_callback(int err, const char *const msg) {
-	fprintf(stderr, "\033[91mE: glfw returned (%i); \"%s\"\033[0m\n", err, msg);
+	error("glfw returned (%i); \"%s\"", err, msg);
 }
 
 static inline int init(void) {
