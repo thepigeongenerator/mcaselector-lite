@@ -21,26 +21,21 @@ static void error_callback(int err, const char *const msg) {
 	error("glfw returned (%i); \"%s\"", err, msg);
 }
 
-static inline int init(void) {
-	glfwSetErrorCallback(error_callback);
-	glfwInitHint(GLFW_JOYSTICK_HAT_BUTTONS, GLFW_FALSE); // disable joystick buttons
-
-	if (!glfwInit()) return 1; // initialize GLFW
-	if (window_init()) return 1;
-
-	return 0;
-}
-
 static void quit(void) {
 	glfwTerminate();
 }
 
 
+/* Entry-point of the application. */
 int main(int argc, char **argv) {
 	(void)argc, (void)argv;
 	printf("debug: [DBG], info: [INF], warning: [WAR], error: [ERR], fatal: [FAT]\n");
 	atexit(quit);
-	if (init()) fatal("failed to initialize!");
+
+	glfwSetErrorCallback(error_callback);
+	glfwInitHint(GLFW_JOYSTICK_HAT_BUTTONS, GLFW_FALSE); // disable joystick buttons; since we won't need them
+	if (!glfwInit() || window_init())
+		fatal("failed to initialise!");
 
 	window_loop();
 	quit();
