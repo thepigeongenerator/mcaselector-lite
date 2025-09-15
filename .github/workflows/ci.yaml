@@ -31,6 +31,7 @@ jobs:
         with:
           path: lib/obj/
           # I swear to god, if runner.arch displays x64 for x86_64, I will eat a potato.
+          # note: it is... fucking shit.
           key: ${{runner.os}}_${{runner.arch}}-lib/obj-${{github.sha}}
           restore-keys: ${{runner.os}}_${{runner.arch}}-lib/obj-
       - run: make -Bj libs
