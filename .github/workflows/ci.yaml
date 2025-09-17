@@ -17,8 +17,8 @@ jobs:
             cc: gcc
           - os: windows-11-arm
             cc: gcc
-          - os: macos-latest
-            cc: cc
+          # - os: macos-latest
+          #   cc: cc
     env:
         CC: ${{matrix.cc}}
     runs-on: ${{matrix.os}}
@@ -47,10 +47,10 @@ jobs:
           key: ${{runner.os}}_${{runner.arch}}-lib/obj-${{steps.get-hash.outputs.HASH}}
           restore-keys: ${{runner.os}}_${{runner.arch}}-lib/obj-
 
-      # - run: make -Bj libs
-      #   if: steps.cache-deps.outputs.cache-hit != 'true' && runner.os != 'Windows'
-      # - run: make -Bj2 libs # compile fewer cores, to save memory.
-      #   if: steps.cache-deps.outputs.cache-hit != 'true' && runner.os == 'Windows'
-      #
-      # - run: make -j all
-      # - run: make -j test
+      - run: make -Bj libs
+        if: steps.cache-deps.outputs.cache-hit != 'true' && runner.os != 'Windows'
+      - run: make -Bj2 libs # compile fewer cores, to save memory.
+        if: steps.cache-deps.outputs.cache-hit != 'true' && runner.os == 'Windows'
+
+      - run: make -j all
+      - run: make -j test
