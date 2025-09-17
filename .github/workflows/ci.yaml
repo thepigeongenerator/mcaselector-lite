@@ -36,7 +36,8 @@ jobs:
 
       - name: get submodule hash
         id: get-hash
-        run: echo "HASH=$(git submodule | sha1sum)" >$GITHUB_OUTPUT
+        run: echo "HASH=$(git submodule | sha1sum | cut -d' ' -f1)" >$GITHUB_OUTPUT
+        shell: bash
 
       - uses: actions/cache@v4
         id: cache-deps
