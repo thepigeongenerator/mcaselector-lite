@@ -32,6 +32,7 @@ LDLIBS   += -lglfw3 -larchive -lm
 ifeq ($(OS),Windows_NT)
 ISWIN = 1
 NAME  := $(NAME).exe
+LDLIBS += -lopengl32 -lgdi32
 $(warning Detected Windows_NT, please refer to the documentation if you encounter issues.)
 else ifeq ($(shell uname -s),Darwin)
 LDLIBS += -framework Cocoa -framework OpenGL -framework IOKit
