@@ -11,8 +11,8 @@ jobs:
         os:
           - ubuntu-latest
           - ubuntu-24.04-arm
-          # - windows-latest
-          # - windows-11-arm
+          - windows-latest
+          - windows-11-arm
           - macos-latest
     runs-on: ${{matrix.os}}
     steps:
@@ -41,7 +41,9 @@ jobs:
           restore-keys: ${{runner.os}}_${{runner.arch}}-lib/obj-
 
       - run: make -Bj libs
-        if: steps.cache-deps.outputs.cache-hit != 'true'
+        if: steps.cache-deps.outputs.cache-hit != 'true' && runner.os != 'Windows'
+      - run: make -Bj1 libs # compile in single-core mode, to save memory, hopefully
+        if: steps.cache-deps.outputs.cache-hit != 'true' && runner.os == 'Windows'
 
       - run: make -j all
       - run: make -j test
