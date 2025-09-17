@@ -8,12 +8,19 @@ jobs:
     strategy:
       fail-fast: false # disable fail fast, so feedback is provided for all matrix combinations
       matrix:
-        os:
-          - ubuntu-latest
-          - ubuntu-24.04-arm
-          - windows-latest
-          - windows-11-arm
-          # - macos-latest
+        include:
+          - os: ubuntu-latest
+            cc: cc
+          - os: ubuntu-24.04-arm
+            cc: cc
+          - os: windows-latest
+            cc: gcc
+          - os: windows-11-arm
+            cc: gcc
+          # - os: macos-latest
+          #   cc: cc
+    env:
+        CC: ${{matrix.cc}}
     runs-on: ${{matrix.os}}
     steps:
       - uses: actions/checkout@v5

@@ -1,6 +1,5 @@
 # Copyright (c) 2025 Quinn
 # Licensed under the MIT Licence. See LICENSE for details
-SHELL = bash
 
 # build configuration, information about the current build process
 NAME    = mcaselector-lite
