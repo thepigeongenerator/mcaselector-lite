@@ -42,7 +42,7 @@ jobs:
 
       - run: make -Bj libs
         if: steps.cache-deps.outputs.cache-hit != 'true' && runner.os != 'Windows'
-      - run: make -Bj1 libs # compile in single-core mode, to save memory, hopefully
+      - run: make -Bj2 libs # compile fewer cores, to save memory.
         if: steps.cache-deps.outputs.cache-hit != 'true' && runner.os == 'Windows'
 
       - run: make -j all
