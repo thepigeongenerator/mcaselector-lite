@@ -33,6 +33,8 @@ ifeq ($(OS),Windows_NT)
 ISWIN = 1
 NAME  := $(NAME).exe
 $(warning Detected Windows_NT, please refer to the documentation if you encounter issues.)
+else ifeq ($(shell uname -s),Darwin)
+LDLIBS += -framework Cocoa -framework OpenGL -framework IOKit
 endif
 
 # TODO: find a better method to find all source files
