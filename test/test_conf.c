@@ -12,15 +12,15 @@ void test_conf_procbuf(const char *restrict buf, const char *restrict expect_key
 	size_t len = strlen(buf) + 1;
 	char k[len], v[len];
 	*k = '\0', *v = '\0';
-	assert_true(conf_procbuf(buf, k, v, len) == expect_return) &&
+	(void)(assert_true(conf_procbuf(buf, k, v, len) == expect_return) &&
 		assert_true(!strcmp(k, expect_key)) &&
-		assert_true(!strcmp(v, expect_val));
+		assert_true(!strcmp(v, expect_val)));
 }
 
 void test_conf_matchopt(struct conf_entry *opts, size_t optc, const char *restrict key, int expect_index) {
 	size_t idx = opts - conf_matchopt(opts, optc, key);
-	idx = (ssize_t)idx < 0 ? -(ssize_t)idx : idx;
-	int i = idx < optc ? idx : -1;
+	idx = (ssize_t)idx < 0 ? -idx : idx;
+	int i = idx < optc ? (int)idx : -1;
 	assert_true(i == expect_index);
 }
 
@@ -40,30 +40,30 @@ void test_conf_procval_f32(const char *val, f32 expect_value) {
 
 void test_procval_str(void) {
 	char *out = NULL;
-	assert_true(!conf_procval(&(struct conf_entry){NULL, (void *)&out, CONF_STR}, "here comes the sowon")) &&
-		assert_false(strcmp("here comes the sowon", out));
+	(void)(assert_true(!conf_procval(&(struct conf_entry){NULL, (void *)&out, CONF_STR}, "here comes the sowon")) &&
+		assert_false(strcmp("here comes the sowon", out)));
 	free(out);
 }
 
 void test_procval_str_predef(void) {
 	char *out = strdup("owo");
-	assert_true(!conf_procval(&(struct conf_entry){NULL, (void *)&out, CONF_STR}, "i leak if I don't free")) &&
-		assert_true(!strcmp("i leak if I don't free", out));
+	(void)(assert_true(!conf_procval(&(struct conf_entry){NULL, (void *)&out, CONF_STR}, "i leak if I don't free")) &&
+		assert_true(!strcmp("i leak if I don't free", out)));
 	free(out);
 }
 
 void test_procval_fstr(void) {
 	char buf[16];
 	struct conf_fstr str = {sizeof(buf), buf};
-	assert_true(!conf_procval(&(struct conf_entry){NULL, &str, CONF_FSTR}, "hewwoo wowld")) &&
-		assert_true(!strcmp(str.out, "hewwoo wowld"));
+	(void)(assert_true(!conf_procval(&(struct conf_entry){NULL, &str, CONF_FSTR}, "hewwoo wowld")) &&
+		assert_true(!strcmp(str.out, "hewwoo wowld")));
 }
 
 void test_procval_fstr_trunc(void) {
 	char buf[8];
 	struct conf_fstr str = {sizeof(buf), buf};
-	assert_true(!conf_procval(&(struct conf_entry){NULL, &str, CONF_FSTR}, "hewwooo wowld")) &&
-		assert_true(!strcmp(str.out, "hewwooo"));
+	(void)(assert_true(!conf_procval(&(struct conf_entry){NULL, &str, CONF_FSTR}, "hewwooo wowld")) &&
+		assert_true(!strcmp(str.out, "hewwooo")));
 }
 
 void test_procval_eparse(void) {
