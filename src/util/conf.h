@@ -35,7 +35,7 @@ enum conf_primitive {
 
 /* for outputting a fixed string as this config field */
 struct conf_fstr {
-	size_t len; // length in BYTES of the output data
+	usize len; // length in BYTES of the output data
 	char *out;  // where we will output the data
 };
 
@@ -51,10 +51,10 @@ struct conf_entry {
  * `kout` and `vout` will contain a null-terminated string if the function returned successfully.
  * returns `0` on success, `<0` when no data was found. `>0` when data was invalid but something went wrong.
  * see `CONF_E*` or `enum conf_err` */
-int conf_procbuf(const char *restrict buf, char *restrict kout, char *restrict vout, size_t len);
+int conf_procbuf(const char *restrict buf, char *restrict kout, char *restrict vout, usize len);
 
 /* matches the key with one of the options and returns the pointer. Returns NULL if none could be found. */
-struct conf_entry const *conf_matchopt(struct conf_entry const *opts, size_t optc, const char *restrict key);
+struct conf_entry const *conf_matchopt(struct conf_entry const *opts, usize optc, const char *restrict key);
 
 /* processes the value belonging to the key and outputs the result to opts.
  * - `val` points to a null-terminated string which contains the key and value.

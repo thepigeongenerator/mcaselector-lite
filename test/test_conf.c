@@ -6,10 +6,11 @@
 #include <string.h>
 
 #include "../src/util/conf.h"
+#include "../src/util/intdef.h"
 #include "test.h"
 
 void test_conf_procbuf(const char *restrict buf, const char *restrict expect_key, const char *restrict expect_val, int expect_return) {
-	size_t len = strlen(buf) + 1;
+	usize len = strlen(buf) + 1;
 	char k[len], v[len];
 	*k = '\0', *v = '\0';
 	(void)(assert_true(conf_procbuf(buf, k, v, len) == expect_return) &&
@@ -17,9 +18,9 @@ void test_conf_procbuf(const char *restrict buf, const char *restrict expect_key
 		assert_true(!strcmp(v, expect_val)));
 }
 
-void test_conf_matchopt(struct conf_entry *opts, size_t optc, const char *restrict key, int expect_index) {
-	size_t idx = opts - conf_matchopt(opts, optc, key);
-	idx = (ssize_t)idx < 0 ? -idx : idx;
+void test_conf_matchopt(struct conf_entry *opts, usize optc, const char *restrict key, int expect_index) {
+	usize idx = opts - conf_matchopt(opts, optc, key);
+	idx = (ssize)idx < 0 ? -idx : idx;
 	int i = idx < optc ? (int)idx : -1;
 	assert_true(i == expect_index);
 }

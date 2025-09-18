@@ -19,6 +19,10 @@ typedef uint16_t u16;
 typedef uint32_t u32;
 typedef uint64_t u64;
 
+#include <stdlib.h>
+typedef size_t usize;
+typedef ssize_t ssize;
+
 /* floating point types */
 typedef float f32;  // single-precision floating-point
 typedef double f64; // double-precision floating-point

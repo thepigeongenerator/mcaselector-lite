@@ -37,7 +37,7 @@ static inline u64 buftoh64(const void *restrict buf) {
  * The data shall be converted to little-endian on little-endian systems
  * Outputs the allocated data to `out`, returns where the next pointer would be. */
 static const u8 *procarr(const u8 *restrict buf, i32 nmemb, uint size, struct nbt_array *restrict out) {
-	size_t len = nmemb * size;
+	usize len = nmemb * size;
 	*out = (struct nbt_array){
 		out->nmemb = nmemb,
 		out->dat = malloc(len),

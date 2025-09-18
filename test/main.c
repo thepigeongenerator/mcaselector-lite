@@ -1,5 +1,6 @@
 /* Copyright (c) 2025 Quinn
  * Licensed under the MIT Licence. See LICENSE for details */
+#include <stdint.h>
 #include <stdio.h>
 
 #include "test.h"
@@ -13,6 +14,7 @@ int main(void) {
 	assert_true(sizeof(u64) == 8);
 	assert_true(sizeof(f32) == 4);
 	assert_true(sizeof(f64) == 8);
+	assert_true(sizeof(size_t) == sizeof(intptr_t));
 	test_conf_procbuf("key=val", "key", "val", 0);
 	test_conf_procbuf("sometxt", "sometxt", "", CONF_ESYNTAX);
 	test_conf_procbuf("# comment", "", "", CONF_ENODAT);

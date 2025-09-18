@@ -14,14 +14,14 @@
 #include "atrb.h"
 #include "intdef.h"
 
-int conf_procbuf(const char *restrict buf, char *restrict kout, char *restrict vout, size_t len) {
+int conf_procbuf(const char *restrict buf, char *restrict kout, char *restrict vout, usize len) {
 	bool feq = false; // whether we've found the equal sign
 
 	// data traversal
 	char *pos = kout; // will point to the next point in the buffer, where we'll write data
 
 	// acquire data
-	for (size_t i = 0; i < len; i++) {
+	for (usize i = 0; i < len; i++) {
 		// handling of termination tokens
 		bool brk = false; // whether we broke out of the loop, and are done reading
 		switch (buf[i]) {
@@ -53,9 +53,9 @@ int conf_procbuf(const char *restrict buf, char *restrict kout, char *restrict v
 	return (pos == kout) ? CONF_ENODAT : (!feq ? CONF_ESYNTAX : 0);
 }
 
-struct conf_entry const *conf_matchopt(struct conf_entry const *opts, size_t optc, const char *restrict key) {
+struct conf_entry const *conf_matchopt(struct conf_entry const *opts, usize optc, const char *restrict key) {
 	// find a match for the current key
-	size_t i = 0;
+	usize i = 0;
 	for (; i < optc; i++) {
 		if (strcmp(opts[i].key, key) == 0)
 			return opts + i;
@@ -128,7 +128,7 @@ int conf_procval(struct conf_entry const *opt, const char *restrict val) {
 
 /* utility function for conf_getpat to concatenate 3 strings, where we already know the size */
 NONNULL((1, 3))
-static char *conf_getpat_concat(const char *restrict s1, const char *restrict s2, const char *restrict s3, size_t s1len, size_t s2len, size_t s3len) {
+static char *conf_getpat_concat(const char *restrict s1, const char *restrict s2, const char *restrict s3, usize s1len, usize s2len, usize s3len) {
 	assert(s2 || (!s2 && !s2len)); // ensuring the programmer passes both s2 and s2len as 0, if they intend to
 	char *buf, *ptr;
 
@@ -140,7 +140,7 @@ static char *conf_getpat_concat(const char *restrict s1, const char *restrict s2
 	// copy data to the buffer
 	ptr = memcpy(ptr, s1, s1len) + s1len;            // copy s1 data to the buffer
 	if (s2len) ptr = memcpy(ptr, s2, s2len) + s2len; // copy s2 data to the buffer (excluding null-terminator)
-	(void)strcpy(ptr, s3);                    // copy s3 as a string, thus including null-terminator
+	(void)strcpy(ptr, s3);                           // copy s3 as a string, thus including null-terminator
 
 	// return the buffer
 	return buf;
@@ -149,8 +149,8 @@ static char *conf_getpat_concat(const char *restrict s1, const char *restrict s2
 /* appends str to the config directory string we acquire from environment variables. */
 char *conf_getpat(const char *restrict str) {
 	char *buf = NULL;
-	size_t len;
-	size_t str_len = strlen(str);
+	usize len;
+	usize str_len = strlen(str);
 #if defined(__linux__)
 	buf = getenv("XDG_CONFIG_HOME");
 	if (!buf) {
