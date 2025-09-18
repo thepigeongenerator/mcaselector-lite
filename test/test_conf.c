@@ -116,7 +116,7 @@ void test_conf_getpat(void) {
 	/* test with setting USERPROFILE */
 	_putenv("USERPROFILE=C:\\Users\\test");
 	path = conf_getpat("\\mypath");
-	assert_true(path != NULL && strcmp(path, "C:\\Users\\test\\mypath") == 0);
+	assert_true(path != NULL && strcmp(path, "C:\\Users\\test\\AppData\\Roaming\\mypath") == 0);
 	free(path);
 
 	/* test with setting APPDATA */
