@@ -29,9 +29,7 @@ int conf_procbuf(const char *restrict buf, char *restrict kout, char *restrict v
 		case '\n':
 		case '\r':
 		case '\0':
-		case '#':
-			brk = true;
-			break;
+		case '#':  brk = true; break;
 		}
 		if (brk)
 			break;
@@ -46,8 +44,8 @@ int conf_procbuf(const char *restrict buf, char *restrict kout, char *restrict v
 		*pos = buf[i]; // copy over the buffer's data
 		pos++;         // increment the position pointer
 	}
-	// null-terminate what we've got now (yes, there should be enough space for this since \0 isn't stored)
-	// this also ensures the value is valid, even if none is given
+	// null-terminate what we've got now (yes, there should be enough space for this since \0
+	// isn't stored) this also ensures the value is valid, even if none is given
 	*pos = '\0';
 
 	// no data if we didn't move from the key position
@@ -55,7 +53,8 @@ int conf_procbuf(const char *restrict buf, char *restrict kout, char *restrict v
 	return (pos == kout) ? CONF_ENODAT : (!feq ? CONF_ESYNTAX : 0);
 }
 
-struct conf_entry const *conf_matchopt(struct conf_entry const *opts, usize optc, const char *restrict key)
+struct conf_entry const *conf_matchopt(struct conf_entry const *opts, usize optc,
+	const char *restrict key)
 {
 	// find a match for the current key
 	usize i = 0;
@@ -96,7 +95,8 @@ int conf_procval(struct conf_entry const *opt, const char *restrict val)
 	// string data parsing
 	case CONF_STR:
 		if (*(char **)opt->out) {
-			free(*(char **)opt->out); // if the same key is given multiple times, free the memory so we don't leak.
+			free(*(char **)opt->out); // if the same key is given multiple times, free
+						  // the memory so we don't leak.
 			warn("encountered a dynamic string multiple times, this is sub-optimal.");
 		}
 		*(char **)opt->out = strdup(val);
@@ -116,25 +116,53 @@ int conf_procval(struct conf_entry const *opt, const char *restrict val)
 	}
 
 	switch (opt->type) {
-	case CONF_U8:  *(u8 *)opt->out = *(u64 *)dat >= UINT8_MAX ? UINT8_MAX : *(u64 *)dat; return 0;
-	case CONF_U16: *(u16 *)opt->out = *(u64 *)dat >= UINT16_MAX ? UINT16_MAX : *(u64 *)dat; return 0;
-	case CONF_U32: *(u32 *)opt->out = *(u64 *)dat >= UINT32_MAX ? UINT32_MAX : *(u64 *)dat; return 0;
-	case CONF_U64: *(u64 *)opt->out = *(u64 *)dat >= UINT64_MAX ? UINT64_MAX : *(u64 *)dat; return 0;
-	case CONF_I8:  *(i8 *)opt->out = *(i64 *)dat >= INT8_MAX ? INT8_MAX : (*(i64 *)dat <= INT8_MIN ? INT8_MIN : *(i64 *)dat); return 0;
-	case CONF_I16: *(i16 *)opt->out = *(i64 *)dat >= INT16_MAX ? INT16_MAX : (*(i64 *)dat <= INT16_MIN ? INT16_MIN : *(i64 *)dat); return 0;
-	case CONF_I32: *(i32 *)opt->out = *(i64 *)dat >= INT32_MAX ? INT32_MAX : (*(i64 *)dat <= INT32_MIN ? INT32_MIN : *(i64 *)dat); return 0;
-	case CONF_I64: *(i64 *)opt->out = *(i64 *)dat >= INT64_MAX ? INT64_MAX : (*(i64 *)dat <= INT64_MIN ? INT64_MIN : *(i64 *)dat); return 0;
+	case CONF_U8:
+		*(u8 *)opt->out = *(u64 *)dat >= UINT8_MAX ? UINT8_MAX : *(u64 *)dat;
+		return 0;
+	case CONF_U16:
+		*(u16 *)opt->out = *(u64 *)dat >= UINT16_MAX ? UINT16_MAX : *(u64 *)dat;
+		return 0;
+	case CONF_U32:
+		*(u32 *)opt->out = *(u64 *)dat >= UINT32_MAX ? UINT32_MAX : *(u64 *)dat;
+		return 0;
+	case CONF_U64:
+		*(u64 *)opt->out = *(u64 *)dat >= UINT64_MAX ? UINT64_MAX : *(u64 *)dat;
+		return 0;
+	case CONF_I8:
+		*(i8 *)opt->out = *(i64 *)dat >= INT8_MAX ?
+			INT8_MAX :
+			(*(i64 *)dat <= INT8_MIN ? INT8_MIN : *(i64 *)dat);
+		return 0;
+	case CONF_I16:
+		*(i16 *)opt->out = *(i64 *)dat >= INT16_MAX ?
+			INT16_MAX :
+			(*(i64 *)dat <= INT16_MIN ? INT16_MIN : *(i64 *)dat);
+		return 0;
+	case CONF_I32:
+		*(i32 *)opt->out = *(i64 *)dat >= INT32_MAX ?
+			INT32_MAX :
+			(*(i64 *)dat <= INT32_MIN ? INT32_MIN : *(i64 *)dat);
+		return 0;
+	case CONF_I64:
+		*(i64 *)opt->out = *(i64 *)dat >= INT64_MAX ?
+			INT64_MAX :
+			(*(i64 *)dat <= INT64_MIN ? INT64_MIN : *(i64 *)dat);
+		return 0;
 	case CONF_F32: *(f32 *)opt->out = *(f32 *)dat; return 0;
 	case CONF_F64: *(f64 *)opt->out = *(f64 *)dat; return 0;
-	default:       fatal("invalid switch state, all cases should be handled already"); // abort; this shouldn't be possible, so I blame the programmer
+	default:
+		/* abort; this shouldn't be possible so I blame the programmer. */
+		fatal("invalid switch state, all cases should be handled already");
 	}
 }
 
 /* utility function for conf_getpat to concatenate 3 strings, where we already know the size */
 NONNULL((1, 3))
-static char *conf_getpat_concat(const char *restrict s1, const char *restrict s2, const char *restrict s3, usize s1len, usize s2len, usize s3len)
+static char *conf_getpat_concat(const char *restrict s1, const char *restrict s2,
+	const char *restrict s3, usize s1len, usize s2len, usize s3len)
 {
-	assert(s2 || (!s2 && !s2len)); // ensuring the programmer passes both s2 and s2len as 0, if they intend to
+	assert(s2 || (!s2 && !s2len)); // ensuring the programmer passes both s2 and s2len as 0, if
+				       // they intend to
 	char *buf, *ptr;
 
 	// allocate enough data for all three to the buffer
@@ -146,8 +174,9 @@ static char *conf_getpat_concat(const char *restrict s1, const char *restrict s2
 	// copy data to the buffer
 	ptr = memcpy(ptr, s1, s1len) + s1len; // copy s1 data to the buffer
 	if (s2len)
-		ptr = memcpy(ptr, s2, s2len) + s2len; // copy s2 data to the buffer (excluding null-terminator)
-	(void)strcpy(ptr, s3);                        // copy s3 as a string, thus including null-terminator
+		ptr = memcpy(ptr, s2, s2len) + s2len; // copy s2 data to the buffer (excluding
+						      // null-terminator)
+	(void)strcpy(ptr, s3); // copy s3 as a string, thus including null-terminator
 
 	// return the buffer
 	return buf;

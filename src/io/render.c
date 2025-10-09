@@ -25,8 +25,8 @@ static void screen_resize(int w, int h)
 		{0, h,  w, -20   },
 	};
 
-	glUniform2i(screen_loc, w, h);                                        // send the screen dimensions to the shader pipeline
-	glViewport(0, 0, w, h);                                               // update the viewport
+	glUniform2i(screen_loc, w, h); // send the screen dimensions to the shader pipeline
+	glViewport(0, 0, w, h);        // update the viewport
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_DYNAMIC_DRAW); // bind the data to it
 	win_w = w;
 	win_h = h;
@@ -44,7 +44,7 @@ int render_init(void)
 	if (len > 0) {
 		char log[len];
 		glGetProgramInfoLog(pipe, len, &len, log);
-		log[len - 1] = '\0'; // terminate the string one character sooner since the log includes a newline
+		log[len - 1] = '\0'; // terminate the string one character sooner
 		fatal("error whilst linking the pipe: '%s'", log);
 	}
 

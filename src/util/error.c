@@ -7,7 +7,8 @@
 
 #include "../types.h"
 
-static void error_log(FILE *restrict stream, const char *restrict pfx, uint ln, const char *restrict file, const char *restrict fmt, va_list ap)
+static void error_log(FILE *restrict stream, const char *restrict pfx, uint ln,
+	const char *restrict file, const char *restrict fmt, va_list        ap)
 {
 	fprintf(stream, "(%s:%u) [%s] '", file, ln, pfx);
 	vfprintf(stream, fmt, ap);

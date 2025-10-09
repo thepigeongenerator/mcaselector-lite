@@ -25,7 +25,8 @@ enum mcx_compression {
 	MCX_COMPRESSION_CUSTOM = 0x7F,
 };
 
-/* first 4 bytes is an i32 indicating remaining bytes, the following byte defines the compression scheme */
+/* First 4 bytes is an i32 indicating remaining bytes.
+ * The following byte defines the compression scheme */
 static int mcx_loadchunk(const u8 *restrict buf, const i32 *restrict table, int idx)
 {
 	const u8 *chunk = buf + (be32toh(table[idx]) >> 8) * SECTOR;
@@ -97,12 +98,15 @@ static usize delchunk(u8 *restrict buf, u32 *restrict table, usize rmb, int sidx
 	// load the table data
 	usize slen, bidx, blen;
 	slen = be32toh(table[sidx]) & 0xFF;          // acquire the sector length of the chunk
-	bidx = (be32toh(table[sidx]) >> 8) * SECTOR; // acquire and compute the byte offset the chunk starts at
+	bidx = (be32toh(table[sidx]) >> 8) * SECTOR; // acquire and compute the byte offset the
+						     // chunk starts at
 	blen = slen * SECTOR;                        // compute the byte length of the chunk
 
 	// reset the table data
 	table[sidx]          = 0;
-	table[sidx + CHUNKS] = htobe32(time(NULL)); // assign the current time to the timestamp, for correctness  NOTE: might need to zero-out instead
+	table[sidx + CHUNKS] = htobe32(time(NULL)); // assign the current time to the timestamp, for
+						    // correctness  NOTE: might need to zero-out
+						    // instead
 
 	// move the succeeding chunks over the deleted chunk
 	u8 *dst = buf + bidx - rmb;
@@ -111,9 +115,11 @@ static usize delchunk(u8 *restrict buf, u32 *restrict table, usize rmb, int sidx
 	return blen;
 }
 
-/* Call `delchunk` with the parameters and some defaults. Ensuring the table is copied correctly as well.
- * This is done instead of `delchunk` being globally linked, because
- * `delchunk` requests more specific parameters, which is confusing outside this module. */
+/* Call `delchunk` with the parameters and some defaults.
+ * Ensuring the table is copied correctly as well.
+ * This is done instead of `delchunk` being globally linked,
+ * because `delchunk` requests more specific parameters,
+ * which is confusing outside this module. */
 usize mcx_delchunk(u8 *restrict buf, int chunk)
 {
 	u32 table[TABLE];
@@ -155,14 +161,15 @@ static int cmp_chunkids(const void *restrict x, const void *restrict y)
 }
 
 /* Sorts the chunks marked for deletion from smallest to greatest index.
- * Then performs the deletion in this order. Making sure to only update the chunks up to the next. */
+ * Then performs the deletion in this order.
+ * Making sure to only update the chunks up to the next. */
 usize mcx_delchunk_bulk(u8 *restrict buf, const u16 *restrict chunks, int chunkc)
 {
 	// ensure the chunks ids we're working on are sorted from least to greatest
 	u16 chunkids[chunkc + 1];
 	memcpy(chunkids, chunks, chunkc);
 	qsort(chunkids, chunkc, sizeof(int), cmp_chunkids);
-	chunkids[chunkc] = CHUNKS; // set the spare chunk to the max chunks, so the rest of the chunks are moved
+	chunkids[chunkc] = CHUNKS; // move the rest of the chunks
 
 	u32 table[TABLE];
 	memcpy(table, buf, sizeof(table));
