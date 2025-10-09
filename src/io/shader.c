@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "../error.h"
+#include "../util/error.h"
 
 
 // NOTE: we are currently just sucking up the memory costs for ease. We can either include the source files themselves. Or use compression, where I'd prefer the latter for ease of installation.

@@ -11,7 +11,7 @@
 #include <string.h>
 
 #include "../types.h"
-#include "../error.h"
+#include "../util/error.h"
 #include "atrb.h"
 
 int conf_procbuf(const char *restrict buf, char *restrict kout, char *restrict vout, usize len) {

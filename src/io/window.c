@@ -6,8 +6,8 @@
 #include <assert.h>
 #include <glad/gl.h>
 
-#include "../error.h"
 #include "../types.h"
+#include "../util/error.h"
 #include "input.h"
 #include "render.h"
 

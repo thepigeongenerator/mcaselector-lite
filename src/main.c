@@ -5,8 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "error.h"
 #include "io/window.h"
+#include "util/error.h"
 
 /* reroutes GLFW errors to our logging system. */
 static void error_callback(int err, const char *const msg) {

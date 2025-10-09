@@ -10,8 +10,8 @@
 #include <string.h>
 #include <time.h>
 
-#include "../error.h"
 #include "../types.h"
+#include "../util/error.h"
 
 #define SECTOR 0x1000 // sector size
 #define TABLE  0x800  // table (total) element count

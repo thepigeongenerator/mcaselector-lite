@@ -6,8 +6,8 @@
 #include <glad/gl.h>
 #include <stdint.h>
 
-#include "../error.h"
 #include "../types.h"
+#include "../util/error.h"
 #include "shader.h"
 
 #define VERTC 3
