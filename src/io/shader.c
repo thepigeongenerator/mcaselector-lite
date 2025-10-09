@@ -19,7 +19,8 @@ extern const uint sh_geom_glsl_len;
 
 /* Compiles a shader of `type` from `src` with `len` bytes.
  * Returns the integer for the shader. */
-static GLuint shader_compile(GLenum type, const char *src, usize len) {
+static GLuint shader_compile(GLenum type, const char *src, usize len)
+{
 	int    ilen   = len;
 	GLuint shader = glCreateShader(type);
 	glShaderSource(shader, 1, &src, &ilen);
@@ -37,7 +38,8 @@ static GLuint shader_compile(GLenum type, const char *src, usize len) {
 	return shader;
 }
 
-int shader_init(GLuint pipe) {
+int shader_init(GLuint pipe)
+{
 	GLuint vs = shader_compile(GL_VERTEX_SHADER, sh_vert_glsl, sh_vert_glsl_len);
 	GLuint fs = shader_compile(GL_FRAGMENT_SHADER, sh_frag_glsl, sh_frag_glsl_len);
 	GLuint gs = shader_compile(GL_GEOMETRY_SHADER, sh_geom_glsl, sh_geom_glsl_len);

@@ -9,11 +9,13 @@
 #include "util/error.h"
 
 /* reroutes GLFW errors to our logging system. */
-static void error_callback(int err, const char *const msg) {
+static void error_callback(int err, const char *const msg)
+{
 	error("glfw returned (%i); \"%s\"", err, msg);
 }
 
-static void quit(void) {
+static void quit(void)
+{
 	window_free();
 
 	/* terminates GLFW; destroying any
@@ -23,7 +25,8 @@ static void quit(void) {
 
 
 /* Entry-point of the application. */
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 	(void)argc, (void)argv;
 	printf("debug: [DBG], info: [INF], warning: [WAR], error: [ERR], fatal: [FAT]\n");
 	atexit(quit);

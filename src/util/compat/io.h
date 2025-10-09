@@ -33,14 +33,16 @@ static inline int faccess(const char *restrict fname, int perms);
 #define PATH_SEP     '/' // contains the path separator as a character. Yes it is extremely annoying that this has to exist.
 #define PATH_SEP_STR "/" // contains the path separator as a string, useful for concatenation. Yes it is extremely annoying that this has to exist.
 
-int faccess(char const *restrict fname, int perms) {
+int faccess(char const *restrict fname, int perms)
+{
 	return access(fname, perms);
 }
 #elif defined(_WIN32)
 #define PATH_SEP     '\\' // contains the path separator as a character. Yes it is extremely annoying that this has to exist.
 #define PATH_SEP_STR "\\" // contains the path separator as a string, useful for concatenation. Yes it is extremely annoying that this has to exist.
 
-int faccess(char const *restrict fname, int perms) {
+int faccess(char const *restrict fname, int perms)
+{
 	return _access(fname, perms);
 }
 #else

@@ -15,7 +15,8 @@ static struct GLFWwindow *win = NULL;
 
 /* Initialises the GLFW window with some defaults,
  * then proceed to activate OpenGL on it. */
-int window_init(void) {
+int window_init(void)
+{
 	// initialise the window
 #ifndef NDEBUG
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
@@ -32,10 +33,12 @@ int window_init(void) {
 	/* NOTE: on my system; x86_64, GTX 1650 580.82.09-2, X11, i3, this causes one direct, 2 indirect memory leaks.
 	 * This is not my fault, and can safely be ignored. */
 	win = glfwCreateWindow(640, 480, "MCA-Selector lite", NULL, NULL);
-	if (!win) return 1;
+	if (!win)
+		return 1;
 
 	glfwMakeContextCurrent(win);
-	if (!gladLoadGL(glfwGetProcAddress)) return 1;
+	if (!gladLoadGL(glfwGetProcAddress))
+		return 1;
 	glfwSwapInterval(1); // wait 1 screen update for a redraw a.k.a. "vsync". (not really applicable in this case but eh)
 
 	glfwSetKeyCallback(win, input_callback);
@@ -53,7 +56,8 @@ int window_init(void) {
 	return 0;
 }
 
-void window_loop(void) {
+void window_loop(void)
+{
 	assert(win);
 	render_init();
 	while (!glfwWindowShouldClose(win)) {
@@ -65,12 +69,14 @@ void window_loop(void) {
 	}
 }
 
-void window_close(void) {
+void window_close(void)
+{
 	assert(win);
 	glfwSetWindowShouldClose(win, 1);
 }
 
-void window_free(void) {
+void window_free(void)
+{
 	if (!win) {
 		debug("window has already been freed.");
 		return;

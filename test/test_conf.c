@@ -9,7 +9,8 @@
 #include "../src/util/conf.h"
 #include "test.h"
 
-void test_conf_procbuf(const char *restrict buf, const char *restrict expect_key, const char *restrict expect_val, int expect_return) {
+void test_conf_procbuf(const char *restrict buf, const char *restrict expect_key, const char *restrict expect_val, int expect_return)
+{
 	usize len = strlen(buf) + 1;
 	char  k[len], v[len];
 	*k = '\0', *v = '\0';
@@ -18,20 +19,23 @@ void test_conf_procbuf(const char *restrict buf, const char *restrict expect_key
 		assert_true(!strcmp(v, expect_val)));
 }
 
-void test_conf_matchopt(struct conf_entry *opts, usize optc, const char *restrict key, int expect_index) {
+void test_conf_matchopt(struct conf_entry *opts, usize optc, const char *restrict key, int expect_index)
+{
 	usize idx = opts - conf_matchopt(opts, optc, key);
 	idx       = (ssize)idx < 0 ? -idx : idx;
 	int i     = idx < optc ? (int)idx : -1;
 	assert_true(i == expect_index);
 }
 
-void test_conf_procval_int(const char *val, u64 expect_value, int type) {
+void test_conf_procval_int(const char *val, u64 expect_value, int type)
+{
 	u8 out[sizeof(u64)] = {0};
 	assert_true(!conf_procval(&(struct conf_entry){NULL, out, type}, val));
 	assert_true(memcmp(out, &expect_value, sizeof(u64)) == 0);
 }
 
-void test_conf_procval_f32(const char *val, f32 expect_value) {
+void test_conf_procval_f32(const char *val, f32 expect_value)
+{
 	u8  out[4];
 	f32 result;
 	conf_procval(&(struct conf_entry){NULL, out, CONF_F32}, val);
@@ -39,40 +43,46 @@ void test_conf_procval_f32(const char *val, f32 expect_value) {
 	assert_true(fabsf(expect_value - result) < 1e-9f);
 }
 
-void test_procval_str(void) {
+void test_procval_str(void)
+{
 	char *out = NULL;
 	(void)(assert_true(!conf_procval(&(struct conf_entry){NULL, (void *)&out, CONF_STR}, "here comes the sowon")) &&
 		assert_false(strcmp("here comes the sowon", out)));
 	free(out);
 }
 
-void test_procval_str_predef(void) {
+void test_procval_str_predef(void)
+{
 	char *out = strdup("owo");
 	(void)(assert_true(!conf_procval(&(struct conf_entry){NULL, (void *)&out, CONF_STR}, "i leak if I don't free")) &&
 		assert_true(!strcmp("i leak if I don't free", out)));
 	free(out);
 }
 
-void test_procval_fstr(void) {
+void test_procval_fstr(void)
+{
 	char             buf[16];
 	struct conf_fstr str = {sizeof(buf), buf};
 	(void)(assert_true(!conf_procval(&(struct conf_entry){NULL, &str, CONF_FSTR}, "hewwoo wowld")) &&
 		assert_true(!strcmp(str.out, "hewwoo wowld")));
 }
 
-void test_procval_fstr_trunc(void) {
+void test_procval_fstr_trunc(void)
+{
 	char             buf[8];
 	struct conf_fstr str = {sizeof(buf), buf};
 	(void)(assert_true(!conf_procval(&(struct conf_entry){NULL, &str, CONF_FSTR}, "hewwooo wowld")) &&
 		assert_true(!strcmp(str.out, "hewwooo")));
 }
 
-void test_procval_eparse(void) {
+void test_procval_eparse(void)
+{
 	i32 out;
 	assert_true(conf_procval(&(struct conf_entry){NULL, &out, CONF_I32}, "owo") == CONF_EPARSE);
 }
 
-void test_conf_getpat(void) {
+void test_conf_getpat(void)
+{
 	char *path;
 #if defined(__linux__)
 	/* test without setting environment variables. */

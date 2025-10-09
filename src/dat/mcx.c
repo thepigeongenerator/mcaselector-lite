@@ -26,7 +26,8 @@ enum mcx_compression {
 };
 
 /* first 4 bytes is an i32 indicating remaining bytes, the following byte defines the compression scheme */
-static int mcx_loadchunk(const u8 *restrict buf, const i32 *restrict table, int idx) {
+static int mcx_loadchunk(const u8 *restrict buf, const i32 *restrict table, int idx)
+{
 	const u8 *chunk = buf + (be32toh(table[idx]) >> 8) * SECTOR;
 
 	i32 len;
@@ -64,7 +65,8 @@ static int mcx_loadchunk(const u8 *restrict buf, const i32 *restrict table, int 
 			error("failed to decompress %i bytes of compression type %i", len, *chunk);
 			return 1;
 		}
-		if (size == 0) break;
+		if (size == 0)
+			break;
 		// TODO: handle data
 	}
 
@@ -72,7 +74,8 @@ static int mcx_loadchunk(const u8 *restrict buf, const i32 *restrict table, int 
 }
 
 /* Moves chunks `src_s` to `src_e` (inclusive) from `src`, back onto `dst`. */
-static void mvchunks(u8 *dst, u8 *src, u32 *restrict table, int src_s, int src_e) {
+static void mvchunks(u8 *dst, u8 *src, u32 *restrict table, int src_s, int src_e)
+{
 	assert(src > dst);
 	uintptr len = src - dst; // acquire the amount of bytes that we shall move
 	assert(!(len % SECTOR));
@@ -89,7 +92,8 @@ static void mvchunks(u8 *dst, u8 *src, u32 *restrict table, int src_s, int src_e
 /* Deletes chunk `sidx` by moving chunks up to `eidx` back over `sidx` in `buf`.
  * `rmb` is an optional additional offset that can be applied, and signifies bytes already removed.
  * Returns the bytes removed by this function. */
-static usize delchunk(u8 *restrict buf, u32 *restrict table, usize rmb, int sidx, int eidx) {
+static usize delchunk(u8 *restrict buf, u32 *restrict table, usize rmb, int sidx, int eidx)
+{
 	// load the table data
 	usize slen, bidx, blen;
 	slen = be32toh(table[sidx]) & 0xFF;          // acquire the sector length of the chunk
@@ -110,7 +114,8 @@ static usize delchunk(u8 *restrict buf, u32 *restrict table, usize rmb, int sidx
 /* Call `delchunk` with the parameters and some defaults. Ensuring the table is copied correctly as well.
  * This is done instead of `delchunk` being globally linked, because
  * `delchunk` requests more specific parameters, which is confusing outside this module. */
-usize mcx_delchunk(u8 *restrict buf, int chunk) {
+usize mcx_delchunk(u8 *restrict buf, int chunk)
+{
 	u32 table[TABLE];
 	memcpy(table, buf, sizeof(table));
 	usize res = delchunk(buf, table, 0, chunk, CHUNKS);
@@ -118,7 +123,8 @@ usize mcx_delchunk(u8 *restrict buf, int chunk) {
 	return res;
 }
 
-usize mcx_delchunk_range(u8 *restrict buf, int start, int end) {
+usize mcx_delchunk_range(u8 *restrict buf, int start, int end)
+{
 	assert(start < end && end < CHUNKS);
 	u32 table[TABLE];
 	memcpy(table, buf, sizeof(table));
@@ -141,7 +147,8 @@ usize mcx_delchunk_range(u8 *restrict buf, int start, int end) {
 }
 
 /* comparer function for to be inputted into `qsort` to compare two */
-static int cmp_chunkids(const void *restrict x, const void *restrict y) {
+static int cmp_chunkids(const void *restrict x, const void *restrict y)
+{
 	u16 x2 = *(u16 *)x;
 	u16 y2 = *(u16 *)y;
 	return (x2 > y2) - (x2 < y2);
@@ -149,7 +156,8 @@ static int cmp_chunkids(const void *restrict x, const void *restrict y) {
 
 /* Sorts the chunks marked for deletion from smallest to greatest index.
  * Then performs the deletion in this order. Making sure to only update the chunks up to the next. */
-usize mcx_delchunk_bulk(u8 *restrict buf, const u16 *restrict chunks, int chunkc) {
+usize mcx_delchunk_bulk(u8 *restrict buf, const u16 *restrict chunks, int chunkc)
+{
 	// ensure the chunks ids we're working on are sorted from least to greatest
 	u16 chunkids[chunkc + 1];
 	memcpy(chunkids, chunks, chunkc);
@@ -169,7 +177,8 @@ usize mcx_delchunk_bulk(u8 *restrict buf, const u16 *restrict chunks, int chunkc
 
 /* Sum together the 4th byte in each location integer to compute the sector size of all chunks.
  * Multiplying by `SECTOR`, and adding the size of the table itself. */
-usize mcx_calcsize(const u8 *restrict buf) {
+usize mcx_calcsize(const u8 *restrict buf)
+{
 	usize size = 0;
 	for (uint i = 0; i < CHUNKS; i++)
 		size += *(buf + (i * 4) + 3);

@@ -14,7 +14,8 @@
 #include "../util/error.h"
 #include "atrb.h"
 
-int conf_procbuf(const char *restrict buf, char *restrict kout, char *restrict vout, usize len) {
+int conf_procbuf(const char *restrict buf, char *restrict kout, char *restrict vout, usize len)
+{
 	bool feq = false; // whether we've found the equal sign
 
 	// data traversal
@@ -32,7 +33,8 @@ int conf_procbuf(const char *restrict buf, char *restrict kout, char *restrict v
 			brk = true;
 			break;
 		}
-		if (brk) break;
+		if (brk)
+			break;
 
 		// everything after `=` is interpreted as a value
 		if (!feq && buf[i] == '=') {
@@ -53,7 +55,8 @@ int conf_procbuf(const char *restrict buf, char *restrict kout, char *restrict v
 	return (pos == kout) ? CONF_ENODAT : (!feq ? CONF_ESYNTAX : 0);
 }
 
-struct conf_entry const *conf_matchopt(struct conf_entry const *opts, usize optc, const char *restrict key) {
+struct conf_entry const *conf_matchopt(struct conf_entry const *opts, usize optc, const char *restrict key)
+{
 	// find a match for the current key
 	usize i = 0;
 	for (; i < optc; i++) {
@@ -63,7 +66,8 @@ struct conf_entry const *conf_matchopt(struct conf_entry const *opts, usize optc
 	return NULL;
 }
 
-int conf_procval(struct conf_entry const *opt, const char *restrict val) {
+int conf_procval(struct conf_entry const *opt, const char *restrict val)
+{
 	// parse the data
 	errno = 0;
 	char *end;
@@ -128,26 +132,30 @@ int conf_procval(struct conf_entry const *opt, const char *restrict val) {
 
 /* utility function for conf_getpat to concatenate 3 strings, where we already know the size */
 NONNULL((1, 3))
-static char *conf_getpat_concat(const char *restrict s1, const char *restrict s2, const char *restrict s3, usize s1len, usize s2len, usize s3len) {
+static char *conf_getpat_concat(const char *restrict s1, const char *restrict s2, const char *restrict s3, usize s1len, usize s2len, usize s3len)
+{
 	assert(s2 || (!s2 && !s2len)); // ensuring the programmer passes both s2 and s2len as 0, if they intend to
 	char *buf, *ptr;
 
 	// allocate enough data for all three to the buffer
 	ptr = malloc(s1len + s2len + s3len + 1);
-	if (!ptr) return NULL;
+	if (!ptr)
+		return NULL;
 	buf = ptr; // store the head pointer into buf
 
 	// copy data to the buffer
-	ptr = memcpy(ptr, s1, s1len) + s1len;            // copy s1 data to the buffer
-	if (s2len) ptr = memcpy(ptr, s2, s2len) + s2len; // copy s2 data to the buffer (excluding null-terminator)
-	(void)strcpy(ptr, s3);                           // copy s3 as a string, thus including null-terminator
+	ptr = memcpy(ptr, s1, s1len) + s1len; // copy s1 data to the buffer
+	if (s2len)
+		ptr = memcpy(ptr, s2, s2len) + s2len; // copy s2 data to the buffer (excluding null-terminator)
+	(void)strcpy(ptr, s3);                        // copy s3 as a string, thus including null-terminator
 
 	// return the buffer
 	return buf;
 }
 
 /* appends str to the config directory string we acquire from environment variables. */
-char *conf_getpat(const char *restrict str) {
+char *conf_getpat(const char *restrict str)
+{
 	char *buf = NULL;
 	usize len;
 	usize str_len = strlen(str);
@@ -155,21 +163,24 @@ char *conf_getpat(const char *restrict str) {
 	buf = getenv("XDG_CONFIG_HOME");
 	if (!buf) {
 		buf = getenv("HOME");
-		if (!buf) return NULL;
+		if (!buf)
+			return NULL;
 		len = strlen(buf);
 		return conf_getpat_concat(buf, "/.config", str, len, 8, str_len);
 	}
 	return conf_getpat_concat(buf, NULL, str, strlen(buf), 0, str_len);
 #elif defined(__APPLE__)
 	buf = getenv("HOME");
-	if (!buf) return NULL;
+	if (!buf)
+		return NULL;
 	len = strlen(buf);
 	return conf_getpat_concat(buf, "/Library/Application Support", str, len, 28, str_len);
 #elif defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
 	buf = getenv("APPDATA");
 	if (!buf) {
 		buf = getenv("USERPROFILE");
-		if (!buf) return NULL;
+		if (!buf)
+			return NULL;
 		len = strlen(buf);
 		return conf_getpat_concat(buf, "\\AppData\\Roaming", str, len, 16, str_len);
 	}

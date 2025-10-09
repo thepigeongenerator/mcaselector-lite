@@ -34,9 +34,9 @@ AlignConsecutiveShortCaseStatements:
 # short constructs on a single line
 # ---------------------------
 AllowShortBlocksOnASingleLine:       Always
-AllowShortFunctionsOnASingleLine:    All
+AllowShortFunctionsOnASingleLine:    None
 AllowShortLambdasOnASingleLine:      All
-AllowShortIfStatementsOnASingleLine: AllIfsAndElse
+AllowShortIfStatementsOnASingleLine: Never
 AllowShortCaseLabelsOnASingleLine:   true
 AllowShortEnumsOnASingleLine:        true
 AllowShortLoopsOnASingleLine:        true
@@ -61,7 +61,7 @@ BraceWrapping:
   AfterCaseLabel:        false
   AfterClass:            false
   AfterEnum:             false
-  AfterFunction:         false
+  AfterFunction:         true
   AfterNamespace:        false
   AfterObjCDeclaration:  false
   AfterStruct:           false

@@ -17,7 +17,8 @@ static GLuint vao;        // vertex array object
 static GLuint screen_loc; // location to where OpenGL sends to the shaders of the screen dimensions
 static int    win_w, win_h;
 
-static void screen_resize(int w, int h) {
+static void screen_resize(int w, int h)
+{
 	i32 verts[VERTC][4] = {
 		{0, 0,  w, 20    },
 		{0, 20, w, h - 40},
@@ -31,7 +32,8 @@ static void screen_resize(int w, int h) {
 	win_h = h;
 }
 
-int render_init(void) {
+int render_init(void)
+{
 	pipe = glCreateProgram();
 	shader_init(pipe);       // initialise and include the shaders
 	glLinkProgram(pipe);     // link the application
@@ -63,7 +65,8 @@ int render_init(void) {
 	return 0;
 }
 
-void render_update(GLFWwindow *win) {
+void render_update(GLFWwindow *win)
+{
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 
@@ -80,7 +83,8 @@ void render_update(GLFWwindow *win) {
 	glDrawArrays(GL_POINTS, 0, VERTC);
 }
 
-void render_free(void) {
+void render_free(void)
+{
 	glDeleteVertexArrays(1, &vao);
 	glDeleteBuffers(1, &vbo);
 	glDeleteProgram(pipe);

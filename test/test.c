@@ -7,7 +7,8 @@
 uint test_okay = 0;
 uint test_fail = 0;
 
-int test_process(int res, const char *restrict file, uint ln, const char *restrict function, const char *restrict expression) {
+int test_process(int res, const char *restrict file, uint ln, const char *restrict function, const char *restrict expression)
+{
 	const char *status = res ?
 		"[\033[32;1m  OK  \033[0m]" :
 		"[\033[31;1m FAIL \033[0m]";

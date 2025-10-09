@@ -6,7 +6,8 @@
 #include "test.h"
 #include "test_conf.h"
 
-int main(void) {
+int main(void)
+{
 	assert_true(-3 >> 5 == -1); // checking for arithmetic shift, rather than logical shift
 	assert_true(sizeof(u8) == 1);
 	assert_true(sizeof(u16) == 2);
