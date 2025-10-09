@@ -2,8 +2,8 @@
  * Licensed under the MIT Licence. See LICENSE for details */
 #pragma once
 
+#include "../src/types.h"
 #include "../src/util/conf.h"
-#include "../src/util/intdef.h"
 
 void test_conf_procbuf(const char *restrict buf, const char *restrict expect_key, const char *restrict expect_val, int expect_return);
 void test_conf_matchopt(struct conf_entry *restrict opts, usize optc, const char *restrict key, int expect_index);

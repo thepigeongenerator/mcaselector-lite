@@ -7,7 +7,7 @@
 #include <glad/gl.h>
 
 #include "../error.h"
-#include "../util/intdef.h"
+#include "../types.h"
 #include "input.h"
 #include "render.h"
 

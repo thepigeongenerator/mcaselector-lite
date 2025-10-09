@@ -5,8 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "types.h"
 #include "util/atrb.h"
-#include "util/intdef.h"
 #include "util/macro.h"
 
 void error_debug(uint ln, const char *restrict file, const char *restrict fmt, ...);

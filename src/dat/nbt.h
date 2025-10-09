@@ -7,8 +7,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include "../types.h"
 #include "../util/atrb.h"
-#include "../util/intdef.h"
 
 /* NBT (named binary tag) is a tree data structure. Tags have a numeric type ID, name and a payload.
  * NBT files are a compressed `compound` tag. GZip is the compression used in most cases,

@@ -3,7 +3,7 @@
 #pragma once
 #include <stdio.h>
 
-#include "../src/util/intdef.h"
+#include "../src/types.h"
 
 extern uint test_okay;
 extern uint test_fail;

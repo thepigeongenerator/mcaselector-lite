@@ -4,8 +4,8 @@
 
 #include <stdlib.h>
 
+#include "../types.h"
 #include "../util/atrb.h"
-#include "../util/intdef.h"
 
 /* contains chunk metadata */
 struct mcx_chunk {

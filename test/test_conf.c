@@ -5,8 +5,8 @@
 #include <math.h>
 #include <string.h>
 
+#include "../src/types.h"
 #include "../src/util/conf.h"
-#include "../src/util/intdef.h"
 #include "test.h"
 
 void test_conf_procbuf(const char *restrict buf, const char *restrict expect_key, const char *restrict expect_val, int expect_return) {

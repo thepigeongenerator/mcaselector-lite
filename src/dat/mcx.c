@@ -11,7 +11,7 @@
 #include <time.h>
 
 #include "../error.h"
-#include "../util/intdef.h"
+#include "../types.h"
 
 #define SECTOR 0x1000 // sector size
 #define TABLE  0x800  // table (total) element count

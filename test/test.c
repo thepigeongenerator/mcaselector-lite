@@ -2,7 +2,7 @@
  * Licensed under the MIT Licence. See LICENSE for details */
 #include "test.h"
 
-#include "../src/util/intdef.h"
+#include "../src/types.h"
 
 uint test_okay = 0;
 uint test_fail = 0;

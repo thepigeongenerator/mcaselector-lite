@@ -10,9 +10,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../types.h"
 #include "../error.h"
 #include "atrb.h"
-#include "intdef.h"
 
 int conf_procbuf(const char *restrict buf, char *restrict kout, char *restrict vout, usize len) {
 	bool feq = false; // whether we've found the equal sign

@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../util/intdef.h"
+#include "../types.h"
 
 #define MAX_DEPTH 512
 

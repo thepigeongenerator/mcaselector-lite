@@ -7,7 +7,7 @@
 #include <stdint.h>
 
 #include "../error.h"
-#include "../util/intdef.h"
+#include "../types.h"
 #include "shader.h"
 
 #define VERTC 3

@@ -5,8 +5,8 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+#include "../types.h"
 #include "atrb.h"
-#include "intdef.h"
 
 /* error codes */
 enum conf_err {

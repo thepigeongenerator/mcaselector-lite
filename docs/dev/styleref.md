@@ -21,7 +21,7 @@ Where we have dependencies on:
 | [openGL](https://www.opengl.org/) | hardware accelleration, for handling graphics.          |
 
 It is intended to be platform-agnostic, within reason. But the main focus is for [Linux](https://wikipedia.org/wiki/Linux) systems with [x86_64](https://wikipedia.org/wiki/X86-64) architecture.
-Within [intdef.h](/src/util/intdef.h) there live definitions for fixed-width integer types.
+Within [types.h](/src/types.h) there live definitions for fixed-width integer types.
 
 ### style guide
 - Code must be written correctly, read [Correct C](./correct-c.md) if more information is required.
