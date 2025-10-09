@@ -19,6 +19,14 @@ typedef __SIZE_TYPE__        usize;
 typedef __INTPTR_TYPE__      intptr;
 typedef __UINTPTR_TYPE__     uintptr;
 
+#if __SIZEOF_SIZE_T__ == __SIZEOF_LONG_LONG__
+typedef llong ssize;
+#elif __SIZEOF_SIZE_T__ == __SIZEOF_LONG__
+typedef long ssize;
+#elif __SIZEOF_SIZE_T__ == __SIZEOF_INT__
+typedef int ssize;
+#endif
+
 #if __SIZEOF_FLOAT__ == 4
 typedef float f32;
 #endif
