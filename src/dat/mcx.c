@@ -74,7 +74,7 @@ static int mcx_loadchunk(const u8 *restrict buf, const i32 *restrict table, int 
 /* Moves chunks `src_s` to `src_e` (inclusive) from `src`, back onto `dst`. */
 static void mvchunks(u8 *dst, u8 *src, u32 *restrict table, int src_s, int src_e) {
 	assert(src > dst);
-	usize len = src - dst; // acquire the amount of bytes that we shall move
+	uintptr len = src - dst; // acquire the amount of bytes that we shall move
 	assert(!(len % SECTOR));
 
 	// count how many bytes we need to move, whilst updating location data
