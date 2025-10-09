@@ -38,10 +38,10 @@ static inline u64 buftoh64(const void *restrict buf) {
  * Outputs the allocated data to `out`, returns where the next pointer would be. */
 static const u8 *procarr(const u8 *restrict buf, i32 nmemb, uint size, struct nbt_array *restrict out) {
 	usize len = nmemb * size;
-	*out = (struct nbt_array){
-		out->nmemb = nmemb,
-		out->dat = malloc(len),
-	};
+	*out      = (struct nbt_array){
+                out->nmemb = nmemb,
+                out->dat   = malloc(len),
+        };
 	if (!out->dat)
 		return buf + len;
 
@@ -92,7 +92,7 @@ const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out) {
 	const u8 *ptr, *tmp;
 	ptr = buf + 3 + slen;
 
-	i32 nmem;
+	i32  nmem;
 	uint size;
 
 	switch (*buf) {
@@ -152,7 +152,7 @@ static const u8 *nexttag_list(const u8 *restrict ptr, uint *restrict const dpt, 
  *     Where the value is decremented until we reach `0`.
  * - `tags` shall contain `MAX_DEPTH` of items representing the list's stored type. */
 static const u8 *nexttag(const u8 *restrict tag, uint *restrict const dpt, i32 *restrict const lens, u8 *restrict const tags) {
-	u8 type;
+	u8        type;
 	const u8 *ptr = tag;
 	if (lens[*dpt]) {
 		type = tags[*dpt];
@@ -195,9 +195,9 @@ static const u8 *nexttag(const u8 *restrict tag, uint *restrict const dpt, i32 *
  */
 const u8 *nbt_nexttag(const u8 *restrict buf) {
 	const u8 *tag;
-	u8 tags[MAX_DEPTH] = {0};
-	i32 lens[MAX_DEPTH] = {0};
-	uint dpt = 0;
+	u8        tags[MAX_DEPTH] = {0};
+	i32       lens[MAX_DEPTH] = {0};
+	uint      dpt             = 0;
 
 	tag = buf;
 	do {

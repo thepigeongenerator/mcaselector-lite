@@ -11,7 +11,7 @@
 
 void test_conf_procbuf(const char *restrict buf, const char *restrict expect_key, const char *restrict expect_val, int expect_return) {
 	usize len = strlen(buf) + 1;
-	char k[len], v[len];
+	char  k[len], v[len];
 	*k = '\0', *v = '\0';
 	(void)(assert_true(conf_procbuf(buf, k, v, len) == expect_return) &&
 		assert_true(!strcmp(k, expect_key)) &&
@@ -20,8 +20,8 @@ void test_conf_procbuf(const char *restrict buf, const char *restrict expect_key
 
 void test_conf_matchopt(struct conf_entry *opts, usize optc, const char *restrict key, int expect_index) {
 	usize idx = opts - conf_matchopt(opts, optc, key);
-	idx = (ssize)idx < 0 ? -idx : idx;
-	int i = idx < optc ? (int)idx : -1;
+	idx       = (ssize)idx < 0 ? -idx : idx;
+	int i     = idx < optc ? (int)idx : -1;
 	assert_true(i == expect_index);
 }
 
@@ -32,7 +32,7 @@ void test_conf_procval_int(const char *val, u64 expect_value, int type) {
 }
 
 void test_conf_procval_f32(const char *val, f32 expect_value) {
-	u8 out[4];
+	u8  out[4];
 	f32 result;
 	conf_procval(&(struct conf_entry){NULL, out, CONF_F32}, val);
 	memcpy(&result, out, 4);
@@ -54,14 +54,14 @@ void test_procval_str_predef(void) {
 }
 
 void test_procval_fstr(void) {
-	char buf[16];
+	char             buf[16];
 	struct conf_fstr str = {sizeof(buf), buf};
 	(void)(assert_true(!conf_procval(&(struct conf_entry){NULL, &str, CONF_FSTR}, "hewwoo wowld")) &&
 		assert_true(!strcmp(str.out, "hewwoo wowld")));
 }
 
 void test_procval_fstr_trunc(void) {
-	char buf[8];
+	char             buf[8];
 	struct conf_fstr str = {sizeof(buf), buf};
 	(void)(assert_true(!conf_procval(&(struct conf_entry){NULL, &str, CONF_FSTR}, "hewwooo wowld")) &&
 		assert_true(!strcmp(str.out, "hewwooo")));

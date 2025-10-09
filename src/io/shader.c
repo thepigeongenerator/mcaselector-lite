@@ -20,7 +20,7 @@ extern const uint sh_geom_glsl_len;
 /* Compiles a shader of `type` from `src` with `len` bytes.
  * Returns the integer for the shader. */
 static GLuint shader_compile(GLenum type, const char *src, usize len) {
-	int ilen = len;
+	int    ilen   = len;
 	GLuint shader = glCreateShader(type);
 	glShaderSource(shader, 1, &src, &ilen);
 	glCompileShader(shader);

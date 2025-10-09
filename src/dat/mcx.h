@@ -9,9 +9,9 @@
 
 /* contains chunk metadata */
 struct mcx_chunk {
-	usize idx; // byte offset for start of chunk data
-	u32 len;    // byte length of chunk (+ padding)
-	u32 time;   // modification time in epoch seconds
+	usize idx;  // byte offset for start of chunk data
+	u32   len;  // byte length of chunk (+ padding)
+	u32   time; // modification time in epoch seconds
 };
 
 /* Deletes a single chunk (`chunk`) out of `buf`.

@@ -36,9 +36,9 @@ int conf_procbuf(const char *restrict buf, char *restrict kout, char *restrict v
 
 		// everything after `=` is interpreted as a value
 		if (!feq && buf[i] == '=') {
-			feq = true;
+			feq  = true;
 			*pos = '\0'; // terminate string
-			pos = vout;  // move pointer to start of value data
+			pos  = vout; // move pointer to start of value data
 			continue;
 		}
 		*pos = buf[i]; // copy over the buffer's data
@@ -67,7 +67,7 @@ int conf_procval(struct conf_entry const *opt, const char *restrict val) {
 	// parse the data
 	errno = 0;
 	char *end;
-	u8 dat[sizeof(u64)];
+	u8    dat[sizeof(u64)];
 
 	switch (opt->type) {
 	// signed integer data parsing

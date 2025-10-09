@@ -18,10 +18,10 @@
 #define CHUNKS 0x400  // amount of chunks in a file
 
 enum mcx_compression {
-	MCX_COMPRESSION_GZIP = 0x01,
-	MCX_COMPRESSION_ZLIB = 0x02,
-	MCX_COMPRESSION_NONE = 0x03,
-	MCX_COMPRESSION_LZ4 = 0x04,
+	MCX_COMPRESSION_GZIP   = 0x01,
+	MCX_COMPRESSION_ZLIB   = 0x02,
+	MCX_COMPRESSION_NONE   = 0x03,
+	MCX_COMPRESSION_LZ4    = 0x04,
 	MCX_COMPRESSION_CUSTOM = 0x7F,
 };
 
@@ -97,7 +97,7 @@ static usize delchunk(u8 *restrict buf, u32 *restrict table, usize rmb, int sidx
 	blen = slen * SECTOR;                        // compute the byte length of the chunk
 
 	// reset the table data
-	table[sidx] = 0;
+	table[sidx]          = 0;
 	table[sidx + CHUNKS] = htobe32(time(NULL)); // assign the current time to the timestamp, for correctness  NOTE: might need to zero-out instead
 
 	// move the succeeding chunks over the deleted chunk
@@ -129,7 +129,7 @@ usize mcx_delchunk_range(u8 *restrict buf, int start, int end) {
 	// zeroes-out the chunk data within this range. (and set the timestamp)
 	u32 ts = htobe32(time(NULL));
 	for (int i = start; i <= end; i++) {
-		table[i] = 0;
+		table[i]          = 0;
 		table[i + CHUNKS] = ts;
 	}
 

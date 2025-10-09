@@ -15,7 +15,7 @@ static GLuint pipe;
 static GLuint vbo;        // vertex buffer object
 static GLuint vao;        // vertex array object
 static GLuint screen_loc; // location to where OpenGL sends to the shaders of the screen dimensions
-static int win_w, win_h;
+static int    win_w, win_h;
 
 static void screen_resize(int w, int h) {
 	i32 verts[VERTC][4] = {
@@ -84,7 +84,7 @@ void render_free(void) {
 	glDeleteVertexArrays(1, &vao);
 	glDeleteBuffers(1, &vbo);
 	glDeleteProgram(pipe);
-	vbo = 0;
-	vao = 0;
+	vbo  = 0;
+	vao  = 0;
 	pipe = 0;
 }

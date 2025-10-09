@@ -24,9 +24,9 @@ AlignTrailingComments:        true
 AlignConsecutiveMacros:       AcrossEmptyLines
 AlignEscapedNewlines:         Left
 AlignArrayOfStructures:       Left
-AlignConsecutiveAssignments:  None
+AlignConsecutiveAssignments:  Consecutive
 AlignConsecutiveBitFields:    AcrossEmptyLines
-AlignConsecutiveDeclarations: None
+AlignConsecutiveDeclarations: Consecutive
 AlignConsecutiveShortCaseStatements:
   Enabled: true
 
