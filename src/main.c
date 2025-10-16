@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 	atexit(quit);
 
 	glfwSetErrorCallback(error_callback);
-	glfwInitHint(GLFW_JOYSTICK_HAT_BUTTONS, GLFW_FALSE); // we won't need them
+	glfwInitHint(GLFW_JOYSTICK_HAT_BUTTONS, GLFW_FALSE); // disable joystick buttons; since we won't need them
 	if (!glfwInit() || window_init())
 		fatal("failed to initialise!");
 

@@ -30,8 +30,8 @@ int window_init(void)
 	glfwWindowHint(GLFW_GREEN_BITS, 8);
 	glfwWindowHint(GLFW_BLUE_BITS, 8);
 	glfwWindowHint(GLFW_ALPHA_BITS, 0);
-	/* NOTE: on my system; x86_64, GTX 1650 580.82.09-2, X11, i3, this causes one direct,
-	 * 2 indirect memory leaks. This is not my fault, and can safely be ignored. */
+	/* NOTE: on my system; x86_64, GTX 1650 580.82.09-2, X11, i3, this causes one direct, 2 indirect memory leaks.
+	 * This is not my fault, and can safely be ignored. */
 	win = glfwCreateWindow(640, 480, "MCA-Selector lite", NULL, NULL);
 	if (!win)
 		return 1;
@@ -39,18 +39,19 @@ int window_init(void)
 	glfwMakeContextCurrent(win);
 	if (!gladLoadGL(glfwGetProcAddress))
 		return 1;
-	/* wait 1 screen update for a redraw a.k.a. "vsync".
-	(not really applicable in this case, but eh) */
-	glfwSwapInterval(1);
+	glfwSwapInterval(1); // wait 1 screen update for a redraw a.k.a. "vsync". (not really applicable in this case but eh)
 
 	glfwSetKeyCallback(win, input_callback);
 
-	debug("version info:\n"
-	      "\tvendor:       %s\n"
-	      "\trenderer:     %s\n"
-	      "\tversion:      %s\n"
-	      "\tshading lang: %s\n",
-		glGetString(GL_VENDOR), glGetString(GL_RENDERER), glGetString(GL_VERSION),
+	debug(
+		"version info:\n"
+		"\tvendor:       %s\n"
+		"\trenderer:     %s\n"
+		"\tversion:      %s\n"
+		"\tshading lang: %s\n",
+		glGetString(GL_VENDOR),
+		glGetString(GL_RENDERER),
+		glGetString(GL_VERSION),
 		glGetString(GL_SHADING_LANGUAGE_VERSION));
 	return 0;
 }

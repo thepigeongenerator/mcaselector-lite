@@ -72,6 +72,5 @@ enum map_colour_id {
 	MAP_COLOUR_COUNT,
 };
 
-/* contains the colours of the map on their' respective index - 1.
- * (NONE should be handled separately) */
+/* contains the colours of the map on their' respective index - 1. (NONE should be handled separately) */
 extern u8vec4 map_colours[MAP_COLOUR_COUNT];

@@ -19,18 +19,18 @@ enum conf_err {
 
 /* defines the primitive types available in the config file */
 enum conf_primitive {
-	CONF_STR  = 0,               // expects `char**`, will output malloc'd data
-	CONF_I8   = 1,               // expects `int8_t*`,
-	CONF_I16  = 2,               // expects `int16_t*`,
-	CONF_I32  = 4,               // expects `int32_t*`,
-	CONF_I64  = 8,               // expects `int64_t*`,
-	CONF_U8   = CONF_I8 | 0x80,  // expects `uint8_t*`,
-	CONF_U16  = CONF_I16 | 0x80, // expects `uint16_t*`,
-	CONF_U32  = CONF_I32 | 0x80, // expects `uint32_t*`,
-	CONF_U64  = CONF_I64 | 0x80, // expects `uint64_t*`,
-	CONF_F32  = CONF_I32 | 0x40, // expects `float*`,
-	CONF_F64  = CONF_I64 | 0x40, // expects `double*`,
-	CONF_FSTR = 0x40,            // expects `struct conf_fstr*`
+	CONF_STR  = 0,               // expects: `char**`, will output malloc'd data !!must be freed!!
+	CONF_I8   = 1,               // expects: `int8_t*`, will point to a location in memory where an i8 is stored.
+	CONF_I16  = 2,               // expects: `int16_t*`, will point to a location in memory where an i16 is stored.
+	CONF_I32  = 4,               // expects: `int32_t*`, will point to a location in memory where an i32 is stored.
+	CONF_I64  = 8,               // expects: `int64_t*`, will point to a location in memory where an i64 is stored.
+	CONF_U8   = CONF_I8 | 0x80,  // expects: `uint8_t*`, will point to a location in memory where an u8 is stored.
+	CONF_U16  = CONF_I16 | 0x80, // expects: `uint16_t*`, will point to a location in memory where an u16 is stored.
+	CONF_U32  = CONF_I32 | 0x80, // expects: `uint32_t*`, will point to a location in memory where an u32 is stored.
+	CONF_U64  = CONF_I64 | 0x80, // expects: `uint64_t*`, will point to a location in memory where an u64 is stored.
+	CONF_F32  = CONF_I32 | 0x40, // expects: `float*`, will point to a location in memory where an f32 is stored.
+	CONF_F64  = CONF_I64 | 0x40, // expects: `double*`, will point to a location in memory where an f64 is stored.
+	CONF_FSTR = 0x40,            // expects: `struct conf_fstr*`, which contains the data for a fixed-width string
 };
 
 /* for outputting a fixed string as this config field */
@@ -42,33 +42,29 @@ struct conf_fstr {
 /* defines the structure of a config file entry */
 struct conf_entry {
 	const char *key;  // the key of this entry
-	void       *out;  // where data will be written, is read when key is missing or invalid
+	void       *out;  // the pointer to which the data is written value is read if the given option is incorrect or missing
 	u8          type; // the primitive type which we are querying for
 };
 
 /* processes an incoming buffer.
  * `buf`, `kout` and `vout` mustn't overlap, and must be (at least) `len` bytes long!
  * `kout` and `vout` will contain a null-terminated string if the function returned successfully.
- * returns `0` on success, `<0` when no data was found. `>0` when data was invalid but something
- * went wrong. see `CONF_E*` or `enum conf_err` */
+ * returns `0` on success, `<0` when no data was found. `>0` when data was invalid but something went wrong.
+ * see `CONF_E*` or `enum conf_err` */
 int conf_procbuf(const char *restrict buf, char *restrict kout, char *restrict vout, usize len);
 
-/* matches the key with one of the options and returns the pointer. Returns NULL if none could be
- * found. */
-struct conf_entry const *conf_matchopt(struct conf_entry const *opts, usize optc,
-	const char *restrict key);
+/* matches the key with one of the options and returns the pointer. Returns NULL if none could be found. */
+struct conf_entry const *conf_matchopt(struct conf_entry const *opts, usize optc, const char *restrict key);
 
-/* Processes the value belonging to the key and outputs the result to opts.
- * `val` points to a null-terminated string which contains the key and value.
- * returns `0` upon success, non-zero upon failure.
- * For information about specific error codes, see`enum conf_err` */
+/* processes the value belonging to the key and outputs the result to opts.
+ * - `val` points to a null-terminated string which contains the key and value.
+ * returns `0` upon success, non-zero upon failure. For information about specific error codes, see `enum conf_err` */
 int conf_procval(struct conf_entry const *opts, const char *restrict val);
 
-/* acquires the config file path, appending str to the end  expecting str to be null-terminated
- * note: you must handle path separators yourself.
- * checks the following environment variables for each platform in order:
- * LINUX:   `$XDG_CONFIG_HOME`, `$HOME/.config`.
- * WINDOWS: `%APPDATA%`, `%USERPROFILE%\AppData\Roaming`.
- * MACOSX:  `$HOME/Library/Application Support`.
- * `NULL` is returned if the path couldn't be found. */
+/* acquires the config file path, appending str to the end (you need to handle path separators yourself)
+ * expecting str to be null-terminated
+ * - linux:   reads $XDG_CONFIG_HOME, if empty $HOME/.config is used, if $HOME is empty NULL is returned.
+ * - windows: reads %APPDATA%, if empty %USERPROFILE%\AppData\Roaming is used, if both are empty NULL is returned.
+ * - osx:     reads $HOME, uses $HOME/Library/Application Support, if $HOME is empty NULL is returned.
+ * !! A malloc'd null-terminated string is returned !! */
 char *conf_getpat(const char *) MALLOC NONNULL((1));

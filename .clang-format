@@ -7,7 +7,7 @@
 # ---------------------------
 BasedOnStyle:  GNU
 Standard:      Auto
-ColumnLimit:   100
+ColumnLimit:   0
 LineEnding:    LF
 UseTab:        ForContinuationAndIndentation
 TabWidth:      8
@@ -39,7 +39,7 @@ AllowShortLambdasOnASingleLine:      All
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortCaseLabelsOnASingleLine:   true
 AllowShortEnumsOnASingleLine:        true
-AllowShortLoopsOnASingleLine:        false
+AllowShortLoopsOnASingleLine:        true
 
 # ---------------------------
 # break and wrapping options

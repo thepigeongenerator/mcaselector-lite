@@ -11,9 +11,8 @@
 #error platform not supported!
 #endif
 
-/* Tests a files access with F_OK, X_OK, R_OK, W_OK OR'd together.
-   Returns 0 upon success, -1 when errno is set,
-   anything else when one or more of the permissions isn't set */
+/* tests a files access with F_OK, X_OK, R_OK, W_OK OR'd together
+   returns 0 upon success. -1 when errno is set and anything else when one or more of the permissions isn't set */
 static inline int faccess(const char *restrict fname, int perms);
 
 // define the constants if they haven't been
@@ -31,24 +30,16 @@ static inline int faccess(const char *restrict fname, int perms);
 #endif
 
 #if defined __unix__ && _POSIX_C_SOURCE >= 200809L
-#define PATH_SEP \
-	'/' // contains the path separator as a character. Yes it is extremely annoying that this
-	    // has to exist.
-#define PATH_SEP_STR \
-	"/" // contains the path separator as a string, useful for concatenation. Yes it is
-	    // extremely annoying that this has to exist.
+#define PATH_SEP     '/' // contains the path separator as a character. Yes it is extremely annoying that this has to exist.
+#define PATH_SEP_STR "/" // contains the path separator as a string, useful for concatenation. Yes it is extremely annoying that this has to exist.
 
 int faccess(char const *restrict fname, int perms)
 {
 	return access(fname, perms);
 }
 #elif defined(_WIN32)
-#define PATH_SEP \
-	'\\' // contains the path separator as a character. Yes it is extremely annoying that this
-	     // has to exist.
-#define PATH_SEP_STR \
-	"\\" // contains the path separator as a string, useful for concatenation. Yes it is
-	     // extremely annoying that this has to exist.
+#define PATH_SEP     '\\' // contains the path separator as a character. Yes it is extremely annoying that this has to exist.
+#define PATH_SEP_STR "\\" // contains the path separator as a string, useful for concatenation. Yes it is extremely annoying that this has to exist.
 
 int faccess(char const *restrict fname, int perms)
 {

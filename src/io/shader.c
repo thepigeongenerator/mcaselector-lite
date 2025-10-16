@@ -9,9 +9,7 @@
 #include "../util/error.h"
 
 
-/* NOTE: we are currently just sucking up the memory costs for ease. We can either include the
- * source files themselves. Or use compression, where I'd prefer the latter for ease of
- * installation. */
+// NOTE: we are currently just sucking up the memory costs for ease. We can either include the source files themselves. Or use compression, where I'd prefer the latter for ease of installation.
 extern const char sh_vert_glsl[];
 extern const char sh_frag_glsl[];
 extern const char sh_geom_glsl[];
@@ -33,8 +31,7 @@ static GLuint shader_compile(GLenum type, const char *src, usize len)
 	if (ilen > 0) {
 		char log[ilen];
 		glGetShaderInfoLog(shader, ilen, &ilen, log);
-		log[ilen - 1] = '\0'; // terminate the string one character sooner since the log
-				      // includes a newline
+		log[ilen - 1] = '\0'; // terminate the string one character sooner since the log includes a newline
 		error("error whilst compiling shader type '0x%X': '%s'", type, log);
 	}
 
