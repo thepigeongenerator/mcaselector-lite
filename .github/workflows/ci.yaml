@@ -54,4 +54,4 @@ jobs:
         if: steps.cache-deps.outputs.cache-hit != 'true' && runner.os == 'Windows'
 
       - run: make -j all
-      - run: make -j test
+      - run: make -j check
