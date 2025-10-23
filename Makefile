@@ -4,6 +4,7 @@ SHELL = /bin/sh
 .SUFFIXES:
 
 NAME    = mcaselector-lite
+
 CC     ?= cc
 RM     ?= rm -vf
 CMAKE  ?= cmake -G 'Unix Makefiles'
@@ -11,29 +12,35 @@ CMAKE  ?= cmake -G 'Unix Makefiles'
 CPPFLAGS ?= -DNDEBUG
 CFLAGS   ?= -O2
 LDFLAGS  ?= -flto
-CPPFLAGS += -DGLFW_INCLUDE_NONE -Iinclude -Ilib/glad/include -Ilib/glfw/include -Ilib/libarchive/libarchive
-CFLAGS   += -std=gnu99 -g -Wall -Wextra -Wpedantic -Wno-pointer-arith -MMD -MP
+
+CPPFLAGS += -DGLFW_INCLUDE_NONE
+CPPFLAGS += -Iinclude -Ilib/glad/include -Ilib/glfw/include -Ilib/libarchive/libarchive
 LDFLAGS  += -Llib/obj/glfw/src -Llib/obj/libarchive/libarchive
 LDLIBS   += -lglfw3 -larchive -lm
+CFLAGS   += -std=gnu99 -g -MMD -MP
+CFLAGS   += -Wall -Wextra -Wpedantic -Wno-pointer-arith
 
 # detect if we're compiling on Windows, meaning
 # a lot of things considered "standard" are unavailable.
 ifeq ($(OS),Windows_NT)
-NAME  := $(NAME).exe
+NAME   := $(NAME).exe
 LDLIBS += -lopengl32 -lgdi32
-$(warning Detected Windows_NT, please refer to the documentation if you encounter issues.)
+$(warning Detected  Windows_NT, please refer to the documentation if you encounter issues.)
+# in the case of Mac OS X
 else ifeq ($(shell uname -s),Darwin)
-LDLIBS += -framework Cocoa -framework OpenGL -framework IOKit
+LDLIBS += -framework Coca -framework OpenGL -framework IOKit
+$(info Mac OS X detected.)
 endif
 
 # find all the source files using wildcards
 # TODO: find a better method to find all source files
 # NOTE: MS-DOS and MS-Windows uses backslash `\`, this might break.
 RES  := $(wildcard res/*)
-SRC  := $(wildcard src/*.c src/*/*.c src/*/*/*.c src/*/*/*/*.c src/*/*/*/*/*.c src/*/*/*/*/*/*.c src/*/*/*/*/*/*/*.c src/*/*/*/*/*/*/*/*.c) lib/glad/src/gl.c
+SRC  := $(wildcard src/*.c src/*/*.c src/*/*/*.c src/*/*/*/*.c src/*/*/*/*/*.c src/*/*/*/*/*/*.c src/*/*/*/*/*/*/*.c src/*/*/*/*/*/*/*/*.c)
+SRC  += lib/glad/src/gl.c
 TSRC := $(wildcard test/*.c test/*/*.c test/*/*/*.c test/*/*/*/*.c test/*/*/*/*/*.c test/*/*/*/*/*/*.c test/*/*/*/*/*/*/*.c test/*/*/*/*/*/*/*/*.c)
 
-OBJ  := $(RES:%=obj/%.o) $(SRC:%.c=obj/%.o)
+OBJ   := $(RES:%=obj/%.o) $(SRC:%.c=obj/%.o)
 TOBJ  := $(TSRC:%.c=obj/%.o)
 
 # TODO: potentially automatically detect whether we should compile libs, or if we can just go ahead.
