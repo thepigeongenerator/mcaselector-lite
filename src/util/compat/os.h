@@ -1,6 +1,6 @@
 /* Copyright (c) 2025 Quinn.
  * This is a file from the project MCA-Selector-Lite and is
- * licensed under the MIT Licence. See included LICENSE file for details. */
+ * licensed under the MIT Licence. See the project's LICENSE file for details. */
 #pragma once
 
 #if defined(__unix__)
