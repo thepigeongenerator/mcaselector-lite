@@ -1,5 +1,6 @@
-/* Copyright (c) 2025 Quinn
- * Licensed under the MIT Licence. See LICENSE for details */
+/* Copyright (c) 2025 Quinn.
+ * This is a file from the project MCA-Selector-Lite and is
+ * licensed under the MIT Licence. See included LICENSE file for details. */
 #include "render.h"
 
 #include <GLFW/glfw3.h>
