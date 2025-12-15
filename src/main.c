@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "io/window.h"
+#include "io/win/window.h"
 #include "util/error.h"
 
 /* reroutes GLFW errors to our logging system. */
