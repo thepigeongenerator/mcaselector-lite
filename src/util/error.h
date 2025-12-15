@@ -7,8 +7,7 @@
 #include <stdlib.h>
 
 #include "../types.h"
-#include "../util/atrb.h"
-#include "../util/macro.h"
+#include "atrb.h"
 
 void error_debug(uint ln, const char *restrict file, const char *restrict fmt, ...);
 void error_info(uint ln, const char *restrict file, const char *restrict fmt, ...);
