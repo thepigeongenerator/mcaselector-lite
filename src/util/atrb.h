@@ -57,4 +57,8 @@
 #else
 #define NONNULL(args)
 #endif
+
+#if __has_attribute(__assume__)
+#define ASSUME(args) __attribute__((__assume__ args))
+#endif
 #endif
