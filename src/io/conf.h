@@ -7,6 +7,20 @@
 #include "../types.h"
 #include "../util/atrb.h"
 
+enum conf_type {
+	CONF_STR = 0x00,
+	CONF_I8  = 0x00 | 0x01,
+	CONF_I16 = 0x00 | 0x02,
+	CONF_I32 = 0x00 | 0x04,
+	CONF_I64 = 0x00 | 0x08,
+	CONF_U8  = 0x10 | 0x01,
+	CONF_U16 = 0x10 | 0x02,
+	CONF_U32 = 0x10 | 0x04,
+	CONF_U64 = 0x10 | 0x08,
+	CONF_F32 = 0x20 | 0x04,
+	CONF_F64 = 0x20 | 0x08,
+};
+
 /* Gets the key and value, if present. Writes the pointer for the value to `out`.
  * Returns the key index, or <0 upon failure. */
 int conf_getkeyval(const char *restrict buf, const char *const restrict *restrict keys, int klen,

@@ -5,6 +5,9 @@
  * at: www.github.com/thepigeongenerator/mcaselector-lite */
 #include "conf.h"
 
+#include <assert.h>
+#include <inttypes.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "../types.h"
@@ -37,4 +40,35 @@ int conf_getkeyval(const char *restrict buf, const char *const restrict *restric
 	return i;
 }
 
-int conf_val(int);
+int conf_procval(u8 type, const char *val, void *out)
+{
+	char *end;
+	switch (type) {
+	case CONF_STR: *(char **)out = strdup(val); return 0;
+
+	case CONF_I8:  *(i8 *)out = strtoimax(val, &end, 0); return (end && !*end);
+	case CONF_I16: *(i16 *)out = strtoimax(val, &end, 0); return (end && !*end);
+	case CONF_I32: *(i32 *)out = strtoimax(val, &end, 0); return (end && !*end);
+	case CONF_I64: *(i64 *)out = strtoimax(val, &end, 0); return (end && !*end);
+
+	case CONF_U8:  *(u8 *)out = strtoumax(val, &end, 0); return (end && !*end);
+	case CONF_U16: *(u16 *)out = strtoumax(val, &end, 0); return (end && !*end);
+	case CONF_U32: *(u32 *)out = strtoumax(val, &end, 0); return (end && !*end);
+	case CONF_U64: *(u64 *)out = strtoumax(val, &end, 0); return (end && !*end);
+
+#if __SIZEOF_FLOAT__ == 4
+	case CONF_F32: *(f32 *)out = strtof(val, &end); return (end && !*end);
+#else
+#error float is not 4 bytes wide
+#endif
+#if __SIZEOF_DOUBLE__ == 8
+	case CONF_F64: *(f64 *)out = strtod(val, &end); return (end && !*end);
+#elif __SIZEOF_LONG_DOUBLE__ == 8
+	case CONF_F64: *(f64 *)out = strtold(val, &end); return (end && !*end);
+#else
+#error double or long double are not 8 bytes wide
+#endif
+	default: assert("invalid type");
+	}
+	return 0;
+}
