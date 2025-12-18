@@ -1,5 +1,8 @@
-/* Copyright (c) 2025 Quinn
- * Licensed under the MIT Licence. See LICENSE for details */
+/* This file is part of MCA-Selector-lite,
+ * and is licensed under GPL-2.0-only.
+ * Copyright (C)2025 quinnthepigeon@proton.me Quinn
+ * For further information, view COPYING and CONTRIBUTORS
+ * at: www.github.com/thepigeongenerator/mcaselector-lite */
 #ifndef PORTABLE_ENDIAN_H
 #define PORTABLE_ENDIAN_H 1
 

@@ -1,7 +1,3 @@
-# Copyright (c) 2025 Quinn.
-# This is a file from the project MCA-Selector-Lite and is
-# licensed under the MIT Licence. See included LICENSE file for details.
-
 [submodule "lib/glfw"]
 	path = lib/glfw
 	url = https://github.com/glfw/glfw
