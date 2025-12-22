@@ -9,13 +9,11 @@ SHELL = /bin/sh
 
 NAME    = mcaselector-lite
 
-CC     ?= cc
-RM     ?= rm -vf
 CMAKE  ?= cmake -G 'Unix Makefiles'
 
-CPPFLAGS ?= -DNDEBUG
-CFLAGS   ?= -O2
-LDFLAGS  ?= -flto
+CPPFLAGS = -DNDEBUG
+CFLAGS   = -O2
+LDFLAGS  = -flto
 
 CPPFLAGS += -DGLFW_INCLUDE_NONE
 CPPFLAGS += -Iinclude -Ilib/glad/include -Ilib/glfw/include -Ilib/libarchive/libarchive
@@ -53,8 +51,8 @@ TOBJ  := $(TSRC:%.c=obj/%.o)
 all: bin/$(NAME)
 libs: lib/obj/glfw/ lib/obj/libarchive/
 check: bin/TEST_$(NAME); ./$<
-clean:;      @-$(RM) -r bin/ obj/
-clean-libs:; @-$(RM) -r lib/obj/
+clean:;      @-$(RM) -rv bin/ obj/
+clean-libs:; @-$(RM) -rv lib/obj/
 
 .PHONY:
 install: all
