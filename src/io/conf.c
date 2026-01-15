@@ -22,7 +22,9 @@ static const char *strmat(const char *s1, const char *s2)
 	return s1;
 }
 
-int conf_getkeyval(const char *restrict buf, const char *const restrict *restrict keys, int klen, const char *restrict *restrict out)
+int conf_getkeyval(const char *restrict buf,
+	const char *const restrict *restrict keys, int klen,
+	const char *restrict *restrict out)
 {
 	const char *tmp = NULL;
 
