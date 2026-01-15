@@ -24,11 +24,11 @@ AccessModifierOffset: -4
 AlignAfterOpenBracket:        DontAlign
 AlignOperands:                DontAlign
 AlignTrailingComments:        true
-AlignConsecutiveMacros:       AcrossEmptyLines
+AlignConsecutiveMacros:       Consecutive
 AlignEscapedNewlines:         Left
 AlignArrayOfStructures:       Left
 AlignConsecutiveAssignments:  Consecutive
-AlignConsecutiveBitFields:    AcrossEmptyLines
+AlignConsecutiveBitFields:    Consecutive
 AlignConsecutiveDeclarations: Consecutive
 AlignConsecutiveShortCaseStatements:
   Enabled: true
@@ -166,13 +166,18 @@ BitFieldColonSpacing:      Both
 # ---------------------------
 # penalty settings
 # ---------------------------
-PenaltyBreakAssignment: 10
-PenaltyBreakBeforeFirstCallParameter: 30
-PenaltyBreakComment: 10
-PenaltyBreakFirstLessLess: 0
-PenaltyBreakString: 10
+PenaltyBreakAssignment: 2000
+PenaltyBreakBeforeFirstCallParameter: 5000
+PenaltyBreakBeforeMemberAccess: 2000
+PenaltyBreakComment: 1000
+PenaltyBreakFirstLessLess: 1500
+PenaltyBreakOpenParenthesis: 5000
+PenaltyBreakScopeResolution: 2000
+PenaltyBreakString: 2000
+PenaltyBreakTemplateDeclaration: 3000
 PenaltyExcessCharacter: 100
-PenaltyReturnTypeOnItsOwnLine: 60
+PenaltyIndentedWhitespace: 0
+PenaltyReturnTypeOnItsOwnLine: 10000
 
 # ---------------------------
 # indentation details
