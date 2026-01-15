@@ -1,26 +1,41 @@
 # This file is part of MCA-Selector-lite,
 # and is licensed under GPL-2.0-only.
-# Copyright (C)2025 quinnthepigeon@proton.me Quinn
+# Copyright (C)2026 quinnthepigeon@proton.me Quinn
 # For further information, view COPYING and CONTRIBUTORS
 # at: www.github.com/thepigeongenerator/mcaselector-lite
-
 SHELL = /bin/sh
 .SUFFIXES:
 
-NAME    = mcaselector-lite
+VERSION = 0.0
 
-CMAKE  ?= cmake -G 'Unix Makefiles'
+CMAKE ?= cmake -G 'Unix Makefiles'
+XXD   ?= xxd
+TAR   ?= tar
 
-CPPFLAGS = -DNDEBUG
-CFLAGS   = -O2
-LDFLAGS  = -flto
+RES := $(wildcard res/*.glsl)
+SRC := $(shell find src/ -name '*.c' -print) $(addsuffix .c,$(RES)) lib/glad/src/gl.c
+OBJ := $(addsuffix .o,$(SRC))
+DEP := $(addsuffix .d,$(SRC))
 
-CPPFLAGS += -DGLFW_INCLUDE_NONE
-CPPFLAGS += -Iinclude -Ilib/glad/include -Ilib/glfw/include -Ilib/libarchive/libarchive
-LDFLAGS  += -Llib/obj/glfw/src -Llib/obj/libarchive/libarchive
-LDLIBS   += -lglfw3 -larchive -lm
-CFLAGS   += -std=gnu99 -g -MMD -MP
+CFLAGS   := -O2 $(CFLAGS) -g -std=gnu99
 CFLAGS   += -Wall -Wextra -Wpedantic -Wno-pointer-arith
+CPPFLAGS := -DNDEBUG $(CPPFLAGS) -DGLFW_INCLUDE_NONE
+CPPFLAGS += -Iinclude -Ilib/glad/include -Ilib/glfw/include -Ilib/libarchive/libarchive
+LDFLAGS  := -flto $(LDFLAGS)
+LDFLAGS  := -Llib/obj/glfw/src -Llib/obj/libarchive/libarchive
+LDLIBS   := $(LDLIBS) -lglfw3 -larchive -lm
+
+msg-cc    = $(info	[CC]	$(1))
+msg-clean = $(info	[CLEAN]	$(1))
+msg-ld    = $(info	[LD]	$(1))
+msg-mkdir = $(info	[MKDIR]	$(1))
+msg-tar   = $(info	[TAR]	$(1))
+msg-xxd   = $(info	[XXD]	$(1))
+
+# Set Q to @ to silence commands being printed, unless --no-silent has been set
+ifeq (0, $(words $(findstring --no-silent,$(MAKEFLAGS))))
+Q=@
+endif
 
 # detect if we're compiling on Windows, meaning
 # a lot of things considered "standard" are unavailable.
@@ -28,78 +43,49 @@ ifeq ($(OS),Windows_NT)
 NAME   := $(NAME).exe
 LDLIBS += -lopengl32 -lgdi32
 $(warning Detected  Windows_NT, please refer to the documentation if you encounter issues.)
-# in the case of Mac OS X
-else ifeq ($(shell uname -s),Darwin)
-LDLIBS += -framework Coca -framework OpenGL -framework IOKit
-$(info Mac OS X detected.)
 endif
 
-# find all the source files using wildcards
-# TODO: find a better method to find all source files
-# NOTE: MS-DOS and MS-Windows uses backslash `\`, this might break.
-RES  := $(wildcard res/*)
-SRC  := $(wildcard src/*.c src/*/*.c src/*/*/*.c src/*/*/*/*.c src/*/*/*/*/*.c src/*/*/*/*/*/*.c src/*/*/*/*/*/*/*.c src/*/*/*/*/*/*/*/*.c)
-SRC  += lib/glad/src/gl.c
-TSRC := $(wildcard test/*.c test/*/*.c test/*/*/*.c test/*/*/*/*.c test/*/*/*/*/*.c test/*/*/*/*/*/*.c test/*/*/*/*/*/*/*.c test/*/*/*/*/*/*/*/*.c)
+# Default target; compiles everything.
+.PHONY:
+all: bin/mcaselector-lite bin/mcaselector-lite.stripped
 
-OBJ   := $(RES:%=obj/%.o) $(SRC:%.c=obj/%.o)
-TOBJ  := $(TSRC:%.c=obj/%.o)
-
-# TODO: potentially automatically detect whether we should compile libs, or if we can just go ahead.
-
-.PHONY: all libs check clean clean-libs
-all: bin/$(NAME)
-libs: lib/obj/glfw/ lib/obj/libarchive/
-check: bin/TEST_$(NAME); ./$<
-clean:;      @-$(RM) -rv bin/ obj/
-clean-libs:; @-$(RM) -rv lib/obj/
+# TODO: Compile libraries with `all`
+# TODO: Write install recipe to install into DESTDIR, for UNIX® type systems, and Windows NT alongside uninstall recipes.
+# TODO: Same goes for install-strip, which does the same, but with the stripped binary instead.
+# TODO: Include distclean which recompiles the libraries.
 
 .PHONY:
-install: all
-ifneq ($(OS),Windows_NT)
-	# TODO: POSIX-compliant installation
-else
-	# TODO: WINDOWS_NT installation
+clean:
+	-$(Q)$(RM) $(OBJ) $(DEP)
+	-$(Q)$(RM) -r bin/
+
+# Links together the object files into the final binary.
+bin/mcaselector-lite: $(OBJ) | bin/
+	$(Q)$(call msg-ld,$@)
+	$(Q)$(CC) $(LDFLAGS) $(LDLIBS) -o $@ $^
+bin/mcaselector-lite.stripped: $(OBJ) | bin/
+	$(Q)$(call msg-ld,$@)
+	$(Q)$(CC) -s $(LDFLAGS) $(LDLIBS) -o $@ $^
+
+# Compiles C sources into object files
+%.c.o: %.c
+	$(Q)$(call msg-cc,$@)
+	$(Q)$(CC) -c $(CPPFLAGS) $(CFLAGS) -o $@ $<
+
+# Embed files in /res as plain binary into the final binary.
+# TODO: Find some fix for this clogging up the workspace
+.INTERMEDIATE:
+res/%.c: res/%
+	$(Q)$(call msg-xxd,$@)
+	$(Q)cd $(<D) && $(XXD) -i $(patsubst res/%,%,$<) $(abspath $@)
+
+%/:
+	$(Q)$(call msg-mkdir,$@)
+	$(Q)mkdir $@
+
+# Generate and include dependencies,
+# ignoring any errors that may occur when doing so.
+%.c.d: %.c; $(Q)$(CC) -MM $(CPPFLAGS) -MF $@ $<
+ifeq (0, $(words $(findstring $(MAKECMDGOALS), clean)))
+-include $(DEP)
 endif
-
-.PHONY:
-install-strip: install
-	# TODO: strip the produced installation
-
-# compiles the libraries using cmake
-lib/obj/%/: lib/%/
-	$(CMAKE) -S $< -B $@
-	$(MAKE) -C $@
-
-# link together a runtime binary
-bin/$(NAME): $(OBJ)
-	$(info [LD]	$@)
-	@mkdir -p $(@D)
-	@$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS)
-
-# link together a testing binary
-bin/TEST_$(NAME): $(TOBJ) $(filter-out obj/src/main.o,$(OBJ))
-	$(info [LD]	$@)
-	@mkdir -p $(@D)
-	@$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS)
-
-obj/res/%.c: res/%
-	$(info [XXD]	$@)
-	@mkdir -p $(@D)
-	@cd res/ && xxd -i $(patsubst res/%,%,$<) $(abspath $@)
-
-obj/%.o: %.c
-	$(info [CC]	$@)
-	@mkdir -p $(@D)
-	@$(CC) -c $(CPPFLAGS) $(CFLAGS) -o $@ $<
-
-obj/%.o: obj/%.c
-	$(info [CC]	$@)
-	@mkdir -p $(@D)
-	@$(CC) -c $(CPPFLAGS) $(CFLAGS) -o $@ $<
-
-# Include the generated dependency files.
-# Which creates rules for all dependencies,
-# as a result updating an .o file when a .h is updated.
--include $(OBJ:%.o=%.d)
--include $(TOBJ:%.o=%.d)
