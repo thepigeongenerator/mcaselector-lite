@@ -22,7 +22,7 @@ static int    win_w, win_h;
 
 static void screen_resize(int w, int h)
 {
-	i32 verts[VERTC][4] = {
+	s32 verts[VERTC][4] = {
 		{0, 0,  w, 20    },
 		{0, 20, w, h - 40},
 		{0, h,  w, -20   },
@@ -62,7 +62,7 @@ int render_init(void)
 	// set VBO info
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0); // set the array data index to 0
-	glVertexAttribIPointer(0, 4, GL_INT, 4 * sizeof(i32), NULL);
+	glVertexAttribIPointer(0, 4, GL_INT, 4 * sizeof(s32), NULL);
 
 	glBindVertexArray(0);
 	return 0;

@@ -48,10 +48,10 @@ int conf_procval(u8 type, const char *val, void *out)
 	switch (type) {
 	case CONF_STR: *(char **)out = strdup(val); return 0;
 
-	case CONF_I8:  *(i8 *)out = strtoimax(val, &end, 0); return (end && !*end);
-	case CONF_I16: *(i16 *)out = strtoimax(val, &end, 0); return (end && !*end);
-	case CONF_I32: *(i32 *)out = strtoimax(val, &end, 0); return (end && !*end);
-	case CONF_I64: *(i64 *)out = strtoimax(val, &end, 0); return (end && !*end);
+	case CONF_I8:  *(s8 *)out = strtoimax(val, &end, 0); return (end && !*end);
+	case CONF_I16: *(s16 *)out = strtoimax(val, &end, 0); return (end && !*end);
+	case CONF_I32: *(s32 *)out = strtoimax(val, &end, 0); return (end && !*end);
+	case CONF_I64: *(s64 *)out = strtoimax(val, &end, 0); return (end && !*end);
 
 	case CONF_U8:  *(u8 *)out = strtoumax(val, &end, 0); return (end && !*end);
 	case CONF_U16: *(u16 *)out = strtoumax(val, &end, 0); return (end && !*end);

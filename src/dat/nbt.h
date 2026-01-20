@@ -40,7 +40,7 @@ enum nbt_tagid {
 };
 
 struct nbt_array {
-	i32   nmemb;
+	s32   nmemb;
 	void *dat;
 };
 

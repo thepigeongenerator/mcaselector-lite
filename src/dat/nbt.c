@@ -42,7 +42,7 @@ static inline u64 buftoh64(const void *restrict buf)
 /* Processes the incoming array data in `buf`. Which contains `nmem` items of `size`.
  * The data shall be converted to little-endian on little-endian systems
  * Outputs the allocated data to `out`, returns where the next pointer would be. */
-static const u8 *procarr(const u8 *restrict buf, i32 nmemb, uint size, struct nbt_array *restrict out)
+static const u8 *procarr(const u8 *restrict buf, s32 nmemb, uint size, struct nbt_array *restrict out)
 {
 	usize len = nmemb * size;
 	*out      = (struct nbt_array){
@@ -60,7 +60,7 @@ static const u8 *procarr(const u8 *restrict buf, i32 nmemb, uint size, struct nb
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 	if (size == 1)
 		return buf;
-	i32 i = 0;
+	s32 i = 0;
 	while (i < nmemb) {
 		switch (size) {
 		case 2:  ((u16 *)out->dat)[i] = be16toh(((u16 *)out->dat)[i]); break;
@@ -90,7 +90,7 @@ static const u8 *proclist(const u8 *restrict buf, struct nbt_array *restrict out
 	}
 
 	buf++;
-	i32 len;
+	s32 len;
 	memcpy(&len, buf, 4);
 	len = be32toh(len);
 	buf += 4;
@@ -102,7 +102,7 @@ const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out)
 	const u8 *ptr, *tmp;
 	ptr = buf + 3 + slen;
 
-	i32  nmem;
+	s32  nmem;
 	uint size;
 
 	switch (*buf) {
@@ -133,23 +133,23 @@ const u8 *nbt_proctag(const u8 *restrict buf, u16 slen, void *restrict out)
  * `ptr` is assumed to be the start of the `NBT_LIST` data, e.i. The list's ID, followed by the list's length.
  * If `ID` is `NBT_I8`, `NBT_I16`, `NBT_I32`, `NBT_I64`, `NBT_F32`, or `NBT_F64`, the entire list length is computed and returned.
  * For other types this won't be possible, and thus will add `1` to `dpt`, and write the list data to `lens` and `tags` at this new `dpt`. */
-static const u8 *nexttag_list(const u8 *restrict ptr, uint *restrict const dpt, i32 *restrict const lens, u8 *restrict const tags)
+static const u8 *nexttag_list(const u8 *restrict ptr, uint *restrict const dpt, s32 *restrict const lens, u8 *restrict const tags)
 {
 	const u8 *tag = ptr;
 	ptr++;
 	switch (*tag) {
 	case NBT_END: break;
-	case NBT_I8:  ptr += (i32)buftoh32(ptr) * 1; break;
-	case NBT_I16: ptr += (i32)buftoh32(ptr) * 2; break;
+	case NBT_I8:  ptr += (s32)buftoh32(ptr) * 1; break;
+	case NBT_I16: ptr += (s32)buftoh32(ptr) * 2; break;
 	case NBT_I32: // fall through
-	case NBT_F32: ptr += (i32)buftoh32(ptr) * 4; break;
+	case NBT_F32: ptr += (s32)buftoh32(ptr) * 4; break;
 	case NBT_I64: // fall through
-	case NBT_F64: ptr += (i32)buftoh32(ptr) * 8; break;
+	case NBT_F64: ptr += (s32)buftoh32(ptr) * 8; break;
 	default:
 		// TODO: handle out of bounds... Might not be required if we use flexible array member
 		(*dpt)++;
 		tags[*dpt] = *tag;
-		lens[*dpt] = (i32)buftoh32(ptr);
+		lens[*dpt] = (s32)buftoh32(ptr);
 		break;
 	}
 	ptr += 4;
@@ -162,7 +162,7 @@ static const u8 *nexttag_list(const u8 *restrict ptr, uint *restrict const dpt, 
  * - `lens` shall contain `MAX_DEPTH` of items representing the list length, if the current item is non-zero we shall assume we're in a list.
  *     Where the value is decremented until we reach `0`.
  * - `tags` shall contain `MAX_DEPTH` of items representing the list's stored type. */
-static const u8 *nexttag(const u8 *restrict tag, uint *restrict const dpt, i32 *restrict const lens, u8 *restrict const tags)
+static const u8 *nexttag(const u8 *restrict tag, uint *restrict const dpt, s32 *restrict const lens, u8 *restrict const tags)
 {
 	u8        type;
 	const u8 *ptr = tag;
@@ -183,9 +183,9 @@ static const u8 *nexttag(const u8 *restrict tag, uint *restrict const dpt, i32 *
 	case NBT_I64: // fall through
 	case NBT_F64: ptr += 8; break;
 
-	case NBT_ARR_I8:  ptr += 4 + (i32)buftoh32(ptr) * 1; break;
-	case NBT_ARR_I32: ptr += 4 + (i32)buftoh32(ptr) * 4; break;
-	case NBT_ARR_I64: ptr += 4 + (i32)buftoh32(ptr) * 8; break;
+	case NBT_ARR_I8:  ptr += 4 + (s32)buftoh32(ptr) * 1; break;
+	case NBT_ARR_I32: ptr += 4 + (s32)buftoh32(ptr) * 4; break;
+	case NBT_ARR_I64: ptr += 4 + (s32)buftoh32(ptr) * 8; break;
 	case NBT_STR:     ptr += 2 + (u16)buftoh16(ptr) * 1; break;
 
 	case NBT_END:      (*dpt)--; break;
@@ -209,7 +209,7 @@ const u8 *nbt_nexttag(const u8 *restrict buf)
 {
 	const u8 *tag;
 	u8        tags[MAX_DEPTH] = {0};
-	i32       lens[MAX_DEPTH] = {0};
+	s32       lens[MAX_DEPTH] = {0};
 	uint      dpt             = 0;
 
 	tag = buf;

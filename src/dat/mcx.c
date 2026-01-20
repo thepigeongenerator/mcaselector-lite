@@ -28,12 +28,12 @@ enum mcx_compression {
 	MCX_COMPRESSION_CUSTOM = 0x7F,
 };
 
-/* first 4 bytes is an i32 indicating remaining bytes, the following byte defines the compression scheme */
-static int mcx_loadchunk(const u8 *restrict buf, const i32 *restrict table, int idx)
+/* first 4 bytes is an s32 indicating remaining bytes, the following byte defines the compression scheme */
+static int mcx_loadchunk(const u8 *restrict buf, const s32 *restrict table, int idx)
 {
 	const u8 *chunk = buf + (be32toh(table[idx]) >> 8) * SECTOR;
 
-	i32 len;
+	s32 len;
 	memcpy(&len, chunk, 4);
 	len = be32toh(len);
 	chunk += 4;
