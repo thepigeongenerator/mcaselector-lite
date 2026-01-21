@@ -9,18 +9,8 @@ charset = utf-8
 end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
-
-[*.{c,h}]
 indent_style = tab
-indent_size = tab
-
-[{makefile}]
-indent_style = tab
-indent_size = tab
-
-[*.{json}]
-indent_style = tab
-indent_size = tab
+indent_size = 8
 
 [*.{yaml}]
 indent_style = space
