@@ -17,12 +17,12 @@ SRC := $(shell find src/ -name '*.c' -print) $(addsuffix .c,$(RES)) lib/glad/src
 OBJ := $(addsuffix .o,$(SRC))
 DEP := $(addsuffix .d,$(SRC))
 
-CFLAGS   := -O2 $(CFLAGS) -g -std=gnu99
-CFLAGS   += -Wall -Wextra -Wpedantic -Wno-pointer-arith
-CPPFLAGS := -DNDEBUG $(CPPFLAGS) -DGLFW_INCLUDE_NONE
-CPPFLAGS += -Iinclude -Ilib/glad/include -Ilib/glfw/include -Ilib/libarchive/libarchive
-LDFLAGS  := -flto $(LDFLAGS)
-LDFLAGS  := -Llib/obj/glfw/src -Llib/obj/libarchive/libarchive
+CFLAGS   := -O2 $(CFLAGS) -g -std=gnu99\
+	    -Wall -Wextra -Wpedantic -Wno-pointer-arith
+CPPFLAGS := -DNDEBUG $(CPPFLAGS) -DGLFW_INCLUDE_NONE\
+	    -Iinclude -Ilib/glad/include -Ilib/glfw/include -Ilib/libarchive/libarchive
+LDFLAGS  := -flto $(LDFLAGS)\
+	    -Llib/obj/glfw/src -Llib/obj/libarchive/libarchive
 LDLIBS   := $(LDLIBS) -lglfw3 -larchive -lm
 
 msg-cc    = $(info	[CC]	$(1))
