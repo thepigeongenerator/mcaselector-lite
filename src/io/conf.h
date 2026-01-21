@@ -4,8 +4,8 @@
  * For further information, view COPYING and CONTRIBUTORS
  * at: www.github.com/thepigeongenerator/mcaselector-lite */
 #pragma once
-#include "../types.h"
-#include "../util/atrb.h"
+#include <mcaselector-lite/atrb.h>
+#include <mcaselector-lite/types.h>
 
 enum conf_type {
 	CONF_STR = 0x00,

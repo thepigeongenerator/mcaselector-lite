@@ -8,8 +8,8 @@
 #include <GLFW/glfw3.h>
 #include <assert.h>
 #include <glad/gl.h>
+#include <mcaselector-lite/types.h>
 
-#include "../../types.h"
 #include "../../util/error.h"
 #include "input.h"
 #include "render.h"

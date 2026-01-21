@@ -3,9 +3,10 @@
  * Copyright (C)2025 quinnthepigeon@proton.me Quinn
  * For further information, view COPYING and CONTRIBUTORS
  * at: www.github.com/thepigeongenerator/mcaselector-lite */
-#pragma once
+#ifndef MCASELECTOR_LITE_VEC_H
+#define MCASELECTOR_LITE_VEC_H
 
-#include "../types.h"
+#include <mcaselector-lite/types.h>
 
 #if defined(__has_attribute) && __has_attribute(vector_size)
 typedef float fvec2 __attribute__((vector_size(sizeof(float) * 2))); // SMID vector for 2 `float`
@@ -21,3 +22,5 @@ typedef u8 u8vec4 __attribute__((vector_size(sizeof(u8) * 4))); // SMID vector f
 #define VY 1
 #define VZ 2
 #define VW 3
+
+#endif /* MCASELECTOR_LITE_VEC_H */

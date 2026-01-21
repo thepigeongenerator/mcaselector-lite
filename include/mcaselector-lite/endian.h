@@ -3,8 +3,8 @@
  * Copyright (C)2025 quinnthepigeon@proton.me Quinn
  * For further information, view COPYING and CONTRIBUTORS
  * at: www.github.com/thepigeongenerator/mcaselector-lite */
-#ifndef PORTABLE_ENDIAN_H
-#define PORTABLE_ENDIAN_H 1
+#ifndef MCASELECTOR_LITE_ENDIAN_H
+#define MCASELECTOR_LITE_ENDIAN_H
 
 #if defined(__GNUC__)
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
@@ -40,4 +40,4 @@
 #else
 #error GNU C is unavailable
 #endif /* __GNUC__ */
-#endif /* PORTABLE_ENDIAN_H */
+#endif /* MCASELECTOR_LITE_ENDIAN_H */

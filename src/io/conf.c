@@ -7,11 +7,11 @@
 
 #include <assert.h>
 #include <inttypes.h>
+#include <mcaselector-lite/atrb.h>
+#include <mcaselector-lite/types.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "../types.h"
-#include "../util/atrb.h"
 
 /* Matches s1 with s2, returns a pointer to s1 where the match stopped. */
 static const char *strmat(const char *s1, const char *s2) PURE NONNULL((1, 2));

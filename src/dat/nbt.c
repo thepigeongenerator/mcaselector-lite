@@ -6,12 +6,11 @@
 #include "nbt.h"
 
 #include <assert.h>
-#include <endian.h>
+#include <mcaselector-lite/endian.h>
+#include <mcaselector-lite/types.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "../types.h"
 
 #define MAX_DEPTH 512
 

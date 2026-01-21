@@ -5,11 +5,10 @@
  * at: www.github.com/thepigeongenerator/mcaselector-lite */
 #pragma once
 
+#include <mcaselector-lite/atrb.h>
+#include <mcaselector-lite/types.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "../types.h"
-#include "atrb.h"
 
 void error_debug(uint ln, const char *restrict file, const char *restrict fmt, ...);
 void error_info(uint ln, const char *restrict file, const char *restrict fmt, ...);

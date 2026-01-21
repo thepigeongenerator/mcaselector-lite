@@ -3,7 +3,8 @@
  * Copyright (C)2025 quinnthepigeon@proton.me Quinn
  * For further information, view COPYING and CONTRIBUTORS
  * at: www.github.com/thepigeongenerator/mcaselector-lite */
-#pragma once
+#ifndef MCASELECTOR_LITE_TYPES_H
+#define MCASELECTOR_LITE_TYPES_H
 
 typedef signed long long int llong;
 typedef unsigned short int   ushort;
@@ -36,3 +37,4 @@ typedef float f32;
 #if __SIZEOF_DOUBLE__ == 8
 typedef double f64;
 #endif
+#endif /* MCASELECTOR_LITE_TYPES_H */

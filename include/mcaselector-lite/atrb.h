@@ -3,7 +3,8 @@
  * Copyright (C)2025 quinnthepigeon@proton.me Quinn
  * For further information, view COPYING and CONTRIBUTORS
  * at: www.github.com/thepigeongenerator/mcaselector-lite */
-#pragma once
+#ifndef MCASELECTOR_LITE_ATRB_H
+#define MCASELECTOR_LITE_ATRB_H
 
 #if defined(__GNUC__)
 #if __has_attribute(__pure__)
@@ -64,3 +65,5 @@
 #define ASSUME(args) __attribute__((__assume__ args))
 #endif
 #endif
+
+#endif /* MCASELECTOR_LITE_ATRB_H */

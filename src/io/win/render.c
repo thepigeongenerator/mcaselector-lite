@@ -7,9 +7,9 @@
 
 #include <GLFW/glfw3.h>
 #include <glad/gl.h>
+#include <mcaselector-lite/types.h>
 #include <stdint.h>
 
-#include "../../types.h"
 #include "../../util/error.h"
 #include "shader.h"
 
