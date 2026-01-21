@@ -37,7 +37,7 @@ AlignConsecutiveShortCaseStatements:
 # short constructs on a single line
 # ---------------------------
 AllowShortBlocksOnASingleLine:       Always
-AllowShortFunctionsOnASingleLine:    None
+AllowShortFunctionsOnASingleLine:    All
 AllowShortLambdasOnASingleLine:      All
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortCaseLabelsOnASingleLine:   true
