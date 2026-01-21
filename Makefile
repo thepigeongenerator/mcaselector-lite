@@ -20,10 +20,19 @@ DEP := $(addsuffix .d,$(SRC))
 CFLAGS   := -O2 $(CFLAGS) -g -std=gnu99\
 	    -Wall -Wextra -Wpedantic -Wno-pointer-arith
 CPPFLAGS := -DNDEBUG $(CPPFLAGS) -DGLFW_INCLUDE_NONE\
-	    -Iinclude -Ilib/glad/include -Ilib/glfw/include -Ilib/libarchive/libarchive
-LDFLAGS  := -flto $(LDFLAGS)\
-	    -Llib/obj/glfw/src -Llib/obj/libarchive/libarchive
-LDLIBS   := $(LDLIBS) -lglfw3 -larchive -lm
+	    -Iinclude -Ilib/glad/include
+LDFLAGS  := -flto $(LDFLAGS)
+LDLIBS   := $(LDLIBS) -lm
+
+# Use pkg-config to locate dependencies, and set the correct flags.
+ifeq (,$(shell command -v pkg-config))
+$(error Failed to locate pkg-config, please make sure it is installed or acessible through PATH.)
+else
+CPPFLAGS += $(shell pkg-config --cflags-only-I glfw3 libarchive)
+LDFLAGS  += $(shell pkg-config --libs-only-L   glfw3 libarchive)
+LDLIBS   += $(shell pkg-config --libs-only-l   glfw3 libarchive)
+endif
+
 
 msg-cc    = $(info	[CC]	$(1))
 msg-clean = $(info	[CLEAN]	$(1))
