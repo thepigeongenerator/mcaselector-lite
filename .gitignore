@@ -22,5 +22,6 @@
 /bin/
 /obj/
 /lib/obj/
+/res/**.c
 compile_commands.json
 compile_commands.events.json
