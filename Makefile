@@ -9,6 +9,10 @@ SHELL = /bin/sh
 VERSION = 0.0
 NAME    = mcaselector-lite
 
+# Include a .config.mk, if it exists.
+# Allowing users to write persistent configurations
+-include .config.mk
+
 XXD    ?= xxd
 TAR    ?= tar
 SPARSE ?= sparse
