@@ -61,5 +61,5 @@ void error_fatal(uint ln, const char *restrict file, const char *restrict fmt, .
 	error_log(stdout, "\033[101mFAT\033[0m", ln, file, fmt, ap);
 	va_end(ap);
 
-	exit(EXIT_FAILURE);
+	exit(1);
 }
