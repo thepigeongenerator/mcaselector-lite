@@ -25,8 +25,10 @@ typedef __UINTPTR_TYPE__     uintptr;
 
 #ifdef __CHECKER__
 #define BITWISE __attribute__((bitwise))
+#define FORCE __attribute__((force))
 #else
 #define BITWISE
+#define FORCE
 #endif
 
 typedef u16 BITWISE be16;
