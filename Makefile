@@ -13,15 +13,14 @@ XXD    ?= xxd
 TAR    ?= tar
 SPARSE ?= sparse
 
-RES := $(wildcard res/*.glsl)
-SRC := $(shell find src/ -name '*.c' -print) $(addsuffix .c,$(RES)) lib/glad/src/gl.c
+SRC := $(shell find src/ -name '*.c' -print)
 OBJ := $(addsuffix .o,$(SRC))
 DEP := $(addsuffix .d,$(SRC))
 
 CFLAGS   := -O2 $(CFLAGS) -g -std=gnu99\
 	    -Wall -Wextra -Wpedantic -Wno-pointer-arith
 CPPFLAGS := -DNDEBUG $(CPPFLAGS) -DGLFW_INCLUDE_NONE\
-	    -Iinclude -Ilib/glad/include
+	    -Iinclude
 LDFLAGS  := -flto $(LDFLAGS)
 LDLIBS   := $(LDLIBS) -lm
 
@@ -29,9 +28,9 @@ LDLIBS   := $(LDLIBS) -lm
 ifeq (,$(shell command -v pkg-config))
 $(error Failed to locate pkg-config, please make sure it is installed or acessible through PATH.)
 else
-CPPFLAGS += $(shell pkg-config --cflags-only-I glfw3 libarchive)
-LDFLAGS  += $(shell pkg-config --libs-only-L   glfw3 libarchive)
-LDLIBS   += $(shell pkg-config --libs-only-l   glfw3 libarchive)
+CPPFLAGS += $(shell pkg-config --cflags-only-I libarchive)
+LDFLAGS  += $(shell pkg-config --libs-only-L   libarchive)
+LDLIBS   += $(shell pkg-config --libs-only-l   libarchive)
 endif
 
 msg-cc    = $(info	[CC]	$(1))
@@ -50,7 +49,7 @@ endif
 # a lot of things considered "standard" are unavailable.
 ifeq ($(OS),Windows_NT)
 NAME   := $(NAME).exe
-# WARN: Is this still valid?
+# BUG: I am purposefully neglecting this
 LDLIBS += -lopengl32 -lgdi32
 $(warning Detected  Windows_NT, please refer to the documentation if you encounter issues.)
 endif
@@ -96,13 +95,6 @@ bin/stripped_$(NAME): $(OBJ) | bin/
 %.c.o: %.c
 	$(Q)$(call msg-cc,$@)
 	$(Q)$(CC) -c $(CPPFLAGS) $(CFLAGS) -o $@ $<
-
-# Embed files in /res as plain binary into the final binary.
-# TODO: Find some fix for this clogging up the workspace
-.INTERMEDIATE:
-res/%.c: res/%
-	$(Q)$(call msg-xxd,$@)
-	$(Q)cd $(<D) && $(XXD) -i $(patsubst res/%,%,$<) $(abspath $@)
 
 %/:
 	$(Q)$(call msg-mkdir,$@)

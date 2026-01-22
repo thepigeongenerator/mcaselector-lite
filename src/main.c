@@ -3,28 +3,10 @@
  * Copyright (C)2025 quinnthepigeon@proton.me Quinn
  * For further information, view COPYING and CONTRIBUTORS
  * at: www.github.com/thepigeongenerator/mcaselector-lite */
-#include <GLFW/glfw3.h>
-#include <glad/gl.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "io/win/window.h"
 #include "util/error.h"
-
-/* reroutes GLFW errors to our logging system. */
-static void error_callback(int err, const char *const msg)
-{
-	error("glfw returned (%i); \"%s\"", err, msg);
-}
-
-static void quit(void)
-{
-	window_free();
-
-	/* terminates GLFW; destroying any
-	 * remaining windows, or other resources held by GLFW. */
-	glfwTerminate();
-}
 
 #if __has_extension(c_static_assert)
 __extension__ _Static_assert(-3 >> 5 == -1,
@@ -36,14 +18,7 @@ int main(int argc, char **argv)
 {
 	(void)argc, (void)argv;
 	printf("debug: [DBG], info: [INF], warning: [WAR], error: [ERR], fatal: [FAT]\n");
-	atexit(quit);
-
-	glfwSetErrorCallback(error_callback);
-	glfwInitHint(GLFW_JOYSTICK_HAT_BUTTONS, GLFW_FALSE); // disable joystick buttons; since we won't need them
-	if (!glfwInit() || window_init())
-		fatal("failed to initialise!");
-
-	window_loop();
+	// atexit(quit);
 
 	/* return success, since some architectures do not follow 0=success
 	 * This action will call `quit`. */
