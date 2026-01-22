@@ -8,9 +8,10 @@ SHELL = /bin/sh
 
 VERSION = 0.0
 
-CMAKE ?= cmake -G 'Unix Makefiles'
-XXD   ?= xxd
-TAR   ?= tar
+CMAKE  ?= cmake -G 'Unix Makefiles'
+XXD    ?= xxd
+TAR    ?= tar
+SPARSE ?= sparse
 
 RES := $(wildcard res/*.glsl)
 SRC := $(shell find src/ -name '*.c' -print) $(addsuffix .c,$(RES)) lib/glad/src/gl.c
@@ -62,6 +63,14 @@ all: bin/mcaselector-lite bin/mcaselector-lite.stripped
 # TODO: Write install recipe to install into DESTDIR, for UNIX® type systems, and Windows NT alongside uninstall recipes.
 # TODO: Same goes for install-strip, which does the same, but with the stripped binary instead.
 # TODO: Include distclean which recompiles the libraries.
+
+# Executes checks upon the code.
+# The standard requires code to already be built at this stage.
+# This isn't necessary for this, but may be added in the future,
+# if so add the binary in the prerequisites.
+.PHONY:
+check: $(SRC)
+	$(Q)$(SPARSE) $(CPPFLAGS) $<
 
 .PHONY:
 clean:
