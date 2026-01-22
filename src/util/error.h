@@ -10,11 +10,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+FORMAT((printf, 3, 4))
 void error_debug(uint ln, const char *restrict file, const char *restrict fmt, ...);
+
+FORMAT((printf, 3, 4))
 void error_info(uint ln, const char *restrict file, const char *restrict fmt, ...);
+
+FORMAT((printf, 3, 4))
 void error_warn(uint ln, const char *restrict file, const char *restrict fmt, ...);
+
+FORMAT((printf, 3, 4))
 void error_error(uint ln, const char *restrict file, const char *restrict fmt, ...);
-void error_fatal(uint ln, const char *restrict file, const char *restrict fmt, ...) NORET;
+
+NORET
+FORMAT((printf, 3, 4))
+void error_fatal(uint ln, const char *restrict file, const char *restrict fmt, ...);
 
 #define debug(...) error_debug(__LINE__, __FILE__, __VA_ARGS__)
 #define info(...)  error_info(__LINE__, __FILE__, __VA_ARGS__)
