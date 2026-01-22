@@ -31,11 +31,11 @@ enum mcx_compression {
 /* first 4 bytes is an s32 indicating remaining bytes, the following byte defines the compression scheme */
 static int mcx_loadchunk(const u8 *restrict buf, const s32 *restrict table, int idx)
 {
-	const u8 *chunk = buf + (be32toh(table[idx]) >> 8) * SECTOR;
+	const u8 *chunk = buf + (cvt_be32toh(table[idx]) >> 8) * SECTOR;
 
 	s32 len;
 	memcpy(&len, chunk, 4);
-	len = be32toh(len);
+	len = cvt_be32toh(len);
 	chunk += 4;
 
 	struct archive *archive = archive_read_new();
@@ -86,8 +86,8 @@ static void mvchunks(u8 *dst, u8 *src, u32 *restrict table, int src_s, int src_e
 	// count how many bytes we need to move, whilst updating location data
 	usize blen = 0;
 	for (src_s++; src_s <= src_e; src_s++) {
-		blen += (be32toh(table[src_s]) & 0xFF) * SECTOR;
-		table[src_s] -= htobe32((len / SECTOR) << 8);
+		blen += (cvt_be32toh(table[src_s]) & 0xFF) * SECTOR;
+		table[src_s] -= cvt_htobe32((len / SECTOR) << 8);
 	}
 	memmove(dst, src, blen);
 }
@@ -99,13 +99,13 @@ static usize delchunk(u8 *restrict buf, u32 *restrict table, usize rmb, int sidx
 {
 	// load the table data
 	usize slen, bidx, blen;
-	slen = be32toh(table[sidx]) & 0xFF;          // acquire the sector length of the chunk
-	bidx = (be32toh(table[sidx]) >> 8) * SECTOR; // acquire and compute the byte offset the chunk starts at
+	slen = cvt_be32toh(table[sidx]) & 0xFF;          // acquire the sector length of the chunk
+	bidx = (cvt_be32toh(table[sidx]) >> 8) * SECTOR; // acquire and compute the byte offset the chunk starts at
 	blen = slen * SECTOR;                        // compute the byte length of the chunk
 
 	// reset the table data
 	table[sidx]          = 0;
-	table[sidx + CHUNKS] = htobe32(time(NULL)); // assign the current time to the timestamp, for correctness  NOTE: might need to zero-out instead
+	table[sidx + CHUNKS] = cvt_htobe32(time(NULL)); // assign the current time to the timestamp, for correctness  NOTE: might need to zero-out instead
 
 	// move the succeeding chunks over the deleted chunk
 	u8 *dst = buf + bidx - rmb;
@@ -131,12 +131,12 @@ usize mcx_delchunk_range(u8 *restrict buf, int start, int end)
 	assert(start < end && end < CHUNKS);
 	u32 table[TABLE];
 	memcpy(table, buf, sizeof(table));
-	u8 *dst = buf + (be32toh(table[start]) >> 8) * SECTOR;
-	u8 *src = buf + (be32toh(table[end]) >> 8) * SECTOR;
-	src += (be32toh(table[end]) & 0xFF) * SECTOR;
+	u8 *dst = buf + (cvt_be32toh(table[start]) >> 8) * SECTOR;
+	u8 *src = buf + (cvt_be32toh(table[end]) >> 8) * SECTOR;
+	src += (cvt_be32toh(table[end]) & 0xFF) * SECTOR;
 
 	// zeroes-out the chunk data within this range. (and set the timestamp)
-	u32 ts = htobe32(time(NULL));
+	u32 ts = cvt_htobe32(time(NULL));
 	for (int i = start; i <= end; i++) {
 		table[i]          = 0;
 		table[i + CHUNKS] = ts;

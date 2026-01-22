@@ -6,38 +6,36 @@
 #ifndef MCASELECTOR_LITE_ENDIAN_H
 #define MCASELECTOR_LITE_ENDIAN_H
 
-#if defined(__GNUC__)
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#define le16toh(x) __uint16_identity(x)
-#define le32toh(x) __uint32_identity(x)
-#define le64toh(x) __uint64_identity(x)
-#define htole16(x) __uint16_identity(x)
-#define htole32(x) __uint32_identity(x)
-#define htole64(x) __uint64_identity(x)
-#define be16toh(x) __builtin_bswap16(x)
-#define be32toh(x) __builtin_bswap32(x)
-#define be64toh(x) __builtin_bswap64(x)
-#define htobe16(x) __builtin_bswap16(x)
-#define htobe32(x) __builtin_bswap32(x)
-#define htobe64(x) __builtin_bswap64(x)
-#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-#define le16toh(x) __builtin_bswap16(x)
-#define le32toh(x) __builtin_bswap32(x)
-#define le64toh(x) __builtin_bswap64(x)
-#define htole16(x) __builtin_bswap16(x)
-#define htole32(x) __builtin_bswap32(x)
-#define htole64(x) __builtin_bswap64(x)
-#define be16toh(x) __uint16_identity(x)
-#define be32toh(x) __uint32_identity(x)
-#define be64toh(x) __uint64_identity(x)
-#define htobe16(x) __uint16_identity(x)
-#define htobe32(x) __uint32_identity(x)
-#define htobe64(x) __uint64_identity(x)
-#else
-#error machine architecture unsupported! Expected either big-endian or little-endian, make sure to use a compiler which defines __BYTE_ORDER__ (like clang or gcc)
-#endif /* byte order */
+#include <mcaselector-lite/types.h>
 
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+static inline u16  cvt_le16toh(le16 le) { return (u16)le; }
+static inline u32  cvt_le32toh(le32 le) { return (u32)le; }
+static inline u64  cvt_le64toh(le64 le) { return (u64)le; }
+static inline le16 cvt_htole16(u16 u) { return (le16)u; }
+static inline le32 cvt_htole32(u32 u) { return (le32)u; }
+static inline le64 cvt_htole64(u64 u) { return (le64)u; }
+static inline u16  cvt_be16toh(be16 be) { return __builtin_bswap16((u16)be); }
+static inline u32  cvt_be32toh(be32 be) { return __builtin_bswap32((u32)be); }
+static inline u64  cvt_be64toh(be64 be) { return __builtin_bswap64((u64)be); }
+static inline be16 cvt_htobe16(u16 u) { return (be16)__builtin_bswap16(u); }
+static inline be32 cvt_htobe32(u32 u) { return (be32)__builtin_bswap32(u); }
+static inline be64 cvt_htobe64(u64 u) { return (be64)__builtin_bswap64(u); }
+#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+static inline u16  cvt_le16toh(le16 le) { return __builtin_bswap16((u16)le); }
+static inline u32  cvt_le32toh(le32 le) { return __builtin_bswap32((u32)le); }
+static inline u64  cvt_le64toh(le64 le) { return __builtin_bswap64((u64)le); }
+static inline le16 cvt_htole16(u16 u) { return (le16)__builtin_bswap16(u); }
+static inline le32 cvt_htole32(u32 u) { return (le32)__builtin_bswap32(u); }
+static inline le64 cvt_htole64(u64 u) { return (le64)__builtin_bswap64(u); }
+static inline u16  cvt_be16toh(be16 be) { return (u16)be; }
+static inline u32  cvt_be32toh(be32 be) { return (u32)be; }
+static inline u64  cvt_be64toh(be64 be) { return (u64)be; }
+static inline be16 cvt_htobe16(u16 u) { return (be16)u; }
+static inline be32 cvt_htobe32(u32 u) { return (be32)u; }
+static inline be64 cvt_htobe64(u64 u) { return (be64)u; }
 #else
-#error GNU C is unavailable
-#endif /* __GNUC__ */
+#error "Machine architecture unsupported! Expected either big-endian or little-endian."
+#endif
+
 #endif /* MCASELECTOR_LITE_ENDIAN_H */

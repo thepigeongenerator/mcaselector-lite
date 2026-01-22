@@ -19,7 +19,7 @@ static inline u16 buftoh16(const void *restrict buf)
 {
 	u16 i;
 	memcpy(&i, buf, sizeof(i));
-	return be16toh(i);
+	return cvt_be16toh(i);
 }
 
 /* Extracts a big endian 32 bit integer from address `buf`, converts it to host byte size if needed and returns. */
@@ -27,7 +27,7 @@ static inline u32 buftoh32(const void *restrict buf)
 {
 	u32 i;
 	memcpy(&i, buf, sizeof(i));
-	return be32toh(i);
+	return cvt_be32toh(i);
 }
 
 /* Extracts a big endian 64 bit integer from address `buf`, converts it to host byte size if needed and returns. */
@@ -35,7 +35,7 @@ static inline u64 buftoh64(const void *restrict buf)
 {
 	u64 i;
 	memcpy(&i, buf, sizeof(i));
-	return be64toh(i);
+	return cvt_be64toh(i);
 }
 
 /* Processes the incoming array data in `buf`. Which contains `nmem` items of `size`.
@@ -62,9 +62,9 @@ static const u8 *procarr(const u8 *restrict buf, s32 nmemb, uint size, struct nb
 	s32 i = 0;
 	while (i < nmemb) {
 		switch (size) {
-		case 2:  ((u16 *)out->dat)[i] = be16toh(((u16 *)out->dat)[i]); break;
-		case 4:  ((u32 *)out->dat)[i] = be16toh(((u32 *)out->dat)[i]); break;
-		case 8:  ((u64 *)out->dat)[i] = be16toh(((u64 *)out->dat)[i]); break;
+		case 2:  ((u16 *)out->dat)[i] = cvt_be16toh(((u16 *)out->dat)[i]); break;
+		case 4:  ((u32 *)out->dat)[i] = cvt_be16toh(((u32 *)out->dat)[i]); break;
+		case 8:  ((u64 *)out->dat)[i] = cvt_be16toh(((u64 *)out->dat)[i]); break;
 		default: __builtin_unreachable(); // this should be impossible
 		}
 		i += size;
@@ -91,7 +91,7 @@ static const u8 *proclist(const u8 *restrict buf, struct nbt_array *restrict out
 	buf++;
 	s32 len;
 	memcpy(&len, buf, 4);
-	len = be32toh(len);
+	len = cvt_be32toh(len);
 	buf += 4;
 	return procarr(buf, len, size, out);
 }
