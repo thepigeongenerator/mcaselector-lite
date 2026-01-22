@@ -9,7 +9,6 @@ SHELL = /bin/sh
 VERSION = 0.0
 NAME    = mcaselector-lite
 
-CMAKE  ?= cmake -G 'Unix Makefiles'
 XXD    ?= xxd
 TAR    ?= tar
 SPARSE ?= sparse
@@ -35,7 +34,6 @@ LDFLAGS  += $(shell pkg-config --libs-only-L   glfw3 libarchive)
 LDLIBS   += $(shell pkg-config --libs-only-l   glfw3 libarchive)
 endif
 
-
 msg-cc    = $(info	[CC]	$(1))
 msg-clean = $(info	[CLEAN]	$(1))
 msg-ld    = $(info	[LD]	$(1))
@@ -52,6 +50,7 @@ endif
 # a lot of things considered "standard" are unavailable.
 ifeq ($(OS),Windows_NT)
 NAME   := $(NAME).exe
+# WARN: Is this still valid?
 LDLIBS += -lopengl32 -lgdi32
 $(warning Detected  Windows_NT, please refer to the documentation if you encounter issues.)
 endif
