@@ -32,7 +32,7 @@ int conf_getkeyval(const char *restrict buf,
 	int i = 0;
 	for (; i < klen && !tmp; i++) {
 		tmp = strmat(buf, keys[i]);
-		tmp = keys[i][buf - tmp] ? tmp : 0;
+		tmp = keys[i][buf - tmp] ? tmp : NULL;
 	}
 
 	if (!tmp || *tmp != '=')
