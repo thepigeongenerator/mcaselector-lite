@@ -17,7 +17,7 @@
 /* Extracts a big endian 16 bit integer from address `buf`, converts it to host byte size if needed and returns. */
 static inline u16 buftoh16(const void *restrict buf)
 {
-	u16 i;
+	be16 i;
 	memcpy(&i, buf, sizeof(i));
 	return cvt_be16toh(i);
 }
@@ -25,7 +25,7 @@ static inline u16 buftoh16(const void *restrict buf)
 /* Extracts a big endian 32 bit integer from address `buf`, converts it to host byte size if needed and returns. */
 static inline u32 buftoh32(const void *restrict buf)
 {
-	u32 i;
+	be32 i;
 	memcpy(&i, buf, sizeof(i));
 	return cvt_be32toh(i);
 }
@@ -33,7 +33,7 @@ static inline u32 buftoh32(const void *restrict buf)
 /* Extracts a big endian 64 bit integer from address `buf`, converts it to host byte size if needed and returns. */
 static inline u64 buftoh64(const void *restrict buf)
 {
-	u64 i;
+	be64 i;
 	memcpy(&i, buf, sizeof(i));
 	return cvt_be64toh(i);
 }
@@ -89,9 +89,9 @@ static const u8 *proclist(const u8 *restrict buf, struct nbt_array *restrict out
 	}
 
 	buf++;
-	s32 len;
-	memcpy(&len, buf, 4);
-	len = cvt_be32toh(len);
+	be32 tmp;
+	memcpy(&tmp, buf, 4);
+	s32 len = cvt_be32toh(tmp);
 	buf += 4;
 	return procarr(buf, len, size, out);
 }
