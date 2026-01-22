@@ -23,6 +23,19 @@ typedef __SIZE_TYPE__        usize;
 typedef __INTPTR_TYPE__      intptr;
 typedef __UINTPTR_TYPE__     uintptr;
 
+#ifdef __CHECKER__
+#define BITWISE __attribute__((bitwise))
+#else
+#define BITWISE
+#endif
+
+typedef u16 BITWISE be16;
+typedef u32 BITWISE be32;
+typedef u64 BITWISE be64;
+typedef u16 BITWISE le16;
+typedef u32 BITWISE le32;
+typedef u64 BITWISE le64;
+
 #if __SIZEOF_SIZE_T__ == __SIZEOF_LONG_LONG__
 typedef llong ssize;
 #elif __SIZEOF_SIZE_T__ == __SIZEOF_LONG__
