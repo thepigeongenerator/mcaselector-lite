@@ -7,6 +7,7 @@ SHELL = /bin/sh
 .SUFFIXES:
 
 VERSION = 0.0
+NAME    = mcaselector-lite
 
 CMAKE  ?= cmake -G 'Unix Makefiles'
 XXD    ?= xxd
@@ -57,7 +58,7 @@ endif
 
 # Default target; compiles everything.
 .PHONY:
-all: bin/mcaselector-lite bin/mcaselector-lite.stripped
+all: bin/$(NAME) bin/stripped_$(NAME)
 
 # TODO: Compile libraries with `all`
 # TODO: Write install recipe to install into DESTDIR, for UNIX® type systems, and Windows NT alongside uninstall recipes.
@@ -78,10 +79,10 @@ clean:
 	-$(Q)$(RM) -r bin/
 
 # Links together the object files into the final binary.
-bin/mcaselector-lite: $(OBJ) | bin/
+bin/$(NAME): $(OBJ) | bin/
 	$(Q)$(call msg-ld,$@)
 	$(Q)$(CC) $(LDFLAGS) $(LDLIBS) -o $@ $^
-bin/mcaselector-lite.stripped: $(OBJ) | bin/
+bin/stripped_$(NAME): $(OBJ) | bin/
 	$(Q)$(call msg-ld,$@)
 	$(Q)$(CC) -s $(LDFLAGS) $(LDLIBS) -o $@ $^
 
