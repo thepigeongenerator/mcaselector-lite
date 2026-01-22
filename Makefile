@@ -73,13 +73,11 @@ install-strip: bin/mcaselector-lite.stripped
 uninstall:
 	$(RM) $(DESTDIR)/bin/$(NAME)
 
-# Executes checks upon the code.
-# The standard requires code to already be built at this stage.
-# This isn't necessary for this, but may be added in the future,
-# if so add the binary in the prerequisites.
 .PHONY:
-check: $(SRC)
-	$(Q)$(SPARSE) $(CPPFLAGS) $<
+check-sparse: $(SRC)
+	$(foreach f,$(SRC),\
+	-$(Q)$(SPARSE) $(CPPFLAGS) $f\
+	)
 
 .PHONY:
 clean:
