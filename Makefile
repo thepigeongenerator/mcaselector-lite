@@ -60,10 +60,19 @@ endif
 .PHONY:
 all: bin/$(NAME) bin/stripped_$(NAME)
 
-# TODO: Compile libraries with `all`
-# TODO: Write install recipe to install into DESTDIR, for UNIX® type systems, and Windows NT alongside uninstall recipes.
-# TODO: Same goes for install-strip, which does the same, but with the stripped binary instead.
-# TODO: Include distclean which recompiles the libraries.
+# Install a binary on a POSIX-compliant system.
+.PHONY:
+install: bin/mcaselector-lite
+	install -m0755 bin/$(NAME) $(DESTDIR)/bin/$(NAME)
+
+# Install a stripped binary on a POSIX-compliant system
+.PHONY:
+install-strip: bin/mcaselector-lite.stripped
+	install -m0755 bin/stripped_$(NAME) $(DESTDIR)/bin/$(NAME)
+
+.PHONY:
+uninstall:
+	$(RM) $(DESTDIR)/bin/$(NAME)
 
 # Executes checks upon the code.
 # The standard requires code to already be built at this stage.
