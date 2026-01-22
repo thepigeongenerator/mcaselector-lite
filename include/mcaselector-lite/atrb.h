@@ -63,6 +63,8 @@
 
 #if __has_attribute(__assume__)
 #define ASSUME(args) __attribute__((__assume__ args))
+#else
+#define ASSUME(args)
 #endif
 #endif
 
