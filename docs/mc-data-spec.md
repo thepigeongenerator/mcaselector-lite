@@ -63,9 +63,11 @@ The actual structure of this is best illustrated by [the wiki](https://minecraft
 | `sections[i].block_states.data`            | `long array` | [view below](#block-state-data)                                               |
 ##### block state data
 Contains 4096 indices, which are packed in a specific way.
-All indices are the same with, though the width is decided by the minimum width required to index the palette. In versions ≥`1.16`, the indices are not packed across multiple elements of the array.
-So they have an alignment requirement of 64 bits.
-There might be an additional section at the top and or bottom of the world used to store light, so that light travels properly over and under the world limits.
+All indices are the same width,
+though the width is decided by the minimum width required to index the palette.
+In versions ≥`1.16`, the indices are not packed across multiple elements of the array.
+There might be an additional section at the top and or bottom of the world used to store light,
+so that light travels properly over and under the world limits.
 This is an example on how to access individual block info from a single section;
 ```c
 unsigned w = 0;
