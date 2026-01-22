@@ -107,8 +107,9 @@ static usize delchunk(u8 *restrict buf, be32 *restrict table, usize rmb, int sid
 	blen = slen * SECTOR;                            // compute the byte length of the chunk
 
 	// reset the table data
-	table[sidx]          = 0;
-	table[sidx + CHUNKS] = cvt_htobe32(time(NULL)); // assign the current time to the timestamp, for correctness  NOTE: might need to zero-out instead
+	table[sidx] = 0;
+	// WARN: might need to zero-out the timestamp instead
+	table[sidx + CHUNKS] = cvt_htobe32(time(NULL));
 
 	// move the succeeding chunks over the deleted chunk
 	u8 *dst = buf + bidx - rmb;
@@ -136,9 +137,11 @@ usize mcx_delchunk_range(u8 *restrict buf, int start, int end)
 	memcpy(table, buf, sizeof(table));
 	u8 *dst = buf + (cvt_be32toh(table[start]) >> 8) * SECTOR;
 	u8 *src = buf + (cvt_be32toh(table[end]) >> 8) * SECTOR;
+	// BUG: We are selecting the wrong byte for this.
 	src += (cvt_be32toh(table[end]) & 0xFF) * SECTOR;
 
 	// zeroes-out the chunk data within this range. (and set the timestamp)
+	// WARN: May need to zero-out the timestamp instead.
 	be32 ts = cvt_htobe32(time(NULL));
 	for (int i = start; i <= end; i++) {
 		table[i]          = 0;
@@ -146,6 +149,7 @@ usize mcx_delchunk_range(u8 *restrict buf, int start, int end)
 	}
 
 	// move the remaining chunks down
+	// BUG: Chunks may not necessarily be stored in order.
 	if (end < (CHUNKS - 1))
 		mvchunks(dst, src, table, end, (CHUNKS - 1));
 	memcpy(buf, table, sizeof(table));
@@ -185,6 +189,9 @@ usize mcx_delchunk_bulk(u8 *restrict buf, const u16 *restrict chunks, int chunkc
  * Multiplying by `SECTOR`, and adding the size of the table itself. */
 usize mcx_calcsize(const u8 *restrict buf)
 {
+	/* NOTE: This can be optimised if chunks are always
+	 * in order. I.e. we can guarantee that the last chunk in
+	 * the table has the greatest offset. */
 	usize size = 0;
 	for (uint i = 0; i < CHUNKS; i++)
 		size += *(buf + (i * 4) + 3);

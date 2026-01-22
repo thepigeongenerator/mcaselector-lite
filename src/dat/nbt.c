@@ -62,6 +62,7 @@ static const u8 *procarr(const u8 *restrict buf, s32 nmemb, uint size, struct nb
 	s32 i = 0;
 	while (i < nmemb) {
 		switch (size) {
+		// BUG: Violation of strict aliasing
 		case 2:  ((u16 *)out->dat)[i] = cvt_be16toh(((u16 *)out->dat)[i]); break;
 		case 4:  ((u32 *)out->dat)[i] = cvt_be16toh(((u32 *)out->dat)[i]); break;
 		case 8:  ((u64 *)out->dat)[i] = cvt_be16toh(((u64 *)out->dat)[i]); break;
