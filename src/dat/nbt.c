@@ -215,6 +215,6 @@ const u8 *nbt_nexttag(const u8 *restrict buf)
 	tag = buf;
 	do {
 		tag = nexttag(tag, &dpt, lens, tags);
-	} while (dpt > 0);
+	} while (tag && dpt > 0);
 	return tag;
 }
