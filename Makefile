@@ -79,7 +79,7 @@ uninstall:
 .PHONY:
 check-sparse: $(SRC)
 	$(foreach f,$(SRC),\
-	-$(Q)$(SPARSE) $(CPPFLAGS) $f\
+	-$(Q)$(SPARSE) $(CFLAGS) $(CPPFLAGS) $f\
 	)
 
 .PHONY:
