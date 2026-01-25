@@ -64,12 +64,12 @@ all: bin/$(NAME) bin/stripped_$(NAME)
 
 # Install a binary on a POSIX-compliant system.
 .PHONY:
-install: bin/mcaselector-lite
+install: bin/$(NAME)
 	install -m0755 bin/$(NAME) $(DESTDIR)/bin/$(NAME)
 
 # Install a stripped binary on a POSIX-compliant system
 .PHONY:
-install-strip: bin/mcaselector-lite.stripped
+install-strip: bin/$(NAME).stripped
 	install -m0755 bin/stripped_$(NAME) $(DESTDIR)/bin/$(NAME)
 
 .PHONY:
