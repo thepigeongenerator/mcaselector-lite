@@ -22,7 +22,7 @@ OBJ := $(addsuffix .o,$(SRC))
 DEP := $(addsuffix .d,$(SRC))
 
 CFLAGS   := -O2 $(CFLAGS) -g -std=gnu17\
-	    -Wall -Wextra -Wpedantic -Wno-pointer-arith
+	    -Wall -Wextra -Wpedantic -Wno-pointer-arith -Wvla
 CPPFLAGS := -DNDEBUG $(CPPFLAGS) -DGLFW_INCLUDE_NONE\
 	    -Iinclude
 LDFLAGS  := -flto $(LDFLAGS)
