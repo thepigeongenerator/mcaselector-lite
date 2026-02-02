@@ -21,7 +21,7 @@ SRC := $(shell find src/ -name '*.c' -print)
 OBJ := $(addsuffix .o,$(SRC))
 DEP := $(addsuffix .d,$(SRC))
 
-CFLAGS   := -O2 $(CFLAGS) -g -std=gnu99\
+CFLAGS   := -O2 $(CFLAGS) -g -std=gnu17\
 	    -Wall -Wextra -Wpedantic -Wno-pointer-arith
 CPPFLAGS := -DNDEBUG $(CPPFLAGS) -DGLFW_INCLUDE_NONE\
 	    -Iinclude
