@@ -12,6 +12,7 @@
 !.gitmodules
 !.editorconfig
 !.clang-format
+!.mailmap
 !/.github/
 
 # hide output files
