@@ -52,32 +52,32 @@ LDLIBS += -lopengl32 -lgdi32 $(warning Detected  Windows_NT, please refer to the
 endif
 
 # Default target; compiles everything.
-.PHONY:
+PHONY = all
 all: bin/$(NAME) bin/stripped_$(NAME)
 
 # Install a binary on a POSIX-compliant system.
-.PHONY:
+PHONY += install
 install: bin/$(NAME)
 	install -m0755 bin/$(NAME) $(DESTDIR)/bin/$(NAME)
 
 # Install a stripped binary on a POSIX-compliant system
-.PHONY:
+PHONY += install-strip
 install-strip: bin/$(NAME).stripped
 	install -m0755 bin/stripped_$(NAME) $(DESTDIR)/bin/$(NAME)
 
-.PHONY:
+PHONY += uninstall
 uninstall:
 	$(RM) $(DESTDIR)/bin/$(NAME)
 
-.PHONY:
+PHONY += check-sparse
 check-sparse: $(SRC)
 	-$(Q)$(SPARSE) $(CFLAGS) $(CPPFLAGS) $(SRC)
 
-.PHONY:
+PHONY += check-gcc
 check-gcc: $(SRC)
 	-$(Q)$(CC) -fanalyzer $(CFLAGS) $(CPPFLAGS) $(SRC)
 
-.PHONY:
+PHONY += clean
 clean:
 	-$(Q)$(RM) $(OBJ) $(DEP)
 	-$(Q)$(RM) -r bin/
@@ -105,3 +105,5 @@ bin/stripped_$(NAME): $(OBJ) | bin/
 ifeq (0, $(words $(findstring $(MAKECMDGOALS), clean)))
 -include $(DEP)
 endif
+
+.PHONY: $(PHONY)
