@@ -1,8 +1,7 @@
-# This file is part of MCA-Selector-lite,
-# and is licensed under GPL-2.0-only.
-# Copyright (C)2026 quinnthepigeon@proton.me Quinn
-# For further information, view COPYING and CONTRIBUTORS
-# at: www.github.com/thepigeongenerator/mcaselector-lite
+# Copyright (C)2026 MCA-Selector-Lite
+# Licensed under GPL-2.0-only. For further information,
+# view `git log`, and the COPYING and CONTRIBUTORS files
+# at www.github.com/thepigeongenerator/mcaselector-lite.
 SHELL = /bin/sh
 .SUFFIXES:
 
@@ -37,12 +36,7 @@ LDFLAGS  += $(shell pkg-config --libs-only-L   libarchive)
 LDLIBS   += $(shell pkg-config --libs-only-l   libarchive)
 endif
 
-msg-cc    = $(info	[CC]	$(1))
-msg-clean = $(info	[CLEAN]	$(1))
-msg-ld    = $(info	[LD]	$(1))
-msg-mkdir = $(info	[MKDIR]	$(1))
-msg-tar   = $(info	[TAR]	$(1))
-msg-xxd   = $(info	[XXD]	$(1))
+msg = @printf '%-8s %s\n' "$(1)" "$(2)"
 
 # Set Q to @ to silence commands being printed, unless --no-silent has been set
 ifeq (0, $(words $(findstring --no-silent,$(MAKEFLAGS))))
@@ -54,8 +48,7 @@ endif
 ifeq ($(OS),Windows_NT)
 NAME   := $(NAME).exe
 # BUG: I am purposefully neglecting this
-LDLIBS += -lopengl32 -lgdi32
-$(warning Detected  Windows_NT, please refer to the documentation if you encounter issues.)
+LDLIBS += -lopengl32 -lgdi32 $(warning Detected  Windows_NT, please refer to the documentation if you encounter issues.)
 endif
 
 # Default target; compiles everything.
@@ -78,9 +71,11 @@ uninstall:
 
 .PHONY:
 check-sparse: $(SRC)
-	$(foreach f,$(SRC),\
-	-$(Q)$(SPARSE) $(CFLAGS) $(CPPFLAGS) $f\
-	)
+	-$(Q)$(SPARSE) $(CFLAGS) $(CPPFLAGS) $(SRC)
+
+.PHONY:
+check-gcc: $(SRC)
+	-$(Q)$(CC) -fanalyzer $(CFLAGS) $(CPPFLAGS) $(SRC)
 
 .PHONY:
 clean:
@@ -89,19 +84,19 @@ clean:
 
 # Links together the object files into the final binary.
 bin/$(NAME): $(OBJ) | bin/
-	$(Q)$(call msg-ld,$@)
+	$(Q)$(call msg,LD,$@)
 	$(Q)$(CC) $(LDFLAGS) $(LDLIBS) -o $@ $^
 bin/stripped_$(NAME): $(OBJ) | bin/
-	$(Q)$(call msg-ld,$@)
+	$(Q)$(call msg,LD,$@)
 	$(Q)$(CC) -s $(LDFLAGS) $(LDLIBS) -o $@ $^
 
 # Compiles C sources into object files
 %.c.o: %.c
-	$(Q)$(call msg-cc,$@)
+	$(Q)$(call msg,CC,$@)
 	$(Q)$(CC) -c $(CPPFLAGS) $(CFLAGS) -o $@ $<
 
 %/:
-	$(Q)$(call msg-mkdir,$@)
+	$(Q)$(call msg,MKDIR,$@)
 	$(Q)mkdir $@
 
 # Generate and include dependencies,

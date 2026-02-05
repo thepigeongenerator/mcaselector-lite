@@ -1,8 +1,7 @@
-/* This file is part of MCA-Selector-lite,
- * and is licensed under GPL-2.0-only.
- * Copyright (C)2025 quinnthepigeon@proton.me Quinn
- * For further information, view COPYING and CONTRIBUTORS
- * at: www.github.com/thepigeongenerator/mcaselector-lite */
+/* Copyright (C)2025 MCA-Selector-Lite
+ * Licensed under GPL-2.0-only. For further information,
+ * view `git log`, and the COPYING and CONTRIBUTORS files
+ * at www.github.com/thepigeongenerator/mcaselector-lite. */
 #include "nbt.h"
 
 #include <assert.h>
@@ -45,9 +44,8 @@ static const u8 *procarr(const u8 *restrict buf, s32 nmemb, uint size, struct nb
 {
 	usize len = nmemb * size;
 	*out      = (struct nbt_array){
-                out->nmemb = nmemb,
-                out->dat   = malloc(len),
-        };
+                nmemb,
+                malloc(len)};
 	if (!out->dat)
 		return buf + len;
 
