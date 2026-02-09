@@ -7,10 +7,9 @@
 
 #include "util/error.h"
 
-#if __has_extension(c_static_assert)
-__extension__ _Static_assert(-3 >> 5 == -1,
-	"The platform does not compile right-shifting signed integers to an arithmetic shift!");
-#endif
+_Static_assert(-3 >> 5 == -1,
+	"The platform does not compile "
+	"right-shifting signed integers to an arithmetic shift!");
 
 /* Entry-point of the application. */
 int main(int argc, char **argv)
