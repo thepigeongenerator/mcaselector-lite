@@ -6,13 +6,13 @@
 
 #include <archive.h>
 #include <assert.h>
-#include <mcaselector-lite/endian.h>
-#include <mcaselector-lite/types.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
+#include "../endian.h"
+#include "../types.h"
 #include "../util/error.h"
 
 #define SECTOR 0x1000 // sector size

@@ -5,7 +5,7 @@
 #ifndef MCASELECTOR_LITE_ENDIAN_H
 #define MCASELECTOR_LITE_ENDIAN_H
 
-#include <mcaselector-lite/types.h>
+#include "types.h"
 
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 static inline u16  cvt_le16toh(le16 le) { return (FORCE u16)le; }

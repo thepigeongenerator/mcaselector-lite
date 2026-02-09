@@ -6,10 +6,11 @@
 
 #include <assert.h>
 #include <inttypes.h>
-#include <mcaselector-lite/atrb.h>
-#include <mcaselector-lite/types.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "../atrb.h"
+#include "../types.h"
 
 
 /* Matches s1 with s2, returns a pointer to s1 where the match stopped. */

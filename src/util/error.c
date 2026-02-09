@@ -4,9 +4,10 @@
  * at www.github.com/thepigeongenerator/mcaselector-lite. */
 #include "error.h"
 
-#include <mcaselector-lite/types.h>
 #include <stdarg.h>
 #include <stdio.h>
+
+#include "../types.h"
 
 static void error_log(FILE *restrict stream, const char *restrict pfx, uint ln, const char *restrict file, const char *restrict fmt, va_list ap)
 {

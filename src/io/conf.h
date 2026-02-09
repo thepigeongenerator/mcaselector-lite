@@ -3,8 +3,8 @@
  * view `git log`, and the COPYING and CONTRIBUTORS files
  * at www.github.com/thepigeongenerator/mcaselector-lite. */
 #pragma once
-#include <mcaselector-lite/atrb.h>
-#include <mcaselector-lite/types.h>
+#include "../atrb.h"
+#include "../types.h"
 
 enum conf_type {
 	CONF_STR = 0x00,

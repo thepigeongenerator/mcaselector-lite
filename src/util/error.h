@@ -4,10 +4,11 @@
  * at www.github.com/thepigeongenerator/mcaselector-lite. */
 #pragma once
 
-#include <mcaselector-lite/atrb.h>
-#include <mcaselector-lite/types.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "../atrb.h"
+#include "../types.h"
 
 FORMAT((printf, 3, 4))
 void error_debug(uint ln, const char *restrict file, const char *restrict fmt, ...);

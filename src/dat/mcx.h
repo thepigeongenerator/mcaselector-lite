@@ -4,9 +4,10 @@
  * at www.github.com/thepigeongenerator/mcaselector-lite. */
 #pragma once
 
-#include <mcaselector-lite/atrb.h>
-#include <mcaselector-lite/types.h>
 #include <stdlib.h>
+
+#include "../atrb.h"
+#include "../types.h"
 
 
 /* contains chunk metadata */
