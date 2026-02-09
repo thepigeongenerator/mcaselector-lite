@@ -11,14 +11,17 @@ _Static_assert(-3 >> 5 == -1,
 	"The platform does not compile "
 	"right-shifting signed integers to an arithmetic shift!");
 
+/* Called by _exit. */
+void quit(void)
+{
+	printf("exited\n");
+}
+
 /* Entry-point of the application. */
 int main(int argc, char **argv)
 {
 	(void)argc, (void)argv;
-	printf("debug: [DBG], info: [INF], warning: [WAR], error: [ERR], fatal: [FAT]\n");
-	// atexit(quit);
+	atexit(quit); /* Register `quit` to be called on _exit. */
 
-	/* return success, since some architectures do not follow 0=success
-	 * This action will call `quit`. */
-	return EXIT_SUCCESS;
+	return 0;
 }
