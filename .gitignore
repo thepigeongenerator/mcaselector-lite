@@ -1,22 +1,36 @@
-# ignore all dotfiles by default
+# Ignore all dotfiles by default
 .*
 
-# unhide dotfiles we want to keep
+
+# Ignore commonly produced files (Sorted alphabetically)
+*.a
+*.d
+*.exe
+*.gz
+*.hex
+*.lock
+*.o
+*.out
+*.so
+*.tar
+*.xz
+*.zip
+
+# Ignore temporary files
+*.tmp
+*~
+
+compile_commands.events.json
+compile_commands.json
+
+# Ignore specific top-level files
+/mcaselector-lite
+/mcaselector-lite.exe
+
+# Unignore files we want to keep
+!.clang-format
+!.editorconfig
 !.gitignore
 !.gitmodules
-!.editorconfig
-!.clang-format
 !.mailmap
 !/.github/
-
-# hide output files
-*.o
-*.d
-*.out
-*.lock
-/bin/
-/obj/
-/lib/obj/
-/res/**.c
-compile_commands.json
-compile_commands.events.json
