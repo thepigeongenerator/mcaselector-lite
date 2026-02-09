@@ -12,6 +12,7 @@ NAME    = mcaselector-lite
 # Allowing users to write persistent configurations
 -include .config.mk
 
+GZ     ?= gzip
 SPARSE ?= sparse
 TAR    ?= tar
 XXD    ?= xxd
@@ -86,6 +87,9 @@ $(NAME): $(OBJ)
 	$(call msg,CC,$@)
 	$(Q)$(CC) -c $(CPPFLAGS) $(CFLAGS) -o $@ $<
 
+%.gz: %
+	$(call msg,GZ,$@)
+	$(Q)$(GZ) -k $<
 
 # Generate and include dependencies,
 # ignoring any errors that may occur when doing so.
