@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "util/error.h"
 
 _Static_assert(-3 >> 5 == -1,
 	"The platform does not compile "
