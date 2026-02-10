@@ -33,7 +33,7 @@ AlignConsecutiveShortCaseStatements:
 AllowShortBlocksOnASingleLine:       Always
 AllowShortFunctionsOnASingleLine:    All
 AllowShortLambdasOnASingleLine:      All
-AllowShortIfStatementsOnASingleLine: Never
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse
 AllowShortCaseLabelsOnASingleLine:   true
 AllowShortEnumsOnASingleLine:        true
 AllowShortLoopsOnASingleLine:        true
