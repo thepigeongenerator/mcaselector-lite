@@ -12,3 +12,4 @@ $(warning Detected  Windows_NT, please refer to the documentation if you encount
 # Append .exe to the name to match the PE format.
 NAME := $(NAME).exe
 LDLIBS += -lopengl32 -lgdi32
+CFLAGS += -D_CRT_NONSTDC_NO_WARNINGS
