@@ -25,17 +25,7 @@ CFLAGS   := -O2 $(CFLAGS) -g -std=gnu17\
 	    -Wall -Wextra -Wpedantic -Wno-pointer-arith -Wvla
 CPPFLAGS := -DNDEBUG $(CPPFLAGS)
 LDFLAGS  := -flto $(LDFLAGS)
-LDLIBS   := $(LDLIBS) -lm
-
-# Use pkg-config to locate dependencies, and set the correct flags.
-ifeq (,$(shell command -v pkg-config))
-$(error Failed to locate pkg-config, please make sure it is installed or acessible through PATH.)
-else
-CPPFLAGS += $(shell pkg-config --cflags-only-I libarchive)
-LDFLAGS  += $(shell pkg-config --libs-only-L   libarchive)
-LDLIBS   += $(shell pkg-config --libs-only-l   libarchive)
-endif
-
+LDLIBS   := $(LDLIBS) -lm -larchive
 
 # Set Q to @ to silence commands being printed, unless --no-silent has been set
 ifeq (0, $(words $(findstring --no-silent,$(MAKEFLAGS))))
