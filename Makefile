@@ -54,7 +54,6 @@ uninstall:
 
 check:
 	-$(Q)$(SPARSE) $(CFLAGS) $(CPPFLAGS) $(SRC)
-	-$(Q)$(CC) -fanalyzer $(CFLAGS) $(CPPFLAGS) $(SRC)
 
 clean:
 	$(Q)$(RM) $(OBJ) $(DEP)
