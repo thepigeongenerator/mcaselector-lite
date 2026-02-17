@@ -1,4 +1,4 @@
-/* Copyright (C)2025 MCA-Selector-Lite
+/* Copyright (C)2025-2026 MCA-Selector-Lite
  * Licensed under GPL-2.0-only. For further information,
  * view `git log`, and the COPYING and CONTRIBUTORS files
  * at www.github.com/thepigeongenerator/mcaselector-lite. */
@@ -44,13 +44,12 @@ static inline u64 buftoh64(const void *restrict buf)
 static const u8 *procarr(const u8 *restrict buf, s32 nmemb, uint size, struct nbt_array *restrict out)
 {
 	usize len = nmemb * size;
-	*out      = (struct nbt_array){
-                nmemb,
-                malloc(len)};
-	if (!out->dat)
+	void *dat = malloc(len);
+	*out      = (struct nbt_array){len, {dat}};
+	if (!dat) // BUG: no error handling?
 		return buf + len;
 
-	memcpy(out->dat, buf, len);
+	memcpy(dat, buf, len);
 	buf += len;
 
 	/* Only include this code for little-endian systems. Since only they require this logic.
@@ -61,10 +60,9 @@ static const u8 *procarr(const u8 *restrict buf, s32 nmemb, uint size, struct nb
 	s32 i = 0;
 	while (i < nmemb) {
 		switch (size) {
-		// BUG: Violation of strict aliasing
-		case 2:  ((u16 *)out->dat)[i] = cvt_be16toh(((u16 *)out->dat)[i]); break;
-		case 4:  ((u32 *)out->dat)[i] = cvt_be16toh(((u32 *)out->dat)[i]); break;
-		case 8:  ((u64 *)out->dat)[i] = cvt_be16toh(((u64 *)out->dat)[i]); break;
+		case 2:  out->arr.dat16[i] = cvt_be16toh(((be16 *)dat)[i]); break;
+		case 4:  out->arr.dat32[i] = cvt_be32toh(((be32 *)dat)[i]); break;
+		case 8:  out->arr.dat64[i] = cvt_be64toh(((be64 *)dat)[i]); break;
 		default: __builtin_unreachable(); // this should be impossible
 		}
 		i += size;

@@ -1,4 +1,4 @@
-/* Copyright (C)2025 MCA-Selector-Lite
+/* Copyright (C)2025-2026 MCA-Selector-Lite
  * Licensed under GPL-2.0-only. For further information,
  * view `git log`, and the COPYING and CONTRIBUTORS files
  * at www.github.com/thepigeongenerator/mcaselector-lite. */
@@ -39,9 +39,18 @@ enum nbt_tagid {
 	NBT_ARR_I64  = 0x0C, // starts with a i32, denoting size, followed by the u32 data
 };
 
+
 struct nbt_array {
-	s32   nmemb;
-	void *dat;
+	s32 nmemb;
+
+	/* Contains the data of the NBT array,
+	 * Since this is a user-facing structure, it must point
+	 * to host-endian data, not big endian, and thus is marked as such. */
+	union nbt_array_dat {
+		u16 *dat16;
+		u32 *dat32;
+		u64 *dat64;
+	} arr;
 };
 
 
