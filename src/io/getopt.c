@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../err.h"
 #include "../types.h"
 
 char *optarg = NULL;
@@ -61,7 +62,7 @@ int getopt(int argc, char *const *_argv, const char *opts)
 	if (!*opt || *opt == ':') {
 		optopt = argv[idx][optind2];
 		if (opterr && *opts != ':')
-			fprintf(stderr, "%s: invalid option -- '%c'\n", *argv, optopt);
+			warnx("invalid option -- %c", optopt);
 		if (!argv[idx][++optind2])
 			return opt_unwind(argv, idx, 1, '?');
 		return '?';
@@ -83,7 +84,7 @@ int getopt(int argc, char *const *_argv, const char *opts)
 		int ret = *opts == ':' ? ':' : '?';
 		optopt  = *opt;
 		if (opterr && *opts != ':')
-			fprintf(stderr, "%s: option requires an argument -- '%c'\n", *argv, optopt);
+			warnx("option requires an argument -- %c", optopt);
 		return opt_unwind(argv, idx, 1, ret);
 	}
 	return opt_unwind(argv, idx, 2, *opt);
