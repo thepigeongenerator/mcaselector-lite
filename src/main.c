@@ -47,7 +47,7 @@ int main(int argc, char **argv)
 {
 	int opt = 0;
 	argv0   = *argv;
-	char o;
+	int o;
 	while ((o = getopt(argc, argv, "GRdhqv")) != -1) {
 		switch (o) {
 		case 'G': opt |= OPT_DEFRAG; break;
