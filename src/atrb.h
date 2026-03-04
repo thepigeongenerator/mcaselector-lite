@@ -9,6 +9,9 @@
 #error "Compiler unsupported; use a compiler that supports GNU C extensions."
 #endif
 
+/* Function is unlikely to be executed, and shall be compiled for size. */
+#define COLD __attribute__((__cold__))
+
 /* The return value is not affected by changes to the observable
  * state of the program, and has no observable effect on such state.
  * NOTE: The function mustn't examine data pointed at by pointers. */
@@ -18,6 +21,11 @@
  * or `strfmon` style arguments, which must be type-checked against
  * a format string. */
 #define FORMAT(args) __attribute__((__format__ args))
+
+/* Function is in a particular hot section of the code, and shall be aggressively
+ * optimised for performance. Furthermore, it will be placed
+ * inside a special subsection in .text, which improves locality. */
+#define HOT __attribute__((__hot__))
 
 /* Indicates that the function is `malloc`-like, i.e. the returned
  * pointer may not alias any other pointer valid when the function returns.
