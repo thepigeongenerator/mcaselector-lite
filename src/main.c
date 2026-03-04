@@ -15,14 +15,18 @@
 
 #include "dat/mcx.h"
 #include "types.h"
+#include "util.h"
 
 _Static_assert(-3 >> 5 == -1,
 	"The platform does not compile "
 	"right-shifting signed integers to an arithmetic shift!");
 
+const char        *argv0;
+
 /* Entry-point of the application. */
 int main(int argc, char **argv)
 {
+	argv0 = *argv;
 	for (int i = 1; i < argc; ++i) {
 		int fd = open(argv[i], O_RDWR);
 		if (fd < 0) {
