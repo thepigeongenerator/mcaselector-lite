@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #if defined(__unix__)
-#include <err.h>
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -14,6 +13,7 @@
 #endif
 
 #include "dat/mcx.h"
+#include "err.h"
 #include "io/getopt.h"
 #include "types.h"
 #include "util.h"

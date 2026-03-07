@@ -4,11 +4,11 @@
  * at www.github.com/thepigeongenerator/mcxedit. */
 #include "mcx.h"
 
-#include <err.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "../endian.h"
+#include "../err.h"
 #include "../types.h"
 
 /* Binds an indices with the value in a mcX table.
