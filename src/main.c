@@ -3,8 +3,10 @@
  * view `git log`, and the COPYING and CONTRIBUTORS files
  * at www.github.com/thepigeongenerator/mcxedit. */
 #include <errno.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #if defined(__unix__)
 #include <fcntl.h>
 #include <sys/mman.h>
@@ -41,10 +43,21 @@ static const char *str_help =
 	"  -q: [q]uiet       Silences most error output.\n"
 	"  -v: [v]erbose     Outputs more detailed information.\n"
 	"View %s(1) for more information.\n";
+static _Bool signaled = 0;
+
+static void signal_received(int sig)
+{
+	signaled = 1;
+}
 
 /* Entry-point of the application. */
 int main(int argc, char **argv)
 {
+	/* TODO: With some system calls, we may want to check against
+	 * errno == EINTR, and retry the syscall, since no actual error occurred.
+	 * This may not be necessary however, considering mmap does not have this problem. */
+	signal(SIGINT, signal_received);
+	signal(SIGTERM, signal_received);
 	int opt = 0;
 	argv0   = *argv;
 	int o;
