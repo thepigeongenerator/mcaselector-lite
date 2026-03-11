@@ -49,7 +49,9 @@ PHONY = all
 all: ${NAME}
 
 # CLEANING
-clean:; ${Q}${RM} ${OBJ} ${DEP}
+clean:
+	${Q}find src/ \( -name '*.o' -o -name '*.d' \) -exec rm {} \;
+	${Q}find ./ -name '*.gz' -exec rm {} \;
 PHONY += clean
 
 # SEMANTIC CHECKING
