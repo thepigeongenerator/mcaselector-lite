@@ -22,6 +22,9 @@ CFLAGS   := -O2 ${CFLAGS} -g -std=gnu17\
 LDFLAGS  := -flto ${LDFLAGS}
 LDLIBS   := ${LDLIBS} -lm -larchive
 
+PREFIX = /usr/local
+BINDIR = ${prefix}/bin
+
 # Locate the source files
 SRC := $(shell find src/ -name '*.c' -print)
 OBJ := $(addsuffix .o,${SRC})
@@ -59,10 +62,11 @@ check:; ${Q}sparse ${CPPFLAGS} ${CFLAGS} ${SRC}
 PHONY += check
 
 # INSTALLATION
-install: ${NAME}
-	install -m0755 ${NAME} ${DESTDIR}/bin/${NAME}
+install: all | ${DESTDIR}${bindir}/
+	$(call msg,INSTALL,${NAME})
+	${Q}install -m0755 ${NAME} ${DESTDIR}${bindir}
 uninstall:
-	rm ${DESTDIR}/bin/${NAME}
+	rm ${DESTDIR}${bindir}/${NAME}
 PHONY += install uninstall
 
 # GENERATING TRACKED FILES
@@ -89,6 +93,9 @@ ${NAME}: ${OBJ}
 %.gz: %
 	$(call msg,GZIP,$@)
 	${Q}gzip -fk $<
+%/:
+	$(call msg,MKDIR,$@)
+	${Q}mkdir -p $@
 
 # Generate and include dependencies,
 # ignoring any errors that may occur when doing so.
