@@ -86,7 +86,7 @@ ${NAME}: ${OBJ}
 #
 %.gz: %
 	$(call msg,GZIP,$@)
-	${Q}gzip -k $<
+	${Q}gzip -fk $<
 
 # Generate and include dependencies,
 # ignoring any errors that may occur when doing so.
