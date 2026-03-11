@@ -39,9 +39,10 @@ static const char *str_help =
 	"  -G: defra[G]ment  Removes empty sectors from the file.\n"
 	"  -R: [R]epair      Identifies and repairs faults within the file.\n"
 	"  -d: [d]ry-run     Opens the files as read-only.\n"
-	"  -h: [h]elp        Shows this output & exits.\n"
 	"  -q: [q]uiet       Silences most error output.\n"
 	"  -v: [v]erbose     Outputs more detailed information.\n"
+	"  -V: [V]ersion     Outputs version information & exits.\n"
+	"  -h: [h]elp        Shows this output & exits.\n"
 	"View %s(1) for more information.\n";
 static _Bool signaled = 0;
 
@@ -62,7 +63,7 @@ int main(int argc, char **argv)
 	int opt = 0;
 	argv0   = *argv;
 	int o;
-	while ((o = getopt(argc, argv, "GRdhqv")) != -1) {
+	while ((o = getopt(argc, argv, "GRdqvVh")) != -1) {
 		switch (o) {
 		case 'G': opt |= OPT_DEFRAG; break;
 		case 'R': opt |= OPT_REPAIR; break;
@@ -75,6 +76,9 @@ int main(int argc, char **argv)
 			opt |= OPT_VERBOSE;
 			opt &= ~OPT_QUIET;
 			break;
+		case 'V':
+			printf("%s: v%s\n", *argv, MCXEDIT_VERSION);
+			return 0;
 		case 'h':
 			printf(str_help, *argv, *argv);
 			return 0;
