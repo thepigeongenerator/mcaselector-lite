@@ -47,6 +47,7 @@ static _Bool signaled = 0;
 
 static void signal_received(int sig)
 {
+	(void)sig;
 	signaled = 1;
 }
 
