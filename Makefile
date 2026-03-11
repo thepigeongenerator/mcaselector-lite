@@ -22,8 +22,8 @@ CFLAGS   := -O2 ${CFLAGS} -g -std=gnu17\
 LDFLAGS  := -flto ${LDFLAGS}
 LDLIBS   := ${LDLIBS} -lm -larchive
 
-PREFIX = /usr/local
-BINDIR = ${prefix}/bin
+PREFIX ?= /usr/local
+BINDIR = ${PREFIX}/bin
 
 # Locate the source files
 SRC := $(shell find src/ -name '*.c' -print)
@@ -62,11 +62,11 @@ check:; ${Q}sparse ${CPPFLAGS} ${CFLAGS} ${SRC}
 PHONY += check
 
 # INSTALLATION
-install: all | ${DESTDIR}${bindir}/
+install: all | ${DESTDIR}${BINDIR}/
 	$(call msg,INSTALL,${NAME})
-	${Q}install -m0755 ${NAME} ${DESTDIR}${bindir}
+	${Q}install -m0755 ${NAME} ${DESTDIR}${BINDIR}
 uninstall:
-	rm ${DESTDIR}${bindir}/${NAME}
+	rm ${DESTDIR}${BINDIR}/${NAME}
 PHONY += install uninstall
 
 # GENERATING TRACKED FILES
