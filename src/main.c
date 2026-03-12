@@ -148,7 +148,7 @@ int main(int argc, char **argv)
 		case '?':
 			fprintf(stderr, "Try '%s -h' for help.\n", *argv);
 			return 1;
-		default: UNREACHABLE();
+		default: errx(-SIGTRAP, "Unhandled flag -- '%c', please report this bug.", o);
 		}
 	}
 
