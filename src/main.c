@@ -27,9 +27,12 @@ _Static_assert(-3 >> 5 == -1,
 enum options {
 	OPT_VERBOSE = 1,
 	OPT_QUIET   = 2,
-	OPT_DRY_RUN = 4,
+	OPT_CHECK   = 4,
 	OPT_DEFRAG  = 8,
 	OPT_REPAIR  = 16,
+
+	/* Options that need write access to the file. */
+	OPT_NEED_WRITE = OPT_DEFRAG | OPT_REPAIR,
 };
 
 const char        *argv0;
@@ -38,7 +41,7 @@ static const char *str_help =
 	"Options:\n"
 	"  -G: defra[G]ment  Removes empty sectors from the file.\n"
 	"  -R: [R]epair      Identifies and repairs faults within the file.\n"
-	"  -d: [d]ry-run     Opens the files as read-only.\n"
+	"  -c  [c]heck       Performs more thorough checks on the file.\n"
 	"  -q: [q]uiet       Silences most error output.\n"
 	"  -v: [v]erbose     Outputs more detailed information.\n"
 	"  -V: [V]ersion     Outputs version information & exits.\n"
@@ -52,6 +55,64 @@ static void signal_received(int sig)
 	signaled = 1;
 }
 
+/* Processes an .mcX file with the given options.
+ * Returns non-zero on failure. */
+int procmcx(char *pat, int opt)
+{
+	_Bool need_write = opt & OPT_NEED_WRITE;
+	usize size, esize, tmp;
+	void *mcx;
+
+	const int fd = open(pat, need_write ? O_RDWR : O_RDONLY);
+	if (fd < 0) {
+		warn("%s", pat);
+		goto err;
+	}
+
+	struct stat st;
+	fstat(fd, &st);
+	size = st.st_size;
+	if (size < MCX_TABLES) {
+		warnx("%s: Too small to contain table (%zuB < %zuB)", pat, size, (usize)MCX_TABLES);
+		goto err_close;
+	}
+	tmp = size % MCX_SECTOR;
+	if (tmp && !(opt & OPT_QUIET))
+		warnx("%s: Not 4KiB sector aligned! (%+zdB)", pat, -tmp);
+
+	mcx = mmap(NULL, size, need_write ? (PROT_READ | PROT_WRITE) : PROT_READ, MAP_SHARED, fd, 0);
+	if (mcx == MAP_FAILED) {
+		warn("%s", pat);
+		goto err_close;
+	}
+
+	if (opt & OPT_REPAIR) {
+		tmp = mcx_repair(mcx, size);
+		ftruncate(fd, tmp); /* For when it is larger. */
+		size = tmp;
+	}
+
+	if (opt & OPT_DEFRAG) {
+		esize = mcx_calcsize(mcx);
+		tmp   = size - esize;
+		if ((ssize)tmp < 0) {
+			warnx("%s: Predicted a larger size than the actual size. (%+zdB)", pat, tmp);
+			goto err_unmap;
+		}
+		tmp = mcx_defrag(mcx);
+	}
+
+	munmap(mcx, size);
+	close(fd);
+	return 0;
+err_unmap:
+	munmap(mcx, size);
+err_close:
+	close(fd);
+err:
+	return 1;
+}
+
 /* Entry-point of the application. */
 int main(int argc, char **argv)
 {
@@ -60,14 +121,16 @@ int main(int argc, char **argv)
 	 * This may not be necessary however, considering mmap does not have this problem. */
 	signal(SIGINT, signal_received);
 	signal(SIGTERM, signal_received);
+	argv0 = *argv;
+
+	/* Load the options given in argv. */
 	int opt = 0;
-	argv0   = *argv;
 	int o;
-	while ((o = getopt(argc, argv, "GRdqvVh")) != -1) {
+	while ((o = getopt(argc, argv, "GRcqvVh")) != -1) {
 		switch (o) {
 		case 'G': opt |= OPT_DEFRAG; break;
 		case 'R': opt |= OPT_REPAIR; break;
-		case 'd': opt |= OPT_DRY_RUN; break;
+		case 'c': opt |= OPT_CHECK; break;
 		case 'q':
 			opt |= OPT_QUIET;
 			opt &= ~OPT_VERBOSE;
@@ -89,49 +152,10 @@ int main(int argc, char **argv)
 		}
 	}
 
-	/* Process the *.mcX files */
-	for (int i = optind; i < argc; ++i) {
-		int fd = open(argv[i], opt & OPT_DRY_RUN ? O_RDONLY : O_RDWR);
-		if (fd < 0) {
-			warn("Failed to open '%s'", argv[i]);
-			continue;
-		}
-
-		usize size, esize, tmp;
-
-		struct stat st;
-		fstat(fd, &st);
-		size = st.st_size;
-		if (size < MCX_TABLES) {
-			warnx("%s: Too small to contain table: (%zuB)", argv[i], size);
-			close(fd);
-			continue;
-		}
-		tmp = size % MCX_SECTOR;
-		if (tmp && !(opt & OPT_QUIET))
-			warnx("%s: Not 4KiB sector aligned! (-%zuB)", argv[i], MCX_SECTOR - tmp);
-
-		void *mcx = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-		if (mcx == MAP_FAILED) {
-			warn("%s: Failed to map!", argv[i]);
-			close(fd);
-			continue;
-		}
-
-		esize = mcx_calcsize(mcx);
-		tmp   = size - esize;
-		if ((ssize)tmp < 0 && opt & OPT_QUIET)
-			warnx("%s: Predicted a larger size than the actual size; file is corrupt! (%zdB)", argv[i], tmp);
-
-		if (opt & OPT_DEFRAG) tmp = mcx_defrag(mcx);
-		if (opt & OPT_REPAIR) tmp = mcx_repair(mcx, size);
-		if (opt & OPT_VERBOSE && opt & (OPT_DEFRAG | OPT_REPAIR))
-			printf("%s: New size is (%zdB)", argv[i], size - tmp);
-
-
-		munmap(mcx, size);
-		close(fd);
-	}
-
-	return 0;
+	/* Loop through the remaining options given in argv (files). */
+	int    err = 0;
+	char **pat = argv + optind;
+	for (; *pat; ++pat)
+		err |= procmcx(*pat, opt);
+	return err;
 }
