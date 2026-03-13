@@ -11,22 +11,6 @@
 #include "../err.h"
 #include "../types.h"
 
-/* Binds an indices with the value in a mcX table.
- * Used for when sorting the table. */
-struct mcx_table_item {
-	u32 val;
-	u32 idx;
-};
-
-/* Comparison function used for qsort.
- * Returns <0 if ma is less, =0 if equal, >0 if mb is less. */
-static int mcx_table_item_compar(const void *ma, const void *mb)
-{
-	const struct mcx_table_item *a = ma, *b = mb;
-	return a->val - b->val;
-}
-
-
 void mcx_check(const void *mcx, usize size, const char *pat)
 {
 	const be32 *tbl = mcx;
@@ -77,33 +61,43 @@ usize mcx_repair(void *mcx, usize size)
 	return ((max >> 8) + (max & 0xFF)) * MCX_SECTOR;
 }
 
+/* Comparison function used for qsort.
+ * Returns <0 if ma is less, =0 if equal, >0 if mb is less. */
+static int mcx_defrag_compar(const void *ma, const void *mb)
+{
+	const u32 *a = ma, *b = mb;
+	return *a - *b;
+}
+
 /* Sort the table based on offset,
  * Then move the chunks down into empty space. */
 usize mcx_defrag(void *mcx)
 {
-	struct mcx_table_item tbl[MCX_TABLE_LEN];
-
-	be32 *mcx_tbl = mcx;
+	u32   chunks[MCX_TABLE_LEN * 2];
+	u32  *chunk = chunks;
+	be32 *tbl   = mcx;
 	for (int i = 0; i < MCX_TABLE_LEN; ++i) {
-		u32 v  = cvt_be32toh(mcx_tbl[i]);
-		tbl[i] = (struct mcx_table_item){v, i};
+		*chunk++ = cvt_be32toh(tbl[i]);
+		*chunk++ = i;
 	}
+	qsort(chunks, sizeof(chunks), sizeof(*chunks) * 2, mcx_defrag_compar);
+	u32 *end = chunk;
+	chunk    = chunks;
 
-	qsort(tbl, MCX_TABLE_LEN, sizeof(*tbl), mcx_table_item_compar);
 	u32 pos = 2;
 	u32 chpos, chlen;
-	for (int i = 0; i < MCX_TABLE_LEN; ++i) {
-		chpos = tbl[i].val >> 8;
-		chlen = tbl[i].val & 0xFF;
+	do {
+		chpos = *chunks >> 8;
+		chlen = *chunks & 0xFF;
 		if (chpos == pos || chpos < 2)
 			goto next_table_item;
 
+		/* BUG: Not checking for overlapping chunks causing issues. */
 		memmove(mcx + pos * MCX_SECTOR, mcx + chpos * MCX_SECTOR, chlen * MCX_SECTOR);
-		tbl[i].val          = chlen | (pos << 8);
-		mcx_tbl[tbl[i].idx] = cvt_htobe32(tbl[i].val);
+		tbl[*(chunk + 1)] = cvt_htobe32(chlen | (pos << 8));
 next_table_item:
 		pos += chlen;
-	}
+	} while ((chunk += 2) < end);
 	if (pos == 2)
 		return 0;
 	return pos * MCX_SECTOR;
