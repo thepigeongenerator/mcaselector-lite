@@ -100,7 +100,7 @@ usize mcx_defrag(void *mcx)
 
 		memmove(mcx + pos * MCX_SECTOR, mcx + chpos * MCX_SECTOR, chlen * MCX_SECTOR);
 		tbl[i].val          = chlen | (pos << 8);
-		mcx_tbl[tbl[i].idx] = cvt_htobe32(tbl->val);
+		mcx_tbl[tbl[i].idx] = cvt_htobe32(tbl[i].val);
 next_table_item:
 		pos += chlen;
 	}
