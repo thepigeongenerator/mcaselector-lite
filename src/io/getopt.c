@@ -57,9 +57,8 @@ int getopt(int argc, char *const *_argv, const char *opts)
 		return opt_unwind(argv, idx, 1, -1);
 
 	/* Find a matching option out of opts. */
-	const char *opt = *opts == ':' ? opts + 1 : opts;
-	while (*opt != argv[idx][optind2] && *opt) opt++;
-	if (!*opt || *opt == ':') {
+	const char *opt = strchr(opts + (*opts == ':'), argv[idx][optind2]);
+	if (!opt || *opt == ':') {
 		optopt = argv[idx][optind2];
 		if (opterr && *opts != ':')
 			warnx("invalid option -- %c", optopt);
