@@ -111,7 +111,10 @@ static int procmcx(char *pat, int opt)
 	}
 
 	if (opt & OPT_DEFRAG) {
-		usize esize = mcx_calcsize(mcx);
+		/* TODO: Could this be more optimal? */
+		usize esize1 = mcx_calcsize(mcx);
+		usize esize2 = mcx_sumsize(mcx);
+		usize esize  = esize1 > esize2 ? esize1 : esize2;
 		if (size < esize) {
 			warnx("%s: Predicted a larger size than the actual size. (%+zdB)", pat, size - esize);
 			goto err_unmap;
