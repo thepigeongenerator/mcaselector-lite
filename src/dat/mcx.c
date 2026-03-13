@@ -122,9 +122,9 @@ usize mcx_sumsize(const void *mcx)
 	const be32 *end = tbl + MCX_TABLE_LEN;
 
 	usize sum = 0;
-	while (tbl < end) {
+	do {
 		const u8 *m = (const u8 *)tbl;
 		sum += m[3];
-	}
+	} while (++tbl < end);
 	return sum * MCX_SECTOR + MCX_TABLES;
 }
