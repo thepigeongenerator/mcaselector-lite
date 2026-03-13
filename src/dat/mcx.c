@@ -116,7 +116,7 @@ usize mcx_calcsize(const void *mcx)
 	return ((max >> 8) + (max & 0xFF)) * MCX_SECTOR;
 }
 
-usize mcx_minsize(const void *mcx)
+usize mcx_sumsize(const void *mcx)
 {
 	const be32 *tbl = mcx;
 	const be32 *end = tbl + MCX_TABLE_LEN;

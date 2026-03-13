@@ -48,6 +48,6 @@ usize mcx_calcsize(const void *mcx) PURE;
  * of the actual size due to the presence of unused sectors.
  * In the edge case of overlapping sectors, this value may be larger
  * than the actual file size. */
-usize mcx_minsize(const void *mcx) PURE;
+usize mcx_sumsize(const void *mcx) PURE;
 
 #endif /* MCXEDIT_MCX_H */
