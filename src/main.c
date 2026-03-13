@@ -112,9 +112,8 @@ static int procmcx(char *pat, int opt)
 
 	if (opt & OPT_DEFRAG) {
 		esize = mcx_calcsize(mcx);
-		tmp   = size - esize;
-		if ((ssize)tmp < 0) {
-			warnx("%s: Predicted a larger size than the actual size. (%+zdB)", pat, tmp);
+		if (size < esize) {
+			warnx("%s: Predicted a larger size than the actual size. (%+zdB)", pat, size - esize);
 			goto err_unmap;
 		}
 		tmp = mcx_defrag(mcx);
