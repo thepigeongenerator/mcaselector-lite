@@ -104,6 +104,8 @@ usize mcx_defrag(void *mcx)
 next_table_item:
 		pos += chlen;
 	}
+	if (pos == 2)
+		return 0;
 	return pos * MCX_SECTOR;
 }
 
