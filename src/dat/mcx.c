@@ -65,10 +65,12 @@ usize mcx_repair(void *mcx, usize size)
 
 		if (chpos < 2 || !chlen) {
 			*tbl = 0;
+			continue;
 		} else if (chend > size) {
 			/* TODO: Add functionality that looks at the payload data,
 			 * and attempts to restore from that, if possible. */
 			*tbl = 0;
+			continue;
 		}
 		max = max < tmp ? tmp : max;
 	} while (++tbl < end);
