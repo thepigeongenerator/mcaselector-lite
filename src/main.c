@@ -117,6 +117,8 @@ static int procmcx(char *pat, int opt)
 			goto err_unmap;
 		}
 		tmp = mcx_defrag(mcx);
+		if (try_ftruncate(fd, tmp, pat))
+			goto err_unmap;
 	}
 
 	munmap(mcx, size);
