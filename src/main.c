@@ -72,7 +72,7 @@ static int try_ftruncate(int fd, usize size, const char *pat)
 static int procmcx(char *pat, int opt)
 {
 	_Bool need_write = opt & OPT_NEED_WRITE;
-	usize size, esize, tmp;
+	usize size, nsize, tmp;
 	void *mcx;
 
 	const int fd = open(pat, need_write ? O_RDWR : O_RDONLY);
@@ -104,20 +104,20 @@ static int procmcx(char *pat, int opt)
 		mcx_check(mcx, size, pat);
 
 	if (opt & OPT_REPAIR) {
-		tmp = mcx_repair(mcx, size);
-		if (try_ftruncate(fd, tmp, pat))
+		nsize = mcx_repair(mcx, size);
+		if (try_ftruncate(fd, nsize, pat))
 			goto err_unmap;
-		size = tmp;
+		size = nsize;
 	}
 
 	if (opt & OPT_DEFRAG) {
-		esize = mcx_calcsize(mcx);
+		usize esize = mcx_calcsize(mcx);
 		if (size < esize) {
 			warnx("%s: Predicted a larger size than the actual size. (%+zdB)", pat, size - esize);
 			goto err_unmap;
 		}
-		tmp = mcx_defrag(mcx);
-		if (try_ftruncate(fd, tmp, pat))
+		nsize = mcx_defrag(mcx);
+		if (try_ftruncate(fd, nsize, pat))
 			goto err_unmap;
 	}
 
