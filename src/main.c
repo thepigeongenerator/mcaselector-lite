@@ -73,11 +73,12 @@ static int procmcx(char *pat, int opt)
 	fstat(fd, &st);
 	size = st.st_size;
 	if (size < MCX_TABLES) {
-		warnx("%s: Too small to contain table (%zuB < %zuB)", pat, size, (usize)MCX_TABLES);
+		warnx("%s: Too small to contain table (%zuB < %zuB)",
+			pat, size, (usize)MCX_TABLES);
 		goto err_close;
 	}
 	tmp = size % MCX_SECTOR;
-	if (tmp && !(opt & OPT_QUIET))
+	if (tmp && !(opt & OPT_QUIET || opt & OPT_CHECK))
 		warnx("%s: Not 4KiB sector aligned! (%+zdB)", pat, -tmp);
 
 	mcx = mmap(NULL, size, need_write ? (PROT_READ | PROT_WRITE) : PROT_READ, MAP_SHARED, fd, 0);
@@ -85,6 +86,9 @@ static int procmcx(char *pat, int opt)
 		warn("%s", pat);
 		goto err_close;
 	}
+
+	if (opt & OPT_CHECK)
+		mcx_check(mcx, size, pat);
 
 	if (opt & OPT_REPAIR) {
 		tmp = mcx_repair(mcx, size);

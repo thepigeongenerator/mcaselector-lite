@@ -14,6 +14,8 @@
 #define MCX_TABLE_LEN  0x400  /* Amount of elements within one table. */
 #define MCX_TABLES_LEN 0x800  /* Amount of elements within the tables. */
 
+void mcx_check(const void *mcx, usize size, const char *pat);
+
 /* Repairs faults in the file format,
  * outputting warnings describing the repaired fault & affected chunk.
  * Returns the size of the file, which may be larger than,
