@@ -57,7 +57,7 @@ static void signal_received(int sig)
 
 /* Processes an .mcX file with the given options.
  * Returns non-zero on failure. */
-int procmcx(char *pat, int opt)
+static int procmcx(char *pat, int opt)
 {
 	_Bool need_write = opt & OPT_NEED_WRITE;
 	usize size, esize, tmp;
