@@ -28,12 +28,12 @@ Planned Features
 * ``[ ]`` Support both `.mca` and `.mcr` files, and various levels of compression.
 * ``[ ]`` Filtering chunks based on player time.
 * ``[x]`` Pruning unused sectors, such as in-between entries and towards the end.
-* ``[ ]`` Region file repairs, as far as possible that is.
+* ``[~]`` Region file repairs, as far as possible that is.
 * ``[ ]`` Converting `.mcr` to `.mca`.
 * ``[ ]`` Changing chunk compression.
 * ``[ ]`` sNBT based chunk filtering.
 * ``[ ]`` View/change chunk sNBT.
-* ``[ ]`` CLI / Terminal - based input.
+* ``[x]`` CLI / Terminal - based input.
 * ``[ ]`` GUI / Graphical - based input.
 
 .. note::
