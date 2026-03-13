@@ -55,6 +55,18 @@ static void signal_received(int sig)
 	signaled = 1;
 }
 
+static int try_ftruncate(int fd, usize size, const char *pat)
+{
+	int e;
+	do e = ftruncate(fd, size);
+	while (e && errno == EINTR);
+	if (e) {
+		warn("%s: ftruncate() failed", pat);
+		return 1;
+	}
+	return 0;
+}
+
 /* Processes an .mcX file with the given options.
  * Returns non-zero on failure. */
 static int procmcx(char *pat, int opt)
@@ -92,7 +104,8 @@ static int procmcx(char *pat, int opt)
 
 	if (opt & OPT_REPAIR) {
 		tmp = mcx_repair(mcx, size);
-		ftruncate(fd, tmp); /* For when it is larger. */
+		if (try_ftruncate(fd, tmp, pat))
+			goto err_unmap;
 		size = tmp;
 	}
 
