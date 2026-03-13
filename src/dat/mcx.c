@@ -95,14 +95,14 @@ usize mcx_defrag(void *mcx)
 	for (int i = 0; i < MCX_TABLE_LEN; ++i) {
 		chpos = tbl[i].val >> 8;
 		chlen = tbl[i].val & 0xFF;
-		if (chpos == pos || chpos < 2) {
-			pos += chlen;
-			continue;
-		}
+		if (chpos == pos || chpos < 2)
+			goto next_table_item;
 
 		memmove(mcx + pos * MCX_SECTOR, mcx + chpos * MCX_SECTOR, chlen * MCX_SECTOR);
 		tbl[i].val          = chlen | (pos << 8);
 		mcx_tbl[tbl[i].idx] = cvt_htobe32(tbl->val);
+next_table_item:
+		pos += chlen;
 	}
 	return pos * MCX_SECTOR;
 }
