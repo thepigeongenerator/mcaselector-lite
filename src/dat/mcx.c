@@ -28,35 +28,26 @@ static int mcx_table_item_compar(const void *ma, const void *mb)
 
 usize mcx_repair(void *mcx, usize size)
 {
-	u32   max = 0, tmp; /* Using similar approach as in mcx_calcsize */
-	u32   chpos, chlen, chend;
 	be32 *tbl = mcx;
-	for (int i = 0; i < MCX_TABLE_LEN; ++i) {
-		if (!tbl[i]) continue;
-		tmp   = cvt_be32toh(tbl[i]);
-		chlen = tmp & 0xFF;
+	be32 *end = mcx + MCX_TABLE;
+	u32   chpos, chlen, chend;
+	u32   max = 0, tmp;
+	do {
+		if (!*tbl) continue; /* TODO: may be faster without? */
+		tmp   = cvt_be32toh(*tbl);
 		chpos = tmp >> 8;
-		chend = (chlen + chpos) * MCX_SECTOR;
+		chlen = tmp & 0xFF;
+		chend = (chpos + chlen) * MCX_SECTOR;
 
 		if (chpos < 2 || !chlen) {
-			warnx("(%u,%u): Chunk has invalid sectors.",
-				i % 32, i / 32);
-			tbl[i] = 0;
-			continue;
+			*tbl = 0;
+		} else if (chend > size) {
+			/* TODO: Add functionality that looks at the payload data,
+			 * and attempts to restore from that, if possible. */
+			*tbl = 0;
 		}
-
-		/* TODO: Add functionality that looks at the payload data,
-		 * and attempts to restore from that, if possible. */
-		if (chend > size) {
-			warnx("(%u,%u): Chunk exeeds the maximum file size, need %zuB, got %zuB",
-				i % 32, i / 32, (usize)chend, size);
-			tbl[i] = 0;
-			continue;
-		}
-
 		max = max < tmp ? tmp : max;
-	}
-
+	} while (++tbl < end);
 	return ((max >> 8) + (max & 0xFF)) * MCX_SECTOR;
 }
 
@@ -78,14 +69,14 @@ usize mcx_defrag(void *mcx)
 	for (int i = 0; i < MCX_TABLE_LEN; ++i) {
 		chpos = tbl[i].val & 0xFF;
 		chlen = tbl[i].val >> 8;
-		if (chpos == pos || chpos < 2)
-			goto next_table_item; /* If pos <2, len=0. */
+		if (chpos == pos || chpos < 2) {
+			pos += chlen;
+			continue;
+		}
 
 		memmove(mcx + pos * MCX_SECTOR, mcx + chpos * MCX_SECTOR, chlen * MCX_SECTOR);
 		tbl[i].val          = chlen | (pos << 8);
 		mcx_tbl[tbl[i].idx] = cvt_htobe32(tbl->val);
-next_table_item:
-		pos += chlen;
 	}
 	return pos * MCX_SECTOR;
 }
@@ -94,15 +85,11 @@ usize mcx_calcsize(const void *mcx)
 {
 	const be32 *tbl = mcx;
 	const be32 *end = tbl + MCX_TABLE_LEN;
-
-	/* We can get away with comparing without masking,
-	 * Since the sector data is the least significant byte,
-	 * and thus won't weigh into our results. */
-	u32 max = 0, tmp;
-	while (tbl < end) {
-		tmp = cvt_be32toh(*tbl++);
+	u32         max = 0, tmp;
+	do {
+		tmp = cvt_be32toh(*tbl);
 		max = max < tmp ? tmp : max;
-	}
+	} while (++tbl < end);
 	return ((max >> 8) + (max & 0xFF)) * MCX_SECTOR;
 }
 
