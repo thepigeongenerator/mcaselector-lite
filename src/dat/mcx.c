@@ -15,7 +15,7 @@
  * Used for when sorting the table. */
 struct mcx_table_item {
 	u32 val;
-	u16 idx;
+	u32 idx;
 };
 
 /* Comparison function used for qsort.
