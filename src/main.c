@@ -181,7 +181,7 @@ int main(int argc, char **argv)
 	/* Loop through the remaining options given in argv (files). */
 	int    err = 0;
 	char **pat = argv + optind;
-	for (; *pat; ++pat)
+	for (; !signaled && *pat; ++pat)
 		err |= procmcx(*pat, opt);
 	return err;
 }
