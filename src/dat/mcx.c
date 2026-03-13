@@ -93,8 +93,8 @@ usize mcx_defrag(void *mcx)
 	u32 pos = 2;
 	u32 chpos, chlen;
 	for (int i = 0; i < MCX_TABLE_LEN; ++i) {
-		chpos = tbl[i].val & 0xFF;
-		chlen = tbl[i].val >> 8;
+		chpos = tbl[i].val >> 8;
+		chlen = tbl[i].val & 0xFF;
 		if (chpos == pos || chpos < 2) {
 			pos += chlen;
 			continue;
