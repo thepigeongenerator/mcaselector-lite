@@ -11,6 +11,7 @@
 #include "../err.h"
 #include "../types.h"
 
+/* TODO: check for overlapping. */
 void mcx_check(const void *mcx, usize size, const char *pat)
 {
 	const be32 *tbl = mcx;
