@@ -85,6 +85,7 @@ static int procmcx(char *pat, int opt)
 	fstat(fd, &st);
 	size = st.st_size;
 	if (size < MCX_TABLES) {
+		/* Not deleting this, since I do not think it is wise to decide that here. */
 		warnx("%s: Too small to contain table (%zuB < %zuB)",
 			pat, size, (usize)MCX_TABLES);
 		goto err_close;
@@ -123,6 +124,8 @@ static int procmcx(char *pat, int opt)
 
 	munmap(mcx, size);
 	close(fd);
+	if (opt & OPT_NEED_WRITE && !size)
+		remove(pat);
 	return 0;
 err_unmap:
 	munmap(mcx, size);
