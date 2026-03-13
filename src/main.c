@@ -124,8 +124,12 @@ static int procmcx(char *pat, int opt)
 
 	munmap(mcx, size);
 	close(fd);
-	if (opt & OPT_NEED_WRITE && !size)
-		remove(pat);
+	if (opt & OPT_NEED_WRITE && !size) {
+		if (remove(pat))
+			warn("failed to remove '%s'", pat);
+		else if (opt & OPT_VERBOSE)
+			printf("removed '%s'\n", pat);
+	}
 	return 0;
 err_unmap:
 	munmap(mcx, size);
