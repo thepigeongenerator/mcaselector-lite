@@ -4,6 +4,7 @@
 # at www.github.com/thepigeongenerator/mcxedit.
 SHELL = /bin/sh
 .SUFFIXES:
+.SECONDARY:
 
 # Include persistent user configurations.
 -include .config.mk
@@ -67,20 +68,13 @@ PHONY += check
 
 # INSTALLATION
 install: all | ${DESTDIR}${BINDIR}/
-	$(call msg,INSTALL,${NAME})
-	${Q}install -m0755 ${NAME} ${DESTDIR}${BINDIR}
-uninstall:
-	rm ${DESTDIR}${BINDIR}/${NAME}
-PHONY += install uninstall
-
-# MANPAGE INSTALLATION
-# NOTE: I know this is inconsistent, I just cannot anymore at this point
-install-man: manpages
+	install -m0755 ${NAME} ${DESTDIR}${BINDIR}
 	${Q}$(foreach man,$(MANPAGES:man/%=%),\
 	install -D -m0644 man/${man} ${DESTDIR}${MANDIR}/${man};)
-uninstall-man:
+uninstall:
+	rm ${DESTDIR}${BINDIR}/${NAME}
 	rm $(MANPAGES:man/%=${DESTDIR}${MANDIR}/%)
-PHONY += install-man uninstall-man
+PHONY += install uninstall
 
 # GENERATING TRACKED FILES
 CONTRIBUTORS:

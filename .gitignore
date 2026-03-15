@@ -3,7 +3,6 @@
 
 
 # Ignore (commonly) produced files (Sorted alphabetically)
-*.[0-9]
 *.a
 *.d
 *.exe
