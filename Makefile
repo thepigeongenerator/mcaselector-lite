@@ -67,10 +67,13 @@ check:; ${Q}sparse ${CPPFLAGS} ${CFLAGS} ${SRC}
 PHONY += check
 
 # INSTALLATION
-install: all | ${DESTDIR}${BINDIR}/
+installdirs: | \
+	${DESTDIR}${BINDIR}/ ${DESTDIR}${MANDIR}/ \
+	$(addprefix ${DESTDIR}${MANDIR}/,$(sort $(dir $(MANPAGES:man/%=%))))
+install: all | installdirs
 	install -m0755 ${NAME} ${DESTDIR}${BINDIR}
 	${Q}$(foreach man,$(MANPAGES:man/%=%),\
-	install -D -m0644 man/${man} ${DESTDIR}${MANDIR}/${man};)
+	install -m0644 man/${man} ${DESTDIR}${MANDIR}/${man};)
 uninstall:
 	rm ${DESTDIR}${BINDIR}/${NAME}
 	rm $(MANPAGES:man/%=${DESTDIR}${MANDIR}/%)
