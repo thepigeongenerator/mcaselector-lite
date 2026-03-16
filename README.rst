@@ -1,3 +1,10 @@
+=======
+MCXEdit
+=======
+--------------------------------------------------------------
+A utility for processing Minecraft: Java Edition Region files.
+--------------------------------------------------------------
+
 .. warning::
    This application is **not** ready for usage, and shouldn't be used.
    It is under active development and most features are considered "alpha",
@@ -6,7 +13,6 @@
 
 .. _the release tab: https://github.com/thepigeongenerator/mcxedit/releases
 
-================
 What does it do?
 ================
 MCX Edit is a tool used to edit `region files`_
@@ -20,7 +26,6 @@ Though, it is recommended to use something such as `dynmap`_ instead (if applica
 .. _Minecraft Java: https://minecraft.wiki/w/Java_Edition
 .. _dynmap:         https://dynmap.wiki.gg/wiki/Home
 
-================
 Planned Features
 ================
 * ``[ ]`` Generating a map of the blocks,
@@ -41,7 +46,6 @@ Planned Features
    be realistic to implement, or even reflect what direction
    I end up taking the project.
 
-================
 Similar software
 ================
 * `MCA-Selector <https://github.com/Querz/mcaselector>`__ (inspiration of this project)
