@@ -8,9 +8,9 @@
 =======
 MCXEDIT
 =======
-----------------------------------------------------------------
-A utility for processing *Minecraft: Java Edition* Region files.
-----------------------------------------------------------------
+--------------------------------------------------------------
+A utility for processing Minecraft: Java Edition Region files.
+--------------------------------------------------------------
 :Version: mcxedit @@VERSION@@
 :Date: @@DATE@@
 :Manual section: 1
