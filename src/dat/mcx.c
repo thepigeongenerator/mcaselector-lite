@@ -20,7 +20,6 @@ void mcx_check(const void *mcx, usize size, const char *pat)
 	for (int i = 0; ++tbl < end; ++i) {
 		if (!*tbl) continue;
 		tmp   = cvt_be32toh(*tbl);
-		chlen = tmp & 0xFF;
 		chpos = tmp >> 8;
 		chlen = tmp & 0xFF;
 		chend = (chpos + chlen) * MCX_SECTOR;
