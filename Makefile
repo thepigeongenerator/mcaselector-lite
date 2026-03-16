@@ -71,9 +71,10 @@ installdirs: | \
 	${DESTDIR}${BINDIR}/ ${DESTDIR}${MANDIR}/ \
 	$(addprefix ${DESTDIR}${MANDIR}/,$(sort $(dir $(MANPAGES:man/%=%))))
 install: all | installdirs
-	install -m0755 ${NAME} ${DESTDIR}${BINDIR}
-	${Q}$(foreach man,$(MANPAGES:man/%=%),\
-	install -m0644 man/${man} ${DESTDIR}${MANDIR}/${man};)
+	${Q}install -m0755 ${NAME} ${DESTDIR}${BINDIR}/${NAME}
+	${Q}for man in $(MANPAGES:man/%=%); do\
+		install -m0644 "man/$$man" ${DESTDIR}${MANDIR}/"$$man";\
+	done
 uninstall:
 	rm ${DESTDIR}${BINDIR}/${NAME}
 	rm $(MANPAGES:man/%=${DESTDIR}${MANDIR}/%)
