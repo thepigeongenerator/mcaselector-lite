@@ -49,3 +49,4 @@ Planned Features
 Similar software
 ================
 * `MCA-Selector <https://github.com/Querz/mcaselector>`__ (inspiration of this project)
+* `MCEdit <https://www.mcedit.net>`__ (unmaintained)
