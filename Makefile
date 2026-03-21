@@ -70,7 +70,7 @@ PHONY += check
 installdirs: | \
 	${DESTDIR}${BINDIR}/ ${DESTDIR}${MANDIR}/ \
 	$(addprefix ${DESTDIR}${MANDIR}/,$(sort $(dir $(MANPAGES:man/%=%))))
-install: all | installdirs
+install: all manpages | installdirs
 	${Q}install -m0755 ${NAME} ${DESTDIR}${BINDIR}/${NAME}
 	${Q}for man in $(MANPAGES:man/%=%); do\
 		install -m0644 "man/$$man" ${DESTDIR}${MANDIR}/"$$man";\
