@@ -20,7 +20,7 @@ VERSION = 0.0
 CPPFLAGS := -DNDEBUG -U_GNU_SOURCE ${CPPFLAGS} -DMCXEDIT_VERSION=\"${VERSION}\"
 CFLAGS   := -O2 ${CFLAGS} -g -std=gnu17\
 	    -Wall -Wextra -Wpedantic -Wno-pointer-arith -Wvla
-LDFLAGS  := -flto ${LDFLAGS}
+LDFLAGS  := ${LDFLAGS}
 LDLIBS   := ${LDLIBS} -lm -larchive
 
 PREFIX ?= /usr/local
