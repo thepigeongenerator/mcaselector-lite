@@ -4,8 +4,8 @@
  * at www.github.com/thepigeongenerator/mcxedit. */
 #ifndef MCXEDIT_CONF_H
 #define MCXEDIT_CONF_H 1
-#include "../atrb.h"
-#include "../types.h"
+#include <libmcx/atrb.h>
+#include <libmcx/types.h>
 
 enum conf_type {
 	CONF_STR = 0x00,

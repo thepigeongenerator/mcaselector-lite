@@ -5,7 +5,7 @@
 #ifndef MCXEDIT_ENDIAN_H
 #define MCXEDIT_ENDIAN_H 1
 
-#include "types.h"
+#include <libmcx/types.h>
 
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 #define cvt_le16toh(x) ((FORCE u16)(le16)x)

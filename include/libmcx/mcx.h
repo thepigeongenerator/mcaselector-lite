@@ -5,8 +5,8 @@
 #ifndef MCXEDIT_MCX_H
 #define MCXEDIT_MCX_H 1
 
-#include "../atrb.h"
-#include "../types.h"
+#include <libmcx/atrb.h>
+#include <libmcx/types.h>
 
 #define MCX_SECTOR     0x1000 /* Size in bytes for a sector. */
 #define MCX_TABLE      0x1000 /* Size in bytes for one table. */

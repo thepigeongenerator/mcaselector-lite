@@ -17,7 +17,9 @@ VERSION = 0.0
 # Flags, including the flag in the definition so it may be overridden.
 # Generally speaking, anything prior to the recursive reference of the variable
 # is able to be overridden, anything afterwards is applied no matter what.
-CPPFLAGS := -DNDEBUG -U_GNU_SOURCE ${CPPFLAGS} -DMCXEDIT_VERSION=\"${VERSION}\"
+CPPFLAGS := -DNDEBUG -U_GNU_SOURCE ${CPPFLAGS}\
+	    -DMCXEDIT_VERSION=\"${VERSION}\" -DMCXEDIT_SOURCE\
+	    -Iinclude
 CFLAGS   := -O2 ${CFLAGS} -g -std=gnu17\
 	    -Wall -Wextra -Wpedantic -Wno-pointer-arith -Wvla
 LDFLAGS  := ${LDFLAGS}

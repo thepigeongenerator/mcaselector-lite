@@ -14,11 +14,11 @@
 #include <unistd.h>
 #endif
 
-#include "dat/mcx.h"
+#include <libmcx/mcx.h>
+#include <libmcx/types.h>
+
 #include "err.h"
-#include "io/getopt.h"
-#include "types.h"
-#include "util.h"
+#include "getopt.h"
 
 _Static_assert(-3 >> 5 == -1,
 	"The platform does not compile "
@@ -35,6 +35,7 @@ enum options {
 	OPT_NEED_WRITE = OPT_DEFRAG | OPT_REPAIR,
 };
 
+extern const char *argv0;
 const char        *argv0;
 static const char *str_help =
 	"%s [options] /path/to/region1 ...\n"

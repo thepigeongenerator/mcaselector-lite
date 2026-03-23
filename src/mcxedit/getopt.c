@@ -5,12 +5,12 @@
 #include "getopt.h"
 
 #include <assert.h>
+#include <libmcx/types.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "../err.h"
-#include "../types.h"
+#include "err.h"
 
 char *optarg = NULL;
 int   opterr = 1;

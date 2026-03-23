@@ -2,14 +2,14 @@
  * Licensed under GPL-2.0-only. For further information,
  * view `git log`, and the COPYING and CONTRIBUTORS files
  * at www.github.com/thepigeongenerator/mcxedit. */
-#include "mcx.h"
+#include <libmcx/mcx.h>
 
+#include <err.h> /* FIX: doesn't exist on WinBlows. */
+#include <libmcx/types.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "../endian.h"
-#include "../err.h"
-#include "../types.h"
+#include "endian.h"
 
 /* TODO: check for overlapping. */
 void mcx_check(const void *mcx, usize size, const char *pat)

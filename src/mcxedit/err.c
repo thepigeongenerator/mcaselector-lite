@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "util.h"
+extern const char *argv0;
 
 void verr(int code, const char *fmt, va_list args)
 {
