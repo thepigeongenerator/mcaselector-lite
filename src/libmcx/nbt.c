@@ -43,9 +43,9 @@ static inline u64 buftoh64(const void *restrict buf)
  * Outputs the allocated data to `out`, returns where the next pointer would be. */
 static const u8 *procarr(const u8 *restrict buf, s32 nmemb, uint size, struct nbt_array *restrict out)
 {
-	usize len = nmemb * size;
-	void *dat = malloc(len);
-	*out      = (struct nbt_array){len, {dat}};
+	size_t len = nmemb * size;
+	void  *dat = malloc(len);
+	*out       = (struct nbt_array){len, {dat}};
 	if (!dat) // BUG: no error handling?
 		return buf + len;
 

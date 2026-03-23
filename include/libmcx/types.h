@@ -23,14 +23,14 @@ typedef unsigned long long ullong;
 
 /* TODO: Convert these into their standard variations. */
 #if __SIZEOF_SIZE_T__ == __SIZEOF_INT__
-typedef uint usize;
-typedef int  ssize;
+typedef uint size_t;
+typedef int  ssize_t;
 #elif __SIZEOF_SIZE_T__ == __SIZEOF_LONG__
-typedef ulong usize;
-typedef long  ssize;
+typedef ulong size_t;
+typedef long  ssize_t;
 #elif __SIZEOF_SIZE_T__ == __SIZEOF_LONG_LONG__
-typedef ullong usize;
-typedef llong  ssize;
+typedef ullong size_t;
+typedef llong  ssize_t;
 #endif
 
 typedef __INT8_TYPE__   __s8;

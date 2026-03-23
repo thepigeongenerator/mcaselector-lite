@@ -12,7 +12,7 @@
 #include "endian.h"
 
 /* TODO: check for overlapping. */
-void mcx_check(const void *mcx, usize size, const char *pat)
+void mcx_check(const void *mcx, size_t size, const char *pat)
 {
 	const be32 *tbl = mcx;
 	const be32 *end = mcx + MCX_TABLE;
@@ -34,7 +34,7 @@ void mcx_check(const void *mcx, usize size, const char *pat)
 	}
 }
 
-usize mcx_repair(void *mcx, usize size)
+size_t mcx_repair(void *mcx, size_t size)
 {
 	be32 *tbl = mcx;
 	be32 *end = mcx + MCX_TABLE;
@@ -71,7 +71,7 @@ static int mcx_defrag_compar(const void *ma, const void *mb)
 
 /* Sort the table based on offset,
  * Then move the chunks down into empty space. */
-usize mcx_defrag(void *mcx)
+size_t mcx_defrag(void *mcx)
 {
 	u32   chunks[MCX_TABLE_LEN * 2];
 	u32  *chunk = chunks;
@@ -103,7 +103,7 @@ next_table_item:
 	return pos * MCX_SECTOR;
 }
 
-usize mcx_calcsize(const void *mcx)
+size_t mcx_calcsize(const void *mcx)
 {
 	const be32 *tbl = mcx;
 	const be32 *end = tbl + MCX_TABLE_LEN;
@@ -115,12 +115,12 @@ usize mcx_calcsize(const void *mcx)
 	return ((max >> 8) + (max & 0xFF)) * MCX_SECTOR;
 }
 
-usize mcx_sumsize(const void *mcx)
+size_t mcx_sumsize(const void *mcx)
 {
 	const be32 *tbl = mcx;
 	const be32 *end = tbl + MCX_TABLE_LEN;
 
-	usize sum = 0;
+	size_t sum = 0;
 	do {
 		const u8 *m = (const u8 *)tbl;
 		sum += m[3];

@@ -28,7 +28,7 @@ static int opt_unwind(char **argv, int idx, int nargs, int ret)
 	if (optind != idx) {
 		char **cargv = argv + optind;
 		char  *args[2];
-		usize  nargsb = sizeof(*argv) * nargs;
+		size_t nargsb = sizeof(*argv) * nargs;
 		memcpy(args, argv + idx, sizeof(args)); /* argv[argc] == NULL. */
 		memmove(cargv + nargs, cargv, sizeof(*argv) * (idx - optind));
 		memcpy(cargv, args, nargsb);

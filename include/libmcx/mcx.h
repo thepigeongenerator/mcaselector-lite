@@ -14,19 +14,19 @@
 #define MCX_TABLE_LEN  0x400  /* Amount of elements within one table. */
 #define MCX_TABLES_LEN 0x800  /* Amount of elements within the tables. */
 
-void mcx_check(const void *mcx, usize size, const char *pat);
+void mcx_check(const void *mcx, size_t size, const char *pat);
 
 /* Repairs faults in the file format,
  * outputting warnings describing the repaired fault & affected chunk.
  * Returns the size of the file, which may be larger than,
  * less than, or equal to the original size. */
-usize mcx_repair(void *mcx, usize size);
+size_t mcx_repair(void *mcx, size_t size);
 
 /* Prunes the unused sections in a .mcX file.
  * It is assumed that the table is formatted correctly and
  * that all data is accessible.
  * Returns the new file size.*/
-usize mcx_defrag(void *mcx);
+size_t mcx_defrag(void *mcx);
 
 /* Computes the size in bytes of the entire .mcX file,
  * according to the table.
@@ -37,7 +37,7 @@ usize mcx_defrag(void *mcx);
  * sectors at the end, or that overlapping values are present.
  * If this value is higher than the actual file size,
  * then corruption has taken place. */
-usize mcx_calcsize(const void *mcx) PURE;
+size_t mcx_calcsize(const void *mcx) PURE;
 
 /* Computes the minimum size in bytes required for the entire .mcX file,
  * according to the table.
@@ -48,6 +48,6 @@ usize mcx_calcsize(const void *mcx) PURE;
  * of the actual size due to the presence of unused sectors.
  * In the edge case of overlapping sectors, this value may be larger
  * than the actual file size. */
-usize mcx_sumsize(const void *mcx) PURE;
+size_t mcx_sumsize(const void *mcx) PURE;
 
 #endif /* MCXEDIT_MCX_H */

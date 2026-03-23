@@ -56,7 +56,7 @@ static void signal_received(int sig)
 	signaled = 1;
 }
 
-static int try_ftruncate(int fd, usize size, const char *pat)
+static int try_ftruncate(int fd, size_t size, const char *pat)
 {
 	int e;
 	do e = ftruncate(fd, size);
@@ -72,9 +72,9 @@ static int try_ftruncate(int fd, usize size, const char *pat)
  * Returns non-zero on failure. */
 static int procmcx(char *pat, int opt)
 {
-	_Bool need_write = opt & OPT_NEED_WRITE;
-	usize size, nsize, tmp;
-	void *mcx;
+	_Bool  need_write = opt & OPT_NEED_WRITE;
+	size_t size, nsize, tmp;
+	void  *mcx;
 
 	const int fd = open(pat, need_write ? O_RDWR : O_RDONLY);
 	if (fd < 0) {
@@ -88,7 +88,7 @@ static int procmcx(char *pat, int opt)
 	if (size < MCX_TABLES) {
 		/* Not deleting this, since I do not think it is wise to decide that here. */
 		warnx("%s: Too small to contain table (%zuB < %zuB)",
-			pat, size, (usize)MCX_TABLES);
+			pat, size, (size_t)MCX_TABLES);
 		goto err_close;
 	}
 	tmp = size % MCX_SECTOR;
@@ -113,9 +113,9 @@ static int procmcx(char *pat, int opt)
 
 	if (opt & OPT_DEFRAG) {
 		/* TODO: Could this be more optimal? */
-		usize esize1 = mcx_calcsize(mcx);
-		usize esize2 = mcx_sumsize(mcx);
-		usize esize  = esize1 > esize2 ? esize1 : esize2;
+		size_t esize1 = mcx_calcsize(mcx);
+		size_t esize2 = mcx_sumsize(mcx);
+		size_t esize  = esize1 > esize2 ? esize1 : esize2;
 		if (size < esize) {
 			warnx("%s: Predicted a larger size than the actual size. (%+zdB)", pat, size - esize);
 			goto err_unmap;
