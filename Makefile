@@ -9,9 +9,6 @@ SHELL = /bin/sh
 # Include persistent user configurations.
 -include .config.mk
 
-# Binary & versioning information
-# NAME exists because Windows_NT.mk appends ".exe", because yup.
-NAME    = mcxedit
 VERSION = 0.0
 
 # Flags, including the flag in the definition so it may be overridden.
@@ -22,19 +19,27 @@ CPPFLAGS := -DNDEBUG -U_GNU_SOURCE ${CPPFLAGS}\
 	    -Iinclude
 CFLAGS   := -O2 ${CFLAGS} -g -std=gnu17\
 	    -Wall -Wextra -Wpedantic -Wno-pointer-arith -Wvla
-LDFLAGS  := ${LDFLAGS}
-LDLIBS   := ${LDLIBS} -lm -larchive
+LDFLAGS  := ${LDFLAGS} -L.
+LDLIBS   := ${LDLIBS} -lm -larchive -lmcx
 
-PREFIX ?= /usr/local
-BINDIR  = ${PREFIX}/bin
-MANDIR  = ${PREFIX}/share/man
+# Configure the prefix directories for installation rules.
+prefix ?= /usr/local
+bindir := ${prefix}/bin
+libdir := ${prefix}/lib
+mandir := ${prefix}/share
 
-# Locate the source files
-SRC      := $(shell find src/ -name '*.c' -print)
-OBJ      := $(addsuffix .o,${SRC})
-DEP      := $(addsuffix .d,${SRC})
-MANSRC   := $(shell find man/ -name '*.rst' -print)
-MANPAGES := $(MANSRC:%.rst=%.gz)
+# Sources for libmcx
+libmcx_SRC  := $(wildcard src/libmcx/*.c)
+libmcx_OBJ  := $(addsuffix .o,${libmcx_SRC})
+libmcx_SOBJ := $(addsuffix .so.o,${libmcx_SRC})
+libmcx_DEP  := $(addsuffix .d,${libmcx_SRC})
+
+# Sources for mcxedit
+mcxedit_SRC := $(wildcard src/mcxedit/*.c)
+mcxedit_OBJ := $(addsuffix .o,${mcxedit_SRC})
+mcxedit_DEP := $(addsuffix .d,${mcxedit_SRC})
+
+DEP := ${mcxedit_DEP} ${libmcx_DEP}
 
 # Set Q to @ to silence commands being printed, unless --no-silent has been set
 ifeq (0, $(words $(findstring --no-silent,${MAKEFLAGS})))
@@ -45,42 +50,65 @@ msg=
 Q=
 endif
 
-# Detect whether we're compiling on Windows, meaning
-# a lot of things considered "standard" are unavailable.
-ifeq (${OS},Windows_NT)
-include Windows_NT.mk
+PHONY = all manpages
+
+ifneq (${OS},Windows_NT)
+all: libmcx.so libmcx.a mcxedit mcxedit.static
+libmcx.so: ${libmcx_SOBJ}
+	$(call msg,LD,$@)
+	${Q}${CC} ${LDFLAGS} -shared ${LDLIBS} -o $@ $^
+mcxedit: ${mcxedit_OBJ}
+	$(call msg,LD,$@)
+	${Q}${CC} ${LDFLAGS} ${LDLIBS} -o $@ $^
+mcxedit.static: ${mcxedit_OBJ} libmcx.a
+	$(call msg,LD,$@)
+	${Q}${CC} ${LDFLAGS} ${LDLIBS} -o $@ $^
+
+installdirs: | \
+	${DESTDIR}${bindir}/ ${DESTDIR}${mandir}/ ${DESTDIR}${libdir}/\
+	$(addprefix ${DESTDIR}${MANDIR}/,$(sort $(dir $(MANPAGES:man/%=%))))
+install: all manpages | installdirs
+	${Q}install -m0755 mcxedit   ${DESTDIR}${bindir}
+	${Q}install -m0755 libmcx.so ${DESTDIR}${libdir}
+	${Q}install -m0755 libmcx.a  ${DESTDIR}${libdir}
+	${Q}for man in $(MANPAGES:man/%=%); do\
+		install -m0644 "man/$$man" ${DESTDIR}${MANDIR}/"$$man";\
+	done
+uninstall:
+	${Q}${RM} ${DESTDIR}${bindir}/mcxedit
+	${Q}${RM} ${DESTDIR}${libdir}/libmcx.so
+	${Q}${RM} ${DESTDIR}${libdir}/libmcx.a
+	${Q}${RM} $(MANPAGES:man/%=${DESTDIR}${mandir}/%)
+else
+$(warning Detected  Windows_NT kernel, please refer to the documentation if you encounter issues.)
+all: libmcx.dll libmcx.a mcxedit.exe
+libmcx.dll: ${libmcx_SOBJ}
+	$(call msg,LD,$@)
+	${Q}${CC} ${LDFLAGS} -shared ${LDLIBS} -o $@ $^
+mcxedit.exe: ${mcxedit_OBJ} libmcx.a
+	$(call msg,LD,$@)
+	${Q}${CC} ${LDFLAGS} ${LDLIBS} -o $@ $^
+
+# BUG: I am purposefully neglecting this at the moment.
+# TODO: Figure out what the fuck they do with files.
 endif
 
-# ==================== #
-#   Rule Definitions   #
-# ==================== #
-PHONY = all manpages
-all: ${NAME}
-manpages: ${MANPAGES}
+libmcx.a: ${libmcx_OBJ}
+	$(call msg,AR,$@)
+	${Q}${AR} -rsc $@ $<
 
 # CLEANING
 clean:
-	${Q}find src/ \( -name '*.o' -o -name '*.d' \) -exec rm {} \;
-	${Q}find ./ -name '*.gz' -exec rm {} \;
+	${Q}${RM} ${libmcx_OBJ} ${libmcx_DEP} ${mcxedit_OBJ} ${mcxedit_DEP}
+	${Q}${RM} ${MANPAGES}
+	${Q}${RM} libmcx.a\
+		libmcx.so mcxedit mcxedit.static\
+		libmcx.dll mcxedit.exe
 PHONY += clean
 
 # SEMANTIC CHECKING
 check:; ${Q}sparse ${CPPFLAGS} ${CFLAGS} ${SRC}
 PHONY += check
-
-# INSTALLATION
-installdirs: | \
-	${DESTDIR}${BINDIR}/ ${DESTDIR}${MANDIR}/ \
-	$(addprefix ${DESTDIR}${MANDIR}/,$(sort $(dir $(MANPAGES:man/%=%))))
-install: all manpages | installdirs
-	${Q}install -m0755 ${NAME} ${DESTDIR}${BINDIR}/${NAME}
-	${Q}for man in $(MANPAGES:man/%=%); do\
-		install -m0644 "man/$$man" ${DESTDIR}${MANDIR}/"$$man";\
-	done
-uninstall:
-	rm ${DESTDIR}${BINDIR}/${NAME}
-	rm $(MANPAGES:man/%=${DESTDIR}${MANDIR}/%)
-PHONY += install uninstall
 
 # GENERATING TRACKED FILES
 CONTRIBUTORS:
@@ -90,27 +118,19 @@ CONTRIBUTORS:
 	${Q}mv CONTRIBUTORS~ CONTRIBUTORS
 PHONY += CONTRIBUTORS
 
-#
-# COMPILATION
-#
-${NAME}: ${OBJ}
-	$(call msg,LD,$@)
-	${Q}${CC} ${LDFLAGS} ${LDLIBS} -o $@ $^
 %.c.o: %.c
 	$(call msg,CC,$@)
 	${Q}${CC} -c ${CPPFLAGS} ${CFLAGS} -o $@ $<
+%.c.so.o: %.c
+	$(call msg,CC,$@)
+	${Q}${CC} -c ${CPPFLAGS} -fPIC ${CFLAGS} -o $@ $<
 
-#
 # MANPAGE CREATION
-#
 man/%: man/%.rst
 	$(call msg,RST2MAN,$@)
 	${Q}sed 's/@@VERSION@@/'${VERSION}'/g;'\
 	's/@@DATE@@/'$(shell date +%Y-%m-%d)'/g' $< | rst2man >$@
 
-#
-# GENERAL UTILITY
-#
 %.gz: %
 	$(call msg,GZIP,$@)
 	${Q}gzip -fk $<

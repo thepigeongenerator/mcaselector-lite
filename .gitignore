@@ -1,10 +1,10 @@
 # Ignore all dotfiles by default
 .*
 
-
 # Ignore (commonly) produced files (Sorted alphabetically)
 *.a
 *.d
+*.dll
 *.exe
 *.gz
 *.hex
@@ -17,6 +17,7 @@
 *.zip
 /mcxedit
 /mcxedit.exe
+/mcxedit.static
 
 # Ignore temporary files
 *.tmp
