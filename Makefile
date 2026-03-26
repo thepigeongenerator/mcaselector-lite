@@ -69,13 +69,13 @@ mcxedit.static: ${mcxedit_OBJ} libmcx.a
 
 installdirs: | \
 	${DESTDIR}${bindir}/ ${DESTDIR}${mandir}/ ${DESTDIR}${libdir}/\
-	$(addprefix ${DESTDIR}${MANDIR}/,$(sort $(dir $(MANPAGES:man/%=%))))
+	$(addprefix ${DESTDIR}${mandir}/,$(sort $(dir $(MANPAGES:man/%=%))))
 install: all manpages | installdirs
 	${Q}install -m0755 mcxedit   ${DESTDIR}${bindir}
 	${Q}install -m0755 libmcx.so ${DESTDIR}${libdir}
 	${Q}install -m0755 libmcx.a  ${DESTDIR}${libdir}
 	${Q}for man in $(MANPAGES:man/%=%); do\
-		install -m0644 "man/$$man" ${DESTDIR}${MANDIR}/"$$man";\
+		install -m0644 "man/$$man" ${DESTDIR}${mandir}/"$$man";\
 	done
 uninstall:
 	${Q}${RM} ${DESTDIR}${bindir}/mcxedit
