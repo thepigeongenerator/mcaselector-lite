@@ -39,6 +39,9 @@ mcxedit_SRC := $(wildcard src/mcxedit/*.c)
 mcxedit_OBJ := $(addsuffix .o,${mcxedit_SRC})
 mcxedit_DEP := $(addsuffix .d,${mcxedit_SRC})
 
+MANSRC      := $(wildcard man/*/*.rst)
+MANPAGES    := $(patsubst %.rst,%.gz,${MANSRC})
+
 DEP := ${mcxedit_DEP} ${libmcx_DEP}
 
 # Set Q to @ to silence commands being printed, unless --no-silent has been set
@@ -96,6 +99,8 @@ endif
 libmcx.a: ${libmcx_OBJ}
 	$(call msg,AR,$@)
 	${Q}${AR} -rsc $@ $<
+
+manpages: ${MANPAGES}
 
 # CLEANING
 clean:
