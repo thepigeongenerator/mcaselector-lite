@@ -46,5 +46,7 @@ clean:
 	${Q}${RM} ${DEP}
 	${Q}${RM} ../../libmcx.a ../../libmcx.so ../../libmcx.dll
 PHONY += clean
+check:; ${Q}sparse ${CPPFLAGS} ${CFLAGS} ${SRC}
+PHONY += check
 
 .PHONY: ${PHONY}

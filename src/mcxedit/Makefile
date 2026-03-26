@@ -40,5 +40,7 @@ clean:
 	${Q}${RM} ${DEP}
 	${Q}${RM} ../../mcxedit ../../mcxedit.static ../../mcxedit.exe
 PHONY += clean
+check:; ${Q}sparse ${CPPFLAGS} ${CFLAGS} ${SRC}
+PHONY += check
 
 .PHONY: ${PHONY}

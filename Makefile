@@ -59,7 +59,9 @@ clean:
 PHONY += clean
 
 # SEMANTIC CHECKING
-check:; ${Q}sparse ${CPPFLAGS} ${CFLAGS} ${SRC}
+check:
+	${Q}${MAKE} -C src/libmcx  check
+	${Q}${MAKE} -C src/mcxedit check
 PHONY += check
 
 # GENERATING TRACKED FILES
