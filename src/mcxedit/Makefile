@@ -18,11 +18,11 @@ ifneq (${OS},Windows_NT)
 	${Q}${CC} ${LDFLAGS} ${LDLIBS} -lmcx -o $@ $^
 ../../mcxedit.static: ${OBJ} ${srcdir}/libmcx.a
 	$(call msg,LD,$(notdir $@))
-	${Q}${CC} ${LDFLAGS} ${LDLIBS} -o $@ $^
+	${Q}${CC} ${LDFLAGS} ${LDLIBS} -static -o $@ $^
 else
 ../../mcxedit.exe:    ${OBJ} ${srcdir}/libmcx.a
 	$(call msg,LD,$(notdir $@))
-	${Q}${CC} ${LDFLAGS} ${LDLIBS} -o $@ $^
+	${Q}${CC} ${LDFLAGS} ${LDLIBS} -static -o $@ $^
 endif
 
 %.c.o: %.c
