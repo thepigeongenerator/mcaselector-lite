@@ -6,66 +6,22 @@ SHELL = /bin/sh
 .SUFFIXES:
 .SECONDARY:
 
-# Include persistent user configurations.
--include .config.mk
+MAKEFLAGS += --no-print-directory
 
-VERSION = 0.0
+include Common.mk
 
-# Flags, including the flag in the definition so it may be overridden.
-# Generally speaking, anything prior to the recursive reference of the variable
-# is able to be overridden, anything afterwards is applied no matter what.
-CPPFLAGS := -DNDEBUG -U_GNU_SOURCE ${CPPFLAGS}\
-	    -DMCXEDIT_VERSION=\"${VERSION}\" -DMCXEDIT_SOURCE\
-	    -Iinclude
-CFLAGS   := -O2 ${CFLAGS} -g -std=gnu17\
-	    -Wall -Wextra -Wpedantic -Wno-pointer-arith -Wvla
-LDFLAGS  := ${LDFLAGS} -L.
-LDLIBS   := ${LDLIBS} -lm -larchive -lmcx
-
-# Configure the prefix directories for installation rules.
-prefix ?= /usr/local
-bindir := ${prefix}/bin
-libdir := ${prefix}/lib
-mandir := ${prefix}/share
-
-# Sources for libmcx
-libmcx_SRC  := $(wildcard src/libmcx/*.c)
-libmcx_OBJ  := $(addsuffix .o,${libmcx_SRC})
-libmcx_SOBJ := $(addsuffix .so.o,${libmcx_SRC})
-libmcx_DEP  := $(addsuffix .d,${libmcx_SRC})
-
-# Sources for mcxedit
-mcxedit_SRC := $(wildcard src/mcxedit/*.c)
-mcxedit_OBJ := $(addsuffix .o,${mcxedit_SRC})
-mcxedit_DEP := $(addsuffix .d,${mcxedit_SRC})
-
+# TODO: move this into a separate Makefile as well
 MANSRC      := $(wildcard man/*/*.rst)
 MANPAGES    := $(patsubst %.rst,%.gz,${MANSRC})
-
-DEP := ${mcxedit_DEP} ${libmcx_DEP}
-
-# Set Q to @ to silence commands being printed, unless --no-silent has been set
-ifeq (0, $(words $(findstring --no-silent,${MAKEFLAGS})))
-msg=@printf ' %-8s %s\n' "${1}" "${2}"
-Q=@
-else
-msg=
-Q=
-endif
 
 PHONY = all manpages
 
 ifneq (${OS},Windows_NT)
 all: libmcx.so libmcx.a mcxedit mcxedit.static
-libmcx.so: ${libmcx_SOBJ}
-	$(call msg,LD,$@)
-	${Q}${CC} ${LDFLAGS} -shared ${LDLIBS} -o $@ $^
-mcxedit: ${mcxedit_OBJ}
-	$(call msg,LD,$@)
-	${Q}${CC} ${LDFLAGS} ${LDLIBS} -o $@ $^
-mcxedit.static: ${mcxedit_OBJ} libmcx.a
-	$(call msg,LD,$@)
-	${Q}${CC} ${LDFLAGS} ${LDLIBS} -o $@ $^
+libmcx.a:               ; ${Q}${MAKE} -C src/libmcx  $@
+libmcx.so:              ; ${Q}${MAKE} -C src/libmcx  $@
+mcxedit: libmcx.so      ; ${Q}${MAKE} -C src/mcxedit $@
+mcxedit.static: libmcx.a; ${Q}${MAKE} -C src/mcxedit $@
 
 installdirs: | \
 	${DESTDIR}${bindir}/ ${DESTDIR}${mandir}/ ${DESTDIR}${libdir}/\
@@ -85,30 +41,21 @@ uninstall:
 else
 $(warning Detected  Windows_NT kernel, please refer to the documentation if you encounter issues.)
 all: libmcx.dll libmcx.a mcxedit.exe
-libmcx.dll: ${libmcx_SOBJ}
-	$(call msg,LD,$@)
-	${Q}${CC} ${LDFLAGS} -shared ${LDLIBS} -o $@ $^
-mcxedit.exe: ${mcxedit_OBJ} libmcx.a
-	$(call msg,LD,$@)
-	${Q}${CC} ${LDFLAGS} ${LDLIBS} -o $@ $^
+libmcx.a:            ; ${Q}${MAKE} -C src/libmcx  $@
+libmcx.dll:          ; ${Q}${MAKE} -C src/libmcx  $@
+mcxedit.exe: libmcx.a; ${Q}${MAKE} -C src/mcxedit $@
 
 # BUG: I am purposefully neglecting this at the moment.
 # TODO: Figure out what the fuck they do with files.
 endif
 
-libmcx.a: ${libmcx_OBJ}
-	$(call msg,AR,$@)
-	${Q}${AR} -rsc $@ $<
-
 manpages: ${MANPAGES}
 
 # CLEANING
 clean:
-	${Q}${RM} ${libmcx_OBJ} ${libmcx_DEP} ${mcxedit_OBJ} ${mcxedit_DEP}
+	${Q}${MAKE} -C src/libmcx  clean
+	${Q}${MAKE} -C src/mcxedit clean
 	${Q}${RM} ${MANPAGES}
-	${Q}${RM} libmcx.a\
-		libmcx.so mcxedit mcxedit.static\
-		libmcx.dll mcxedit.exe
 PHONY += clean
 
 # SEMANTIC CHECKING
@@ -123,26 +70,11 @@ CONTRIBUTORS:
 	${Q}mv CONTRIBUTORS~ CONTRIBUTORS
 PHONY += CONTRIBUTORS
 
-%.c.o: %.c
-	$(call msg,CC,$@)
-	${Q}${CC} -c ${CPPFLAGS} ${CFLAGS} -o $@ $<
-%.c.so.o: %.c
-	$(call msg,CC,$@)
-	${Q}${CC} -c ${CPPFLAGS} -fPIC ${CFLAGS} -o $@ $<
-
 # MANPAGE CREATION
 man/%: man/%.rst
 	$(call msg,RST2MAN,$@)
 	${Q}sed 's/@@VERSION@@/'${VERSION}'/g;'\
 	's/@@DATE@@/'$(shell date +%Y-%m-%d)'/g' $< | rst2man >$@
-
-%.gz: %
-	$(call msg,GZIP,$@)
-	${Q}gzip -fk $<
-%/:
-	$(call msg,MKDIR,$@)
-	${Q}mkdir -p $@
-
 # Generate and include dependencies,
 # ignoring any errors that may occur when doing so.
 %.c.d: %.c; ${Q}${CC} -MM ${CPPFLAGS} -MF $@ $<
