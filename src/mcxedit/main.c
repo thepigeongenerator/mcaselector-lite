@@ -62,7 +62,7 @@ static int try_ftruncate(int fd, size_t size, const char *pat)
 	do e = ftruncate(fd, size);
 	while (e && errno == EINTR);
 	if (e) {
-		warn("%s: ftruncate() failed", pat);
+		warn("cannot truncate '%s'", pat);
 		return 1;
 	}
 	return 0;
@@ -78,7 +78,7 @@ static int procmcx(char *pat, int opt)
 
 	const int fd = open(pat, need_write ? O_RDWR : O_RDONLY);
 	if (fd < 0) {
-		warn("%s", pat);
+		warn("cannot open '%s'", pat);
 		goto err;
 	}
 
@@ -87,17 +87,17 @@ static int procmcx(char *pat, int opt)
 	size = st.st_size;
 	if (size < MCX_TABLES) {
 		/* Not deleting this, since I do not think it is wise to decide that here. */
-		warnx("%s: Too small to contain table (%zuB < %zuB)",
+		warnx("cannot use '%s': Too small to contain table (%zuB < %zuB)",
 			pat, size, (size_t)MCX_TABLES);
 		goto err_close;
 	}
 	tmp = size % MCX_SECTOR;
 	if (tmp && !(opt & OPT_QUIET || opt & OPT_CHECK))
-		warnx("%s: Not 4KiB sector aligned! (%+zdB)", pat, -tmp);
+		warnx("'%s' may be corrupt: Not 4KiB sector aligned! (%+zdB)", pat, -tmp);
 
 	mcx = mmap(NULL, size, need_write ? (PROT_READ | PROT_WRITE) : PROT_READ, MAP_SHARED, fd, 0);
 	if (mcx == MAP_FAILED) {
-		warn("%s", pat);
+		warn("cannot map '%s'", pat);
 		goto err_close;
 	}
 
@@ -117,7 +117,7 @@ static int procmcx(char *pat, int opt)
 		size_t esize2 = mcx_sumsize(mcx);
 		size_t esize  = esize1 > esize2 ? esize1 : esize2;
 		if (size < esize) {
-			warnx("%s: Predicted a larger size than the actual size. (%+zdB)", pat, size - esize);
+			warnx("cannot defrag '%s': Predicted a larger size than the actual size. (%+zdB)", pat, size - esize);
 			goto err_unmap;
 		}
 		nsize = mcx_defrag(mcx);
@@ -129,7 +129,7 @@ static int procmcx(char *pat, int opt)
 	close(fd);
 	if (opt & OPT_NEED_WRITE && !size) {
 		if (remove(pat))
-			warn("failed to remove '%s'", pat);
+			warn("cannot remove '%s'", pat);
 		else if (opt & OPT_VERBOSE)
 			printf("removed '%s'\n", pat);
 	}
