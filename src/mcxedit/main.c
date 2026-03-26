@@ -47,7 +47,7 @@ static const char *str_help =
 	"  -v: [v]erbose     Outputs more detailed information.\n"
 	"  -V: [V]ersion     Outputs version information & exits.\n"
 	"  -h: [h]elp        Shows this output & exits.\n"
-	"View %s(1) for more information.\n";
+	"View mcxedit(1) for more information.\n";
 static _Bool signaled = 0;
 
 static void signal_received(int sig)
@@ -166,7 +166,7 @@ int main(int argc, char **argv)
 			printf("%s: v%s\n", *argv, MCXEDIT_VERSION);
 			return 0;
 		case 'h':
-			printf(str_help, *argv, *argv);
+			printf(str_help, *argv);
 			return 0;
 		case '?':
 			fprintf(stderr, "Try '%s -h' for help.\n", *argv);
