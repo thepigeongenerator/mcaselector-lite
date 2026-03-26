@@ -57,11 +57,9 @@ You may wish to combine with **-R**, if this happens.
 
 -q:
 Silences non-fatal errors.
-Disables **-v**.
 
 -v:
-TODO: Scope not defined.
-Disables **-q**.
+Enable the printing of more information on what actions are taken.
 
 -V:
 Outputs version information & exits.

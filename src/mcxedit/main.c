@@ -160,14 +160,8 @@ int main(int argc, char **argv)
 		case 'G': opt |= OPT_DEFRAG; break;
 		case 'R': opt |= OPT_REPAIR; break;
 		case 'c': opt |= OPT_CHECK; break;
-		case 'q':
-			opt |= OPT_QUIET;
-			opt &= ~OPT_VERBOSE;
-			break;
-		case 'v':
-			opt |= OPT_VERBOSE;
-			opt &= ~OPT_QUIET;
-			break;
+		case 'q': opt |= OPT_QUIET; break;
+		case 'v': opt |= OPT_VERBOSE; break;
 		case 'V':
 			printf("%s: v%s\n", *argv, MCXEDIT_VERSION);
 			return 0;
