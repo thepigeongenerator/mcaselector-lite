@@ -80,7 +80,7 @@ off_t mcx_defrag(void *mcx)
 		*chunk++ = cvt_be32toh(tbl[i]);
 		*chunk++ = i;
 	}
-	qsort(chunks, sizeof(chunks), sizeof(*chunks) * 2, mcx_defrag_compar);
+	qsort(chunks, MCX_TABLE_LEN, sizeof(*chunks) * 2, mcx_defrag_compar);
 	u32 *end = chunk;
 	chunk    = chunks;
 
