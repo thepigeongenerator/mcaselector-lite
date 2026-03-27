@@ -73,7 +73,7 @@ static int try_ftruncate(int fd, size_t size, const char *pat)
 static int procmcx(char *pat, int opt)
 {
 	_Bool  need_write = opt & OPT_NEED_WRITE;
-	size_t size, nsize, tmp;
+	size_t size, nsize, tmp; /* BUG: size_t might be too small for file sizes. */
 	void  *mcx;
 
 	const int fd = open(pat, need_write ? O_RDWR : O_RDONLY);
@@ -145,9 +145,6 @@ err:
 /* Entry-point of the application. */
 int main(int argc, char **argv)
 {
-	/* TODO: With some system calls, we may want to check against
-	 * errno == EINTR, and retry the syscall, since no actual error occurred.
-	 * This may not be necessary however, considering mmap does not have this problem. */
 	signal(SIGINT, signal_received);
 	signal(SIGTERM, signal_received);
 	argv0 = *argv;
