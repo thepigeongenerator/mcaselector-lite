@@ -56,7 +56,7 @@ static void signal_received(int sig)
 	signaled = 1;
 }
 
-static int try_ftruncate(int fd, size_t size, const char *pat)
+static int try_ftruncate(int fd, off_t size, const char *pat)
 {
 	int e;
 	do e = ftruncate(fd, size);
@@ -72,9 +72,9 @@ static int try_ftruncate(int fd, size_t size, const char *pat)
  * Returns non-zero on failure. */
 static int procmcx(char *pat, int opt)
 {
-	_Bool  need_write = opt & OPT_NEED_WRITE;
-	size_t size, nsize, tmp; /* BUG: size_t might be too small for file sizes. */
-	void  *mcx;
+	_Bool need_write = opt & OPT_NEED_WRITE;
+	off_t size, nsize, tmp;
+	void *mcx;
 
 	const int fd = open(pat, need_write ? O_RDWR : O_RDONLY);
 	if (fd < 0) {
@@ -87,15 +87,17 @@ static int procmcx(char *pat, int opt)
 	size = st.st_size;
 	if (size < MCX_TABLES) {
 		/* Not deleting this, since I do not think it is wise to decide that here. */
-		warnx("cannot use '%s': Too small to contain table (%zuB < %zuB)",
-			pat, size, (size_t)MCX_TABLES);
+		warnx("cannot use '%s': Too small to contain table (%juB < %juB)",
+			pat, (uintmax_t)size, (uintmax_t)MCX_TABLES);
 		goto err_close;
 	}
 	tmp = size % MCX_SECTOR;
 	if (tmp && !(opt & OPT_QUIET || opt & OPT_CHECK))
-		warnx("'%s' may be corrupt: Not 4KiB sector aligned! (%+zdB)", pat, -tmp);
+		warnx("'%s' may be corrupt: Not 4KiB sector aligned! (%+jdB)",
+			pat, (intmax_t)-tmp);
 
-	mcx = mmap(NULL, size, need_write ? (PROT_READ | PROT_WRITE) : PROT_READ, MAP_SHARED, fd, 0);
+	mcx = mmap(NULL,
+		size, need_write ? (PROT_READ | PROT_WRITE) : PROT_READ, MAP_SHARED, fd, 0);
 	if (mcx == MAP_FAILED) {
 		warn("cannot map '%s'", pat);
 		goto err_close;
@@ -113,11 +115,12 @@ static int procmcx(char *pat, int opt)
 
 	if (opt & OPT_DEFRAG) {
 		/* TODO: Could this be more optimal? */
-		size_t esize1 = mcx_calcsize(mcx);
-		size_t esize2 = mcx_sumsize(mcx);
-		size_t esize  = esize1 > esize2 ? esize1 : esize2;
+		off_t esize1 = mcx_calcsize(mcx);
+		off_t esize2 = mcx_sumsize(mcx);
+		off_t esize  = esize1 > esize2 ? esize1 : esize2;
 		if (size < esize) {
-			warnx("cannot defrag '%s': Predicted a larger size than the actual size. (%+zdB)", pat, size - esize);
+			warnx("cannot defrag '%s': Predicted a larger size than the actual size. (%+jdB)",
+				pat, (intmax_t)(size - esize));
 			goto err_unmap;
 		}
 		nsize = mcx_defrag(mcx);
