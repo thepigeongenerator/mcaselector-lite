@@ -20,7 +20,7 @@ CPPFLAGS := -DNDEBUG -U_GNU_SOURCE ${CPPFLAGS}\
 	    -I${srcdir}/include
 CFLAGS   := -O2 ${CFLAGS} -g -std=gnu17\
 	    -Wall -Wextra -Wpedantic -Wno-pointer-arith -Wvla
-LDFLAGS  := -L${srcdir}
+LDFLAGS  := ${LDFLAGS} -L${srcdir}
 
 # Rules so simple that it is fine to put them here.
 # Not putting stuff such as C compilation here, since that should
