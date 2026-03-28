@@ -94,7 +94,7 @@ off_t mcx_defrag(void *mcx)
 
 		/* BUG: Not checking for overlapping chunks causing issues. */
 		memmove(mcx + pos * MCX_SECTOR, mcx + chpos * MCX_SECTOR, chlen * MCX_SECTOR);
-		tbl[*(chunk + 1)] = cvt_htobe32(chlen | (pos << 8));
+		tbl[chunk[1]] = cvt_htobe32(chlen | (pos << 8));
 next_table_item:
 		pos += chlen;
 	} while ((chunk += 2) < end);
