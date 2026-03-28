@@ -87,8 +87,8 @@ off_t mcx_defrag(void *mcx)
 	u32 pos = 2;
 	u32 chpos, chlen;
 	do {
-		chpos = *chunks >> 8;
-		chlen = *chunks & 0xFF;
+		chpos = *chunk >> 8;
+		chlen = *chunk & 0xFF;
 		if (chpos == pos || chpos < 2)
 			goto next_table_item;
 
