@@ -39,15 +39,15 @@ enum nbt_tagid {
 
 
 struct nbt_array {
-	__s32 nmemb;
+	mcx_s32 nmemb;
 
 	/* Contains the data of the NBT array,
 	 * Since this is a user-facing structure, it must point
 	 * to host-endian data, not big endian, and thus is marked as such. */
 	union nbt_array_dat {
-		__u16 *dat16;
-		__u32 *dat32;
-		__u64 *dat64;
+		mcx_u16 *dat16;
+		mcx_u32 *dat32;
+		mcx_u64 *dat64;
 	} arr;
 };
 
@@ -59,10 +59,10 @@ struct nbt_array {
  * if `buf` points to `NBT_I8`, `NBT_I16`, `NBT_I32`, `NBT_I64`, `NBT_F32`, or `NBT_F64`, `*out` is assumed
  * to have the available byte width for one of these types. In the case of `NBT_ARR*` and `NBT_LIST`
  * it must point to a `struct nbt_array*`. Where in the case of `NBT_LIST`, it must be one of the previous static-width types. */
-const __u8 *nbt_proctag(const __u8 *restrict buf, __u16 slen, void *restrict out) NONNULL((1, 3));
+const mcx_u8 *nbt_proctag(const mcx_u8 *restrict buf, mcx_u16 slen, void *restrict out) NONNULL((1, 3));
 
 /* searches for the end of a named tag without processing data, the final pointer is returned.
  * `NULL` is returned upon failure, the otherwise returned pointer is not guaranteed to be valid. */
-const __u8 *nbt_nexttag(const __u8 *restrict buf) NONNULL((1)) PURE;
+const mcx_u8 *nbt_nexttag(const mcx_u8 *restrict buf) NONNULL((1)) PURE;
 
 #endif /* MCXEDIT_NBT_H */

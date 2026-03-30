@@ -26,37 +26,37 @@ typedef unsigned int       uint;
 typedef unsigned long      ulong;
 typedef unsigned long long ullong;
 
-typedef int8_t   __s8;
-typedef int16_t  __s16;
-typedef int32_t  __s32;
-typedef int64_t  __s64;
-typedef uint8_t  __u8;
-typedef uint16_t __u16;
-typedef uint32_t __u32;
-typedef uint64_t __u64;
+typedef int8_t   mcx_s8;
+typedef int16_t  mcx_s16;
+typedef int32_t  mcx_s32;
+typedef int64_t  mcx_s64;
+typedef uint8_t  mcx_u8;
+typedef uint16_t mcx_u16;
+typedef uint32_t mcx_u32;
+typedef uint64_t mcx_u64;
 
-typedef __u16 BITWISE __be16;
-typedef __u32 BITWISE __be32;
-typedef __u64 BITWISE __be64;
-typedef __u16 BITWISE __le16;
-typedef __u32 BITWISE __le32;
-typedef __u64 BITWISE __le64;
+typedef mcx_u16 BITWISE mcx_be16;
+typedef mcx_u32 BITWISE mcx_be32;
+typedef mcx_u64 BITWISE mcx_be64;
+typedef mcx_u16 BITWISE mcx_le16;
+typedef mcx_u32 BITWISE mcx_le32;
+typedef mcx_u64 BITWISE mcx_le64;
 
 #ifdef MCXEDIT_SOURCE
-typedef __s8   s8;
-typedef __s16  s16;
-typedef __s32  s32;
-typedef __s64  s64;
-typedef __u8   u8;
-typedef __u16  u16;
-typedef __u32  u32;
-typedef __u64  u64;
-typedef __be16 be16;
-typedef __be32 be32;
-typedef __be64 be64;
-typedef __le16 le16;
-typedef __le32 le32;
-typedef __le64 le64;
+typedef mcx_s8   s8;
+typedef mcx_s16  s16;
+typedef mcx_s32  s32;
+typedef mcx_s64  s64;
+typedef mcx_u8   u8;
+typedef mcx_u16  u16;
+typedef mcx_u32  u32;
+typedef mcx_u64  u64;
+typedef mcx_be16 be16;
+typedef mcx_be32 be32;
+typedef mcx_be64 be64;
+typedef mcx_le16 le16;
+typedef mcx_le32 le32;
+typedef mcx_le64 le64;
 
 #if __SIZEOF_FLOAT__ == 4
 typedef float f32;
