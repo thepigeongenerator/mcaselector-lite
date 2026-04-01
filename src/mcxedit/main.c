@@ -103,8 +103,16 @@ static int procmcx(char *pat, int opt)
 		goto err_close;
 	}
 
-	if (opt & OPT_CHECK)
-		mcx_check(mcx, size, pat);
+	if (opt & OPT_CHECK) {
+		off_t calcsize = mcx_calcsize(mcx);
+		off_t sumsize  = mcx_sumsize(mcx);
+		if (size < calcsize)
+			warnx("%s: Contains chunks that exeed file size! (%juB < %juB)",
+				pat, (uintmax_t)size, (uintmax_t)calcsize);
+		else if (size < sumsize)
+			warnx("%s: Sum of chunk sizes exeed file size! (%juB < %juB)",
+				pat, (uintmax_t)size, (uintmax_t)sumsize);
+	}
 
 	if (opt & OPT_REPAIR) {
 		nsize = mcx_repair(mcx, size);

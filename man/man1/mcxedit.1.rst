@@ -39,8 +39,8 @@ file size based checks on the file, for more thorough checking
 **-c** can be specified.
 
 -c
-Performs the same checks as **-R**, but instead just reports these errors instead
-of repairing them.
+Performs superficial checks using estimated file sizes from the table.
+This'll detect "bad" chunks, but won't pinpoint which chunks will be fixed.
 
 -R:
 Attempts to repair the file to the best of its ability.

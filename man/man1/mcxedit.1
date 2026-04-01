@@ -28,7 +28,7 @@ level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .in \\n[rst2man-indent\\n[rst2man-indent-level]]u
 ..
-.TH "MCXEDIT" "1" "2026-03-26" "mcxedit 0.0" "User Commands"
+.TH "MCXEDIT" "1" "2026-04-01" "mcxedit 0.0" "User Commands"
 .SH Name
 MCXEDIT \- A utility for processing Minecraft: Java Edition Region files.
 .\" Copyright (C)2026 mcxedit
@@ -62,8 +62,8 @@ file size based checks on the file, for more thorough checking
 \fB\-c\fP can be specified.
 .sp
 \-c
-Performs the same checks as \fB\-R\fP, but instead just reports these errors instead
-of repairing them.
+Performs superficial checks using estimated file sizes from the table.
+This\(aqll detect \(dqbad\(dq chunks, but won\(aqt pinpoint which chunks will be fixed.
 .sp
 \-R:
 Attempts to repair the file to the best of its ability.

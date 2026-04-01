@@ -4,35 +4,11 @@
  * at www.github.com/thepigeongenerator/mcxedit. */
 #include <libmcx/mcx.h>
 
-#include <err.h> /* FIX: doesn't exist on WinBlows. */
 #include <libmcx/types.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "endian.h"
-
-/* TODO: check for overlapping. */
-void mcx_check(const void *mcx, off_t size, const char *pat)
-{
-	const be32 *tbl = mcx;
-	const be32 *end = mcx + MCX_TABLE;
-	u32         tmp, chpos, chlen, chend;
-	for (int i = 0; ++tbl < end; ++i) {
-		if (!*tbl) continue;
-		tmp   = cvt_be32toh(*tbl);
-		chpos = tmp >> 8;
-		chlen = tmp & 0xFF;
-		chend = (chpos + chlen) * MCX_SECTOR;
-
-		if (chpos < 2 || !chlen) {
-			warnx("%s:\t(%2u,%2u) Has invalid sectors.",
-				pat, i % 32, i / 32);
-		} else if (chend > size) {
-			warnx("%s: (%2u,%2u) Exeeds maximum file size. (+%zuB)",
-				pat, i % 32, i / 32, chend - size);
-		}
-	}
-}
 
 off_t mcx_repair(void *mcx, off_t size)
 {
