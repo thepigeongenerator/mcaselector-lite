@@ -83,7 +83,10 @@ static int procmcx(char *pat, int opt)
 	}
 
 	struct stat st;
-	fstat(fd, &st);
+	if (fstat(fd, &st) < 0) {
+		warn("cannot stat '%s'", pat);
+		goto err_close;
+	}
 	size = st.st_size;
 	if (size < MCX_TABLES) {
 		/* Not deleting this, since I do not think it is wise to decide that here. */
