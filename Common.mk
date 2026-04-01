@@ -1,3 +1,7 @@
+# Copyright (C)2026 mcxedit
+# Licensed under GPL-2.0-only. For further information,
+# view `git log`, and the COPYING and CONTRIBUTORS files
+# at www.github.com/thepigeongenerator/mcxedit.
 VERSION = 0.0
 
 # Configure the prefix directories for installation rules.
