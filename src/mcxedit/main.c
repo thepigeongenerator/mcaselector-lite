@@ -72,7 +72,7 @@ static int try_ftruncate(int fd, off_t size, const char *pat)
  * Returns non-zero on failure. */
 static int procmcx(char *pat, int opt)
 {
-	_Bool need_write = opt & OPT_NEED_WRITE;
+	int   need_write = opt & OPT_NEED_WRITE;
 	off_t size, nsize, tmp;
 	void *mcx;
 
