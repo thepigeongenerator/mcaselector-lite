@@ -125,16 +125,7 @@ static int procmcx(char *pat, int opt)
 	}
 
 	if (opt & OPT_DEFRAG) {
-		/* TODO: Could this be more optimal? */
-		off_t esize1 = mcx_calcsize(mcx);
-		off_t esize2 = mcx_sumsize(mcx);
-		off_t esize  = esize1 > esize2 ? esize1 : esize2;
-		if (size < esize) {
-			warnx("cannot defrag '%s': Predicted a larger size than the actual size. (%+jdB)",
-				pat, (intmax_t)(size - esize));
-			goto err_unmap;
-		}
-		nsize = mcx_defrag(mcx);
+		nsize = mcx_defrag(mcx, size);
 		if (try_ftruncate(fd, nsize, pat))
 			goto err_unmap;
 		size = nsize;

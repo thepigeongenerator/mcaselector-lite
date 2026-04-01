@@ -25,7 +25,7 @@ off_t mcx_repair(void *mcx, off_t size);
  * It is assumed that the table is formatted correctly and
  * that all data is accessible.
  * Returns the new file size.*/
-off_t mcx_defrag(void *mcx);
+off_t mcx_defrag(void *mcx, off_t size);
 
 /* Computes the size in bytes of the entire .mcX file,
  * according to the table.

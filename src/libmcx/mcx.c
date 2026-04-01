@@ -47,7 +47,7 @@ static int mcx_defrag_compar(const void *ma, const void *mb)
 
 /* Sort the table based on offset,
  * Then move the chunks down into empty space. */
-off_t mcx_defrag(void *mcx)
+off_t mcx_defrag(void *mcx, off_t size)
 {
 	u32   chunks[MCX_TABLE_LEN * 2];
 	u32  *chunk = chunks;
@@ -60,16 +60,25 @@ off_t mcx_defrag(void *mcx)
 	u32 *end = chunk;
 	chunk    = chunks;
 
-	u32 pos = 2;
-	u32 chpos, chlen;
+	u32   pos = 2;
+	u32   chpos, chlen;
+	off_t fpos, fchpos, fchlen;
 	do {
-		chpos = *chunk >> 8;
-		chlen = *chunk & 0xFF;
+		chpos  = *chunk >> 8;
+		chlen  = *chunk & 0xFF;
+		fpos   = pos * MCX_SECTOR;
+		fchpos = chpos * MCX_SECTOR;
+		fchlen = chlen * MCX_SECTOR;
+		if (fchpos + fchlen > size) {
+			tbl[chunk[1]] = 0;
+			/* BUG: Whilst this may correctly handle out-of-bounds chunks, this
+			 * will corrupt the shit out of any valid data after overlapping chunks. */
+			continue;
+		}
 		if (chpos == pos || chpos < 2)
 			goto next_table_item;
 
-		/* BUG: Not checking for overlapping chunks causing issues. */
-		memmove(mcx + pos * MCX_SECTOR, mcx + chpos * MCX_SECTOR, chlen * MCX_SECTOR);
+		memmove(mcx + fpos, mcx + fchpos, fchlen);
 		tbl[chunk[1]] = cvt_htobe32(chlen | (pos << 8));
 next_table_item:
 		pos += chlen;
