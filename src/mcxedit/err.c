@@ -4,13 +4,12 @@
  * at www.github.com/thepigeongenerator/mcxedit. */
 #include "err.h"
 
+#include "main.h"
 #include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-extern const char *argv0;
 
 void verr(int code, const char *fmt, va_list args)
 {

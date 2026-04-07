@@ -2,27 +2,26 @@
  * Licensed under GPL-2.0-only. For further information,
  * view `git log`, and the COPYING and CONTRIBUTORS files
  * at www.github.com/thepigeongenerator/mcxedit. */
+#include "main.h"
+
+#include "err.h"
+#include "getopt.h"
 #include <errno.h>
+#include <libmcx/mcx.h>
+#include <libmcx/types.h>
 #include <signal.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+
 #if defined(__unix__)
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#elif defined(_WIN32)
+/* TODO: Windows implementation. */
+#else
+#error "Platform unsupported"
 #endif
-
-#include <libmcx/mcx.h>
-#include <libmcx/types.h>
-
-#include "err.h"
-#include "getopt.h"
-
-_Static_assert(-3 >> 5 == -1,
-	"The platform does not compile "
-	"right-shifting signed integers to an arithmetic shift!");
 
 enum options {
 	OPT_VERBOSE = 1,
@@ -35,37 +34,16 @@ enum options {
 	OPT_NEED_WRITE = OPT_DEFRAG | OPT_REPAIR,
 };
 
-extern const char *argv0;
-const char        *argv0;
-static const char *str_help =
-	"%s [options] /path/to/region1 ...\n"
-	"Options:\n"
-	"  -G: defra[G]ment  Removes empty sectors from the file.\n"
-	"  -R: [R]epair      Identifies and repairs faults within the file.\n"
-	"  -c  [c]heck       Performs more thorough checks on the file.\n"
-	"  -q: [q]uiet       Silences most error output.\n"
-	"  -v: [v]erbose     Outputs more detailed information.\n"
-	"  -V: [V]ersion     Outputs version information & exits.\n"
-	"  -h: [h]elp        Shows this output & exits.\n"
-	"View mcxedit(1) for more information.\n";
-static _Bool signaled = 0;
+const char *argv0;
+static int  signaled = 0;
 
-static void signal_received(int sig)
-{
-	(void)sig;
-	signaled = 1;
-}
-
-static int try_ftruncate(int fd, off_t size, const char *pat)
+static int try_truncate(int fd, off_t size, const char *pat)
 {
 	int e;
 	do e = ftruncate(fd, size);
 	while (e && errno == EINTR);
-	if (e) {
-		warn("cannot truncate '%s'", pat);
-		return 1;
-	}
-	return 0;
+	if (e) warn("cannot truncate '%s'", pat);
+	return e;
 }
 
 /* Processes an .mcX file with the given options.
@@ -76,13 +54,13 @@ static int procmcx(char *pat, int opt)
 	off_t size, nsize, tmp;
 	void *mcx;
 
-	const int fd = open(pat, need_write ? O_RDWR : O_RDONLY);
+	const int   fd = open(pat, need_write ? O_RDWR : O_RDONLY);
+	struct stat st;
 	if (fd < 0) {
 		warn("cannot open '%s'", pat);
 		goto err;
 	}
 
-	struct stat st;
 	if (fstat(fd, &st) < 0) {
 		warn("cannot stat '%s'", pat);
 		goto err_close;
@@ -101,13 +79,14 @@ static int procmcx(char *pat, int opt)
 		warnx("'%s' may be corrupt: Not 4KiB sector aligned! (%+jdB)",
 			pat, (intmax_t)-tmp);
 
-	mcx = mmap(NULL,
-		size, need_write ? (PROT_READ | PROT_WRITE) : PROT_READ, MAP_SHARED, fd, 0);
+	int map_prot = need_write ? (PROT_READ | PROT_WRITE) : PROT_READ;
+	mcx          = mmap(NULL, size, map_prot, MAP_SHARED, fd, 0);
 	if (mcx == MAP_FAILED) {
 		warn("cannot map '%s'", pat);
 		goto err_close;
 	}
 
+	/* Perform the requested actions from opt. */
 	if (opt & OPT_CHECK) {
 		off_t calcsize = mcx_calcsize(mcx);
 		off_t sumsize  = mcx_sumsize(mcx);
@@ -121,14 +100,14 @@ static int procmcx(char *pat, int opt)
 
 	if (opt & OPT_REPAIR) {
 		nsize = mcx_repair(mcx, size);
-		if (try_ftruncate(fd, nsize, pat))
+		if (try_truncate(fd, nsize, pat))
 			goto err_unmap;
 		size = nsize;
 	}
 
 	if (opt & OPT_DEFRAG) {
 		nsize = mcx_defrag(mcx, size);
-		if (try_ftruncate(fd, nsize, pat))
+		if (try_truncate(fd, nsize, pat))
 			goto err_unmap;
 		size = nsize;
 	}
@@ -142,6 +121,7 @@ suc_close:
 		else if (opt & OPT_VERBOSE)
 			printf("removed '%s'\n", pat);
 	}
+
 	return 0;
 err_unmap:
 	munmap(mcx, size);
@@ -151,11 +131,16 @@ err:
 	return 1;
 }
 
+static void signal_report(int sig)
+{
+	signaled = sig;
+}
+
 /* Entry-point of the application. */
 int main(int argc, char **argv)
 {
-	signal(SIGINT, signal_received);
-	signal(SIGTERM, signal_received);
+	signal(SIGINT, signal_report);
+	signal(SIGTERM, signal_report);
 	argv0 = *argv;
 
 	/* Load the options given in argv. */
@@ -172,7 +157,18 @@ int main(int argc, char **argv)
 			printf("%s: v%s\n", *argv, MCXEDIT_VERSION);
 			return 0;
 		case 'h':
-			printf(str_help, *argv);
+			printf(
+				"%s [options] /path/to/region1 ...\n"
+				"Options:\n"
+				"  -G: defra[G]ment  Removes empty sectors from the file.\n"
+				"  -R: [R]epair      Identifies and repairs faults within the file.\n"
+				"  -c  [c]heck       Performs more thorough checks on the file.\n"
+				"  -q: [q]uiet       Silences most error output.\n"
+				"  -v: [v]erbose     Outputs more detailed information.\n"
+				"  -V: [V]ersion     Outputs version information & exits.\n"
+				"  -h: [h]elp        Shows this output & exits.\n"
+				"View mcxedit(1) for more information.\n",
+				*argv);
 			return 0;
 		case '?':
 			fprintf(stderr, "Try '%s -h' for help.\n", *argv);
