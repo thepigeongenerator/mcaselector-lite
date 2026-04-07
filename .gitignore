@@ -11,6 +11,7 @@
 *.lock
 *.o
 *.out
+*.patch
 *.so
 *.tar
 *.xz
