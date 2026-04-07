@@ -182,5 +182,5 @@ int main(int argc, char **argv)
 	char **pat = argv + optind;
 	while (!signaled && *pat)
 		err |= procmcx(*pat++, opt);
-	return err;
+	return signaled ? signaled + 128 : err;
 }
