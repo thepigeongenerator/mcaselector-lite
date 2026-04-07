@@ -89,7 +89,9 @@ static int procmcx(char *pat, int opt)
 	}
 	size = st.st_size;
 	if (size < MCX_TABLES) {
-		/* Not deleting this, since I do not think it is wise to decide that here. */
+		size = 0;
+		if (opt & OPT_REPAIR || opt & OPT_DEFRAG)
+			goto suc_close; /* Delete when performing the above. */
 		warnx("cannot use '%s': Too small to contain table (%juB < %juB)",
 			pat, (uintmax_t)size, (uintmax_t)MCX_TABLES);
 		goto err_close;
@@ -132,6 +134,7 @@ static int procmcx(char *pat, int opt)
 	}
 
 	munmap(mcx, size);
+suc_close:
 	close(fd);
 	if (opt & OPT_NEED_WRITE && !size) {
 		if (remove(pat))
