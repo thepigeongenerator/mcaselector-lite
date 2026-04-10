@@ -2,7 +2,14 @@
 # Licensed under GPL-2.0-only. For further information,
 # view `git log`, and the COPYING and CONTRIBUTORS files
 # at www.github.com/thepigeongenerator/mcxedit.
-VERSION = 0.0
+
+VERONLY  = v0.0
+ifndef GIT_TAG
+GIT_TAG := $(shell git describe --tags --match=${VERONLY} 2>/dev/null)
+endif
+VERSION := $(if ${GIT_TAG},${GIT_TAG},${VERONLY})
+export VERSION GIT_TAG
+
 
 # Configure the prefix directories for installation rules.
 prefix = /usr/local

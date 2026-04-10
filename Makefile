@@ -75,7 +75,7 @@ PHONY += CONTRIBUTORS
 # MANPAGE CREATION
 man/%: man/%.rst
 	$(call msg,RST2MAN,$@)
-	${Q}sed 's/@@VERSION@@/'${VERSION}'/g;'\
+	${Q}sed 's/@@VERSION@@/'${VERONLY}'/g;'\
 	's/@@DATE@@/'$(shell date +%Y-%m-%d)'/g' $< | rst2man >$@
 # Generate and include dependencies,
 # ignoring any errors that may occur when doing so.
