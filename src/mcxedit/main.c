@@ -231,6 +231,7 @@ static int procmcx(const char *pat, int opt)
 			goto err_unmap;
 		}
 		size = nsize;
+		if (!size) goto suc_close;
 	}
 
 	if (opt & OPT_DEFRAG) {
@@ -240,6 +241,7 @@ static int procmcx(const char *pat, int opt)
 			goto err_unmap;
 		}
 		size = nsize;
+		if (!size) goto suc_close;
 	}
 
 	if (file_unmap(&f, mcx, size) < 0)
