@@ -20,7 +20,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #elif defined(_WIN32)
-/* TODO: Windows implementation. */
+#include <fileapi.h>
+#include <handleapi.h>
+#include <windows.h>
+#include <winnt.h>
 #else
 #error "Platform unsupported"
 #endif
@@ -43,7 +46,7 @@ struct file {
 #if defined(__unix__)
 	int fd;
 #elif _WIN32
-/* TODO: Windows implementation. */
+	HANDLE h;
 #else
 #error "Platform unsupported"
 #endif
@@ -61,7 +64,7 @@ static int file_close(const struct file *f)
 	} while (e < 0 && errno == EINTR);
 	return e; /* e = 0 || -1 */
 #elif defined(_WIN32)
-/* TODO: Windows implementation. */
+	return -!CloseHandle(f->h);
 #else
 #error "Platform unsupported"
 #endif
@@ -82,7 +85,20 @@ static off_t file_open(struct file *f, const char *pat, int need_write)
 		goto err_stat;
 	return st.st_size;
 #elif defined(_WIN32)
-/* TODO: Windows implementation. */
+	/* TODO: Look into CreateFileMappingA */
+	f->h = CreateFileA((char *)pat,
+		need_write ? GENERIC_READ | GENERIC_WRITE : GENERIC_READ,
+		FILE_SHARE_READ,
+		NULL,
+		OPEN_EXISTING,
+		FILE_ATTRIBUTE_NORMAL,
+		NULL);
+	if (f->h == INVALID_HANDLE_VALUE)
+		goto err_open;
+	LARGE_INTEGER size;
+	if (!GetFileSizeEx(f->h, &size))
+		goto err_stat;
+	return size.QuadPart; /* Praise be, MicroSlop! */
 #else
 #error "Platform unsupported"
 #endif
@@ -105,7 +121,14 @@ static void *file_map(const struct file *f, off_t size, int need_write)
 	int map_prot = need_write ? (PROT_READ | PROT_WRITE) : PROT_READ;
 	mcx          = mmap(NULL, size, map_prot, MAP_SHARED, f->fd, 0);
 #elif defined(_WIN32)
-/* TODO: Windows implementation. */
+	(void)need_write;
+	mcx = malloc(size);
+	if (!mcx) return (void *)-1;
+	DWORD n;
+	if (!ReadFile(f->h, mcx, size, &n, NULL) || n != (uintmax_t)size) {
+		free(mcx);
+		return (void *)-1;
+	}
 #else
 #error "Platform unsupported"
 #endif
@@ -118,9 +141,14 @@ static void *file_map(const struct file *f, off_t size, int need_write)
 static int file_unmap(const struct file *f, void *mcx, off_t size)
 {
 #if defined(__unix__)
+	(void)f;
 	return munmap(mcx, size);
 #elif defined(_WIN32)
-/* TODO: Windows implementation. */
+	DWORD n;
+	if (!WriteFile(f->h, mcx, size, &n, NULL) || n != (uintmax_t)size)
+		return -1;
+	free(mcx);
+	return 0;
 #else
 #error "Platform unsupported"
 #endif
@@ -135,7 +163,11 @@ static int file_truncate(const struct file *f, off_t size)
 	do e = ftruncate(f->fd, size);
 	while (e < 0 && errno == EINTR); /* e = 0 or -1*/
 #elif defined(_WIN32)
-/* TODO: Windows implementation. */
+	LARGE_INTEGER slopsize = {.QuadPart = size};
+
+	e = -1;
+	if (SetFilePointerEx(f->h, slopsize, NULL, FILE_BEGIN))
+		e = -!SetEndOfFile(f->h);
 #else
 #error "Platform unsupported"
 #endif
