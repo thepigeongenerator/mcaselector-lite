@@ -10,7 +10,9 @@
 #include <libmcx/mcx.h>
 #include <libmcx/types.h>
 #include <signal.h>
+#include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #if defined(__unix__)
 #include <fcntl.h>
@@ -37,51 +39,143 @@ enum options {
 const char *argv0;
 static int  signaled = 0;
 
-static int try_truncate(int fd, off_t size, const char *pat)
+struct file {
+#if defined(__unix__)
+	int fd;
+#elif _WIN32
+/* TODO: Windows implementation. */
+#else
+#error "Platform unsupported"
+#endif
+};
+
+/* Closes a file.
+ * Returns 0 if successful, or -1 upon failure. */
+static int file_close(const struct file *f)
+{
+#if defined(__unix__)
+	int e;
+	do {
+		errno = 0;
+		e     = close(f->fd);
+	} while (e < 0 && errno == EINTR);
+	return e; /* e = 0 || -1 */
+#elif defined(_WIN32)
+/* TODO: Windows implementation. */
+#else
+#error "Platform unsupported"
+#endif
+}
+
+/* Opens a file.
+ * "pat" specifies the file-path.
+ * need_write sets whether the file is writeable, or read-only.
+ * Returns the file size, or -1 upon failure. */
+static off_t file_open(struct file *f, const char *pat, int need_write)
+{
+#if defined(__unix__)
+	f->fd = open(pat, need_write ? O_RDWR : O_RDONLY);
+	if (f->fd < 0)
+		goto err_open;
+	struct stat st;
+	if (fstat(f->fd, &st) < 0)
+		goto err_stat;
+	return st.st_size;
+#elif defined(_WIN32)
+/* TODO: Windows implementation. */
+#else
+#error "Platform unsupported"
+#endif
+err_open:
+	warn("cannot open '%s'", pat);
+	return -1;
+err_stat:
+	warn("cannot stat '%s'", pat);
+	file_close(f);
+	return -1;
+}
+
+/* Maps "size" in bytes from *f to a memory address.
+ * "need_write" dictates whether the mapping is writeable or read-only.
+ * Returns (void *)-1 upon failure. (NULL is possibly a valid value) */
+static void *file_map(const struct file *f, off_t size, int need_write)
+{
+	void *mcx;
+#if defined(__unix__)
+	int map_prot = need_write ? (PROT_READ | PROT_WRITE) : PROT_READ;
+	mcx          = mmap(NULL, size, map_prot, MAP_SHARED, f->fd, 0);
+#elif defined(_WIN32)
+/* TODO: Windows implementation. */
+#else
+#error "Platform unsupported"
+#endif
+	return mcx;
+}
+
+/* Removes the mapping from created with "file_map".
+ * "size" should be the amount of bytes that we're unmapping.
+ * Returns 0 if successful, or -1 upon failure. */
+static int file_unmap(const struct file *f, void *mcx, off_t size)
+{
+#if defined(__unix__)
+	return munmap(mcx, size);
+#elif defined(_WIN32)
+/* TODO: Windows implementation. */
+#else
+#error "Platform unsupported"
+#endif
+}
+
+/* Truncates file *f to a specified size.
+ * Returns 0 if successful, or -1 upon failure. */
+static int file_truncate(const struct file *f, off_t size)
 {
 	int e;
-	do e = ftruncate(fd, size);
-	while (e && errno == EINTR);
-	if (e) warn("cannot truncate '%s'", pat);
+#if defined(__unix__)
+	do e = ftruncate(f->fd, size);
+	while (e < 0 && errno == EINTR); /* e = 0 or -1*/
+#elif defined(_WIN32)
+/* TODO: Windows implementation. */
+#else
+#error "Platform unsupported"
+#endif
 	return e;
 }
 
 /* Processes an .mcX file with the given options.
  * Returns non-zero on failure. */
-static int procmcx(char *pat, int opt)
+static int procmcx(const char *pat, int opt)
 {
+	struct file f;
+
 	int   need_write = opt & OPT_NEED_WRITE;
 	off_t size, nsize, tmp;
 	void *mcx;
 
-	const int   fd = open(pat, need_write ? O_RDWR : O_RDONLY);
-	struct stat st;
-	if (fd < 0) {
-		warn("cannot open '%s'", pat);
-		goto err;
-	}
-
-	if (fstat(fd, &st) < 0) {
-		warn("cannot stat '%s'", pat);
-		goto err_close;
-	}
-	size = st.st_size;
+	/* Open the file, get and check the size. */
+	size = file_open(&f, pat, need_write);
+	if (size < 0) goto err;
 	if (size < MCX_TABLES) {
 		size = 0;
 		if (opt & OPT_REPAIR || opt & OPT_DEFRAG)
 			goto suc_close; /* Delete when performing the above. */
-		warnx("cannot use '%s': Too small to contain table (%juB < %juB)",
-			pat, (uintmax_t)size, (uintmax_t)MCX_TABLES);
+		warnx("cannot use '%s': Too small to contain table (%lluB < %lluB)",
+			pat, (ullong)size, (ullong)MCX_TABLES);
 		goto err_close;
 	}
-	tmp = size % MCX_SECTOR;
-	if (tmp && !(opt & OPT_QUIET || opt & OPT_CHECK))
-		warnx("'%s' may be corrupt: Not 4KiB sector aligned! (%+jdB)",
-			pat, (intmax_t)-tmp);
 
-	int map_prot = need_write ? (PROT_READ | PROT_WRITE) : PROT_READ;
-	mcx          = mmap(NULL, size, map_prot, MAP_SHARED, fd, 0);
-	if (mcx == MAP_FAILED) {
+	tmp = size % MCX_SECTOR;
+	if (tmp && !(opt & OPT_QUIET || opt & OPT_CHECK)) {
+		warnx("'%s' may be corrupt: Not 4KiB sector aligned! (%+lldB)",
+			pat, (intmax_t)-tmp);
+	}
+	if ((uintmax_t)size > SIZE_MAX) {
+		warnx("cannot use '%s': File is too large for the size_t datatype", pat);
+		goto err_close;
+	}
+
+	mcx = file_map(&f, size, need_write);
+	if (mcx == (void *)-1) {
 		warn("cannot map '%s'", pat);
 		goto err_close;
 	}
@@ -91,30 +185,36 @@ static int procmcx(char *pat, int opt)
 		off_t calcsize = mcx_calcsize(mcx);
 		off_t sumsize  = mcx_sumsize(mcx);
 		if (size < calcsize)
-			warnx("%s: Contains chunks that exeed file size! (%juB < %juB)",
-				pat, (uintmax_t)size, (uintmax_t)calcsize);
+			warnx("%s: Contains chunks that exeed file size! (%lluB < %lluB)",
+				pat, (ullong)size, (ullong)calcsize);
 		else if (size < sumsize)
-			warnx("%s: Sum of chunk sizes exeed file size! (%juB < %juB)",
-				pat, (uintmax_t)size, (uintmax_t)sumsize);
+			warnx("%s: Sum of chunk sizes exeed file size! (%lluB < %lluB)",
+				pat, (ullong)size, (ullong)sumsize);
 	}
 
 	if (opt & OPT_REPAIR) {
 		nsize = mcx_repair(mcx, size);
-		if (try_truncate(fd, nsize, pat))
+		if (file_truncate(&f, nsize)) {
+			warn("cannot truncate '%s'", pat);
 			goto err_unmap;
+		}
 		size = nsize;
 	}
 
 	if (opt & OPT_DEFRAG) {
 		nsize = mcx_defrag(mcx, size);
-		if (try_truncate(fd, nsize, pat))
+		if (file_truncate(&f, nsize)) {
+			warn("cannot truncate '%s'", pat);
 			goto err_unmap;
+		}
 		size = nsize;
 	}
 
-	munmap(mcx, size);
+	if (file_unmap(&f, mcx, size) < 0)
+		err(1, "cannot unmap '%s'", pat);
 suc_close:
-	close(fd);
+	if (file_close(&f) < 0)
+		err(1, "cannot close '%s'", pat);
 	if (opt & OPT_NEED_WRITE && !size) {
 		if (remove(pat))
 			warn("cannot remove '%s'", pat);
@@ -124,9 +224,11 @@ suc_close:
 
 	return 0;
 err_unmap:
-	munmap(mcx, size);
+	if (file_unmap(&f, mcx, size) < 0)
+		err(1, "cannot unmap '%s'", pat);
 err_close:
-	close(fd);
+	if (file_close(&f) < 0)
+		err(1, "cannot close '%s'", pat);
 err:
 	return 1;
 }

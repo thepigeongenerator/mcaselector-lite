@@ -26,7 +26,7 @@ off_t mcx_repair(void *mcx, off_t size)
 		if (chpos < 2 || !chlen) {
 			*tbl = 0;
 			continue;
-		} else if (chend > size) {
+		} else if (chend > (uintmax_t)size) {
 			/* TODO: Add functionality that looks at the payload data,
 			 * and attempts to restore from that, if possible. */
 			*tbl = 0;
