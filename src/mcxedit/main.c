@@ -118,6 +118,8 @@ static void *file_map(const struct file *f, off_t size, int need_write)
 {
 	void *mcx;
 #if defined(__unix__)
+	/* FIX: It may be required that "size" is a multiple of
+	 * the page size returned by sysconf()*/
 	int map_prot = need_write ? (PROT_READ | PROT_WRITE) : PROT_READ;
 	mcx          = mmap(NULL, size, map_prot, MAP_SHARED, f->fd, 0);
 #elif defined(_WIN32)
@@ -141,6 +143,8 @@ static void *file_map(const struct file *f, off_t size, int need_write)
 static int file_unmap(const struct file *f, void *mcx, off_t size)
 {
 #if defined(__unix__)
+	/* FIX: It may be required that "size" is a multiple of
+	 * the page size returned by sysconf()*/
 	(void)f;
 	return munmap(mcx, size);
 #elif defined(_WIN32)
@@ -154,6 +158,9 @@ static int file_unmap(const struct file *f, void *mcx, off_t size)
 #endif
 }
 
+/* WARN: On Windows, if using ViewOfFile™ the map must be
+ * unmapped before truncation. POSIX defines shrinking correctly, but
+ * growing may result in silent data loss. */
 /* Truncates file *f to a specified size.
  * Returns 0 if successful, or -1 upon failure. */
 static int file_truncate(const struct file *f, off_t size)
