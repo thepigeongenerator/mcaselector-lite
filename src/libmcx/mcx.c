@@ -4,6 +4,7 @@
  * at www.github.com/thepigeongenerator/mcxedit. */
 #include <libmcx/mcx.h>
 
+#include <assert.h>
 #include <libmcx/types.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,6 +13,7 @@
 
 off_t mcx_repair(void *mcx, off_t size)
 {
+	assert(size > MCX_TABLES);
 	be32 *tbl = mcx;
 	be32 *end = mcx + MCX_TABLE;
 	u32   chpos, chlen, chend;
@@ -49,6 +51,7 @@ static int mcx_defrag_compar(const void *ma, const void *mb)
  * Then move the chunks down into empty space. */
 off_t mcx_defrag(void *mcx, off_t size)
 {
+	assert(size > MCX_TABLES);
 	u32   chunks[MCX_TABLE_LEN * 2];
 	u32  *chunk = chunks;
 	be32 *tbl   = mcx;
